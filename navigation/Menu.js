@@ -34,22 +34,12 @@ function CustomDrawerContent({
       forceInset={{ top: "always", horizontal: "never" }}
     >
       <Block flex={0.25} style={styles.header}>
-        <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("Profile")}
-        >
           <Block style={styles.profile}>
-            <Image source={{ uri: profile.avatar }} style={styles.avatar} />
             <Text h5 color={"white"}>
               {profile.name}
             </Text>
           </Block>
-        </TouchableWithoutFeedback>
         <Block row>
-          <Block middle style={styles.pro}>
-            <Text size={16} color="white">
-              {profile.plan}
-            </Text>
-          </Block>
           <Text size={16} muted style={styles.seller}>
             {profile.type}
           </Text>
@@ -76,7 +66,7 @@ function CustomDrawerContent({
                 title={item}
                 key={index}
                 navigation={navigation}
-                focused={state.index === index ? true : false}
+                focused={state.index === index}
               />
             );
           })}
@@ -84,14 +74,9 @@ function CustomDrawerContent({
       </Block>
       <Block flex={0.3} style={{ paddingLeft: 7, paddingRight: 14 }}>
         <DrawerCustomItem
-          title="Sign In"
+          title="Cerrar Sesión"
           navigation={navigation}
           focused={state.index === 8}
-        />
-        <DrawerCustomItem
-          title="Sign Up"
-          navigation={navigation}
-          focused={state.index === 9}
         />
       </Block>
     </Block>

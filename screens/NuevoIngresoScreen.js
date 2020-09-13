@@ -9,13 +9,13 @@ import {
 } from "react-native";
 // import { Text, theme } from "galio-framework";
 import { Block, Text, Input, theme } from "galio-framework";
-import { materialTheme, products, Images } from '../constants/';
-import { Select, Icon, Header, Product, Switch } from '../components/';
+import { materialTheme, products, Images } from '../constants';
+import { Select, Icon, Header, Product, Switch } from '../components';
 
 
 const { width } = Dimensions.get("screen");
 
-export default function LoginScren({ navigation }) {
+export default function NuevoIngresoScren({ navigation }) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,

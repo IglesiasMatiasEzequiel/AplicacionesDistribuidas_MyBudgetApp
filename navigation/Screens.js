@@ -6,8 +6,8 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Block, Text, theme } from "galio-framework";
 
 import ComponentsScreen from '../screens/Components';
-import IngresosScreen from '../screens/Ingresos';
-import NuevoIngresoScreen from '../screens/NuevoIngreso';
+import IngresosScreen from '../screens/IngresosScreen';
+import NuevoIngresoScreen from '../screens/NuevoIngresoScreen';
 import HomeScreen from '../screens/Home';
 import Login from '../screens/Login';
 import Onboarding from '../screens/Onboarding';
