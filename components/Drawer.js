@@ -91,6 +91,15 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : materialTheme.COLORS.MUTED}
           />
         );
+      case "Ingresos":
+        return (
+          <Icon
+            size={16}
+            name="md-switch"
+            family="ionicon"
+            color={focused ? "white" : materialTheme.COLORS.MUTED}
+          />
+        );
       case "Sign In":
         return (
           <Icon

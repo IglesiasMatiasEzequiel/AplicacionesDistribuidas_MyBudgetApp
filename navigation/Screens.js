@@ -6,6 +6,8 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Block, Text, theme } from "galio-framework";
 
 import ComponentsScreen from '../screens/Components';
+import IngresosScreen from '../screens/Ingresos';
+import NuevoIngresoScreen from '../screens/NuevoIngreso';
 import HomeScreen from '../screens/Home';
 import Login from '../screens/Login';
 import Onboarding from '../screens/Onboarding';
@@ -82,6 +84,37 @@ function ComponentsStack(props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header title="Components" scene={scene} navigation={navigation} />
+          )
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function IngresosStack(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen
+        name="Ingresos"
+        component={IngresosScreen}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header title="Ingresos" scene={scene} navigation={navigation} />
+          )
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+function NuevoIngresoStack(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen
+        name="NuevoIngreso"
+        component={NuevoIngresoScreen}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header title="Nuevo Ingreso" scene={scene} navigation={navigation} />
           )
         }}
       />
@@ -199,6 +232,36 @@ function AppStack(props) {
       <Drawer.Screen
         name="Components"
         component={ComponentsStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="md-switch"
+              family="ionicon"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+              style={{ marginRight: 2, marginLeft: 2 }}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="Ingresos"
+        component={IngresosStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="md-switch"
+              family="ionicon"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+              style={{ marginRight: 2, marginLeft: 2 }}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="NuevoIngreso"
+        component={NuevoIngresoStack}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon
