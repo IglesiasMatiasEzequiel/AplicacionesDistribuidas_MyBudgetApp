@@ -40,6 +40,7 @@ export default class App extends React.Component {
   };
 
   render() {
+
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
         <AppLoading

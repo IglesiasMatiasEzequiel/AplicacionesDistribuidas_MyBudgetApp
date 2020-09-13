@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { Button, Block, Text, Input, theme, Card } from 'galio-framework';
+import { StyleSheet, Dimensions, ScrollView, View } from 'react-native';
+import { Card } from 'react-native-elements';
+import { Button, Block, Text, Input, theme } from 'galio-framework';
 
 import { PieChart } from "react-native-chart-kit";
 
@@ -9,40 +10,67 @@ import { Icon, Product } from '../components';
 const { width } = Dimensions.get('screen');
 import products from '../constants/products';
 
-const data = [
+const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+const colors = ["#69067A", "#A00440", "#5CA804", "#A0B504", "#10317C", "#2C1180", "#F2D548", "#BA7D04"]
+
+const gastosMes = [
   {
-    name: "Contado",
+    name: "Efectivo",
     gasto: 7557.80,
-    color: "#C66FD5",
-    legendFontColor: "#C66FD5",
+    color: colors[0],
+    legendFontColor: colors[0],
     legendFontSize: 15
   },
   {
-    name: "Débito Automático",
+    name: "Débito Aut.",
     gasto: 12546.34,
-    color: "#69037B",
-    legendFontColor: "#69037B",
+    color: colors[1],
+    legendFontColor: colors[1],
     legendFontSize: 15
   },
   {
     name: "Crédito",
     gasto: 15768.99,
-    color: "#AE45C0",
-    legendFontColor: "#AE45C0",
+    color: colors[2],
+    legendFontColor: colors[2],
     legendFontSize: 15
   },
   {
     name: "Transferencia",
     gasto: 23421.34,
-    color: "#31013A",
-    legendFontColor: "#31013A",
+    color: colors[3],
+    legendFontColor: colors[3],
     legendFontSize: 15
   },
   {
     name: "Débito",
     gasto: 31908.54,
-    color: "#8B04A3",
-    legendFontColor: "#8B04A3",
+    color: colors[4],
+    legendFontColor: colors[4],
+    legendFontSize: 15
+  }
+];
+
+const saldosCuentas = [
+  {
+    name: "Banco Galicia",
+    saldo: 75040.90,
+    color: colors[0],
+    legendFontColor: colors[0],
+    legendFontSize: 15
+  },
+  {
+    name: "BBVA Francés",
+    saldo: 12546.34,
+    color: colors[1],
+    legendFontColor: colors[1],
+    legendFontSize: 15
+  },
+  {
+    name: "HSBC",
+    saldo: 25768.99,
+    color: colors[2],
+    legendFontColor: colors[2],
     legendFontSize: 15
   }
 ];
@@ -67,19 +95,42 @@ const chartConfig = {
 };
 
 export default class DashboardScreen extends React.Component {
-  
   renderCharts = () => {
+
+    const today = new Date();
+
     return (
-      <Block card>
-        <PieChart
-          data={data}
-          width={width}
-          height={220}
-          chartConfig={chartConfig}
-          accessor="gasto"
-          backgroundColor="#9C26B0"
-        />
-      </Block>
+      <View>
+      <Card>
+        <Card.Title>Gastos de {months[today.getMonth()]}</Card.Title>
+        <Card.Divider />
+        <View>
+          <PieChart
+            data={gastosMes}
+            width={width - 20}
+            height={220}
+            chartConfig={chartConfig}
+            accessor="gasto"
+            backgroundColor="transparent"
+          />
+        </View>
+      </Card>
+      <Card>
+        <Card.Title>Saldos</Card.Title>
+        <Card.Divider />
+        <View>
+          <PieChart
+            data={saldosCuentas}
+            width={width - 20}
+            height={220}
+            chartConfig={chartConfig}
+            accessor="saldo"
+            backgroundColor="transparent"
+            absolute
+          />
+        </View>
+      </Card>
+      </View>
     );
   };
 
