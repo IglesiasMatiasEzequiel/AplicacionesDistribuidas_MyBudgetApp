@@ -11,7 +11,7 @@ import { Text, theme } from "galio-framework";
 
 const { width } = Dimensions.get("screen");
 
-export default function LoginScren({ navigation }) {
+export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,

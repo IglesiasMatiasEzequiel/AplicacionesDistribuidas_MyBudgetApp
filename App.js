@@ -7,7 +7,7 @@ import { Block, GalioProvider } from 'galio-framework';
 import { Images, products, materialTheme } from './constants/';
 
 import { NavigationContainer } from '@react-navigation/native';
-import Screens from './navigation/Screens';
+import LoginStack from './navigation/LoginStack';
 
 // Before rendering any navigation stack
 import { enableScreens } from 'react-native-screens';
@@ -54,7 +54,7 @@ export default class App extends React.Component {
           <GalioProvider theme={materialTheme}>
             <Block flex>
               {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-              <Screens />
+              <LoginStack />
             </Block>
           </GalioProvider>
         </NavigationContainer>
