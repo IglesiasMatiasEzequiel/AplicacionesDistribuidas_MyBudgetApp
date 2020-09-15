@@ -14,6 +14,7 @@ import { Alert } from 'react-native';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { Button, Block, Text, Input, theme } from 'galio-framework';
 import { materialTheme, products, Images } from '../constants';
+
 const { width } = Dimensions.get('screen');
 
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -81,24 +82,24 @@ export default class Ingresos extends React.Component {
     );
 
     return (
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <View style={styles.container}>
-                <Table borderStyle={{borderColor: 'transparent'}}>
-                <Row data={state.tableHead} style={styles.head} textStyle={styles.text}/>
-                {
-                    state.tableData.map((rowData, index) => (
-                    <TableWrapper key={index} style={styles.row}>
-                        {
-                        rowData.map((cellData, cellIndex) => (
-                            <Cell key={cellIndex} data={cellIndex === 4 ? element(cellData, index) : cellData} textStyle={styles.text}/>
-                        ))
-                        }
-                    </TableWrapper>
-                    ))
-                }
-                </Table>
-            </View>
-        </Block>
+      <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+          <View style={styles.container}>
+              <Table borderStyle={{borderColor: 'transparent'}}>
+              <Row data={state.tableHead} style={styles.head} textStyle={styles.text}/>
+              {
+                  state.tableData.map((rowData, index) => (
+                  <TableWrapper key={index} style={styles.row}>
+                      {
+                      rowData.map((cellData, cellIndex) => (
+                          <Cell key={cellIndex} data={cellIndex === 4 ? element(cellData, index) : cellData} textStyle={styles.text}/>
+                      ))
+                      }
+                  </TableWrapper>
+                  ))
+              }
+              </Table>
+          </View>
+      </Block>
     )
   }
  

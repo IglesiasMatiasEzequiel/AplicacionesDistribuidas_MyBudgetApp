@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import { Block, Text, Input, theme } from "galio-framework";
 import { materialTheme, products, Images } from '../constants';
-import { Select, Icon, Header, Product, Switch } from '../components/';
-
+import DropDownPicker from 'react-native-dropdown-picker';
+import Icon from 'react-native-vector-icons/Feather';
 
 const { width } = Dimensions.get("screen");
 
@@ -90,6 +90,8 @@ export default function NuevoIngresoScren({ navigation }) {
   const onConfirmar = () => navigation.navigate("Ingresos");
   const onCancelar = () => navigation.navigate("Ingresos");
 
+  console.log(tipoIngreso);
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -125,26 +127,39 @@ export default function NuevoIngresoScren({ navigation }) {
         </View>
 
         <Text size={16} style={styles.signInText}>Destino</Text>
-        <View style={styles.inputView}>
-          {/* <Picker
-            selectedValue={selectedValue}
-            style={{ height: 50, width: 150 }}
-            onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-          >
-            <Picker.Item label="Java" value="java" />
-            <Picker.Item label="JavaScript" value="js" />
-          </Picker> */}
+        <View>
+          <DropDownPicker
+              items={[
+                  {label: 'UK', value: 'uk', icon: () => <Icon name="flag" size={18} color="#900" />},
+                  {label: 'France', value: 'france', icon: () => <Icon name="flag" size={18} color="#900" />}
+              ]}
+              defaultValue={tipoIngreso}
+              containerStyle={{height: 40}}
+              style={{backgroundColor: '#fafafa'}}
+              itemStyle={{
+                  justifyContent: 'flex-start'
+              }}
+              dropDownStyle={{backgroundColor: '#fafafa'}}
+              onChangeItem={ (item) => setTipoIngreso(item.value) }
+          />
         </View>
 
         <Text size={16} style={styles.signInText}>Tipo de Ingreso</Text>
-        <View style={styles.inputView}>
-          <Block flex center>
-              {/* <Select
-                  defaultIndex={1}
-                  options={[1, 2, 3, 4, 5]}
-                  style={styles.shadow}
-              /> */}
-          </Block>
+        <View>
+          <DropDownPicker
+                items={[
+                    {label: 'UK', value: 'uk', icon: () => <Icon name="flag" size={18} color="#900" />},
+                    {label: 'France', value: 'france', icon: () => <Icon name="flag" size={18} color="#900" />}
+                ]}
+                defaultValue={tipoIngreso}
+                containerStyle={{height: 40}}
+                style={{backgroundColor: '#fafafa'}}
+                itemStyle={{
+                    justifyContent: 'flex-start'
+                }}
+                dropDownStyle={{backgroundColor: '#fafafa'}}
+                onChangeItem={ (item) => setTipoIngreso(item.value) }
+            />
         </View>
 
 
