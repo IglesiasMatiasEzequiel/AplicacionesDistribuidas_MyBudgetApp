@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Button,
-} from "react-native";
+import { View, TextInput, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { Text, theme } from "galio-framework";
+import Spinner from 'react-native-loading-spinner-overlay';
+import CustomModal from '../components/CustomModal';
 
 const { width } = Dimensions.get("screen");
 
@@ -58,15 +53,42 @@ export default function LoginScreen({ navigation }) {
     signInText: {
       color: "black",
     },
+    spinnerTextStyle: {
+      color: '#FFF'
+    },
   });
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [email, setEmail] = React.useState("matiiglesias@uade.edu.ar");
+  const [password, setPassword] = React.useState("123456");
 
   const handleChangeEmail = (email) => setEmail(email);
   const handleChangePassword = (password) => setPassword(password);
 
-  const onLogin = () => navigation.navigate("App");
+  const onLogin = () => { 
+
+    setIsLoading(true);
+
+    setTimeout(() => { 
+
+      if(true /* Si logueó bien*/){
+        setIsLoading(false);
+        navigation.navigate("App", {
+          profile: {
+            email: email,
+            nombre: "Matias", //Este dato viene del back una vez que loguea
+            apellido: "Iglesias", //Este dato viene del back una vez que loguea
+            password: password,
+          }});
+      } else {
+        setIsModalVisible(true);
+      }
+    }, 1000);
+  }
+
+  const onRegister = () => navigation.navigate("Register");
+  const onForgotPassword = () => navigation.navigate("ForgotPassword");
 
   return (
     <View style={styles.container}>
@@ -77,7 +99,7 @@ export default function LoginScreen({ navigation }) {
           placeholder="Email..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(text) => handleChangeEmail(text)}
-          value="matiiglesias@uade.edu.ar"
+          value={email}
         />
       </View>
       <View style={styles.inputView}>
@@ -87,10 +109,10 @@ export default function LoginScreen({ navigation }) {
           placeholder="Password..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(text) => handleChangePassword(text)}
-          value="123456"
+          value={password}
         />
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onForgotPassword}>
         <Text style={styles.forgot}>Olvidaste tu password?</Text>
       </TouchableOpacity>
 
@@ -98,9 +120,24 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.loginText}>INGRESAR</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onRegister}>
         <Text style={styles.signInText}>Registrarse</Text>
       </TouchableOpacity>
+
+      <Spinner
+          visible={isLoading}
+          textContent={"Ingresando..."}
+          textStyle={styles.spinnerTextStyle}
+        />
+
+        {/* <CustomModal 
+          title="¡Registro exitoso!"
+          message="El registro se realizó correctamente."
+          isVisible={!isLoading && isModalVisible} 
+          successBtnText="IR AL LOGIN"
+          handleBtnOnSuccess={onSuccessLogin}
+          /> */}
+
     </View>
   );
 }

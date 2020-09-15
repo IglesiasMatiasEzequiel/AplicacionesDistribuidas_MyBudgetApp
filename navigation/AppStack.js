@@ -8,21 +8,17 @@ import IngresosStack from '../navigation/IngresosStack';
 import NuevoIngresoStack from '../navigation/NuevoIngresoStack';
 
 import CustomDrawerContent from './Menu';
-import { Icon} from '../components';
+import { Icon } from '../components';
 import { materialTheme } from "../constants/";
 
 const { width } = Dimensions.get("screen");
 
-const profile = {
-  name: "Matias Iglesias",
-  type: "Seller",
-  plan: "Pro",
-  rating: 4.8
-};
-
 const Drawer = createDrawerNavigator();
 
 export default function AppStack(props) {
+  
+  const { profile } = props.route.params;
+
   return (
     <Drawer.Navigator
       style={{ flex: 1 }}
