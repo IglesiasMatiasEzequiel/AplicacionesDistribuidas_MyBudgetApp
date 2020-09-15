@@ -6,6 +6,7 @@ import Login from '../screens/LoginScreen';
 import DashboardStack from '../navigation/DashboardStack';
 import IngresosStack from '../navigation/IngresosStack';
 import NuevoIngresoStack from '../navigation/NuevoIngresoStack';
+import BorrarIngresoStack from '../navigation/BorrarIngresoStack';
 
 import CustomDrawerContent from './Menu';
 import { Icon } from '../components';
@@ -79,6 +80,20 @@ export default function AppStack(props) {
       <Drawer.Screen
         name="NuevoIngreso"
         component={NuevoIngresoStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="BorrarIngreso"
+        component={BorrarIngresoStack}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon

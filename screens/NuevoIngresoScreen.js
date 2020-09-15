@@ -2,20 +2,21 @@ import React from "react";
 import {
   View,
   TextInput,
+  ScrollView,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
   Button,
 } from "react-native";
-// import { Text, theme } from "galio-framework";
 import { Block, Text, Input, theme } from "galio-framework";
 import { materialTheme, products, Images } from '../constants';
-import { Select, Icon, Header, Product, Switch } from '../components';
+import { Select, Icon, Header, Product, Switch } from '../components/';
 
 
 const { width } = Dimensions.get("screen");
 
 export default function NuevoIngresoScren({ navigation }) {
+  
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -34,7 +35,7 @@ export default function NuevoIngresoScren({ navigation }) {
       backgroundColor: "white",
       borderRadius: 5,
       height: 50,
-      marginBottom: 20,
+      marginBottom: 15,
       justifyContent: "center",
       padding: 20,
     },
@@ -48,12 +49,22 @@ export default function NuevoIngresoScren({ navigation }) {
     },
     loginBtn: {
       width: width - theme.SIZES.BASE * 2,
-      backgroundColor: "#69037B",
+      backgroundColor: "#4CAF50",
       borderRadius: 5,
       height: 50,
       alignItems: "center",
       justifyContent: "center",
-      marginTop: 40,
+      marginTop: 10,
+      marginBottom: theme.SIZES.BASE,
+    },
+    loginBtn2: {
+      width: width - theme.SIZES.BASE * 2,
+      backgroundColor: "#F44336",
+      borderRadius: 5,
+      height: 50,
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 10,
       marginBottom: theme.SIZES.BASE,
     },
     loginText: {
@@ -64,64 +75,86 @@ export default function NuevoIngresoScren({ navigation }) {
     },
   });
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [fecha, setFecha] = React.useState("");
+  const [monto, setMonto] = React.useState("");
+  const [descripcion, setDescripcion] = React.useState("");
+  const [tipoIngreso, setTipoIngreso] = React.useState("");
+  const [destino, setDestino] = React.useState("");
 
-  const handleChangeEmail = (email) => setEmail(email);
-  const handleChangePassword = (password) => setPassword(password);
+  const handleChangeFecha = (fecha) => setMonto(fecha);
+  const handleChangeMonto = (monto) => setMonto(monto);
+  const handleChangeDescripcion = (descripcion) => setDescripcion(descripcion);
+  const handleChangeTipoIngreso = (tipoIngreso) => setTipoIngreso(tipoIngreso);
+  const handleChangeDestino = (destino) => setDestino(destino);
 
-  const onLogin = () => navigation.navigate("App");
-
-  const scaryAnimals = [
-    { label: "Alligators", value: 1 },
-    { label: "Crocodiles", value: 2 },
-    { label: "Sharks", value: 3 },
-    { label: "Small crocodiles", value: 4 },
-    { label: "Smallest crocodiles", value: 5 },
-    { label: "Snakes", value: 6 },
-  ];
-
+  const onConfirmar = () => navigation.navigate("Ingresos");
+  const onCancelar = () => navigation.navigate("Ingresos");
 
   return (
     <View style={styles.container}>
-      
-      <Text size={16} style={styles.signInText}>Monto</Text>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Ingrese el monto del ingreso ..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(text) => handleChangeEmail(text)}
-        />
-      </View>
-      
-      <Text size={16} style={styles.signInText}>Descripciòn</Text>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Ingrese una descripciòn ..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(text) => handleChangeEmail(text)}
-        />
-      </View>
+      <ScrollView>
+        <Text size={10} style={styles.signInText} ></Text>
+        <Text size={16} style={styles.signInText} >Fecha</Text>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Ingrese la fecha del ingreso ..."
+            placeholderTextColor={theme.COLORS.PLACEHOLDER}
+            onChangeText={(fecha) => handleChangeFecha(fecha)}
+          />
+        </View>
 
-      <Text size={16} style={styles.signInText}>Destino</Text>
-      <View style={styles.inputView}>
-        <Select options={scaryAnimals} />
-      </View>
+        <Text size={16} style={styles.signInText}>Monto</Text>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Ingrese el monto del ingreso ..."
+            placeholderTextColor={theme.COLORS.PLACEHOLDER}
+            onChangeText={(monto) => handleChangeMonto(monto)}
+          />
+        </View>
+        
+        <Text size={16} style={styles.signInText}>Descripciòn</Text>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Ingrese una descripciòn ..."
+            placeholderTextColor={theme.COLORS.PLACEHOLDER}
+            onChangeText={(descripcion) => handleChangeDescripcion(descripcion)}
+          />
+        </View>
 
-      <Text size={16} style={styles.signInText}>Tipo de Ingreso</Text>
-      <View style={styles.inputView}>
-        <Select options={scaryAnimals} />
-      </View>
+        <Text size={16} style={styles.signInText}>Destino</Text>
+        <View style={styles.inputView}>
+          {/* <Picker
+            selectedValue={selectedValue}
+            style={{ height: 50, width: 150 }}
+            onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+          >
+            <Picker.Item label="Java" value="java" />
+            <Picker.Item label="JavaScript" value="js" />
+          </Picker> */}
+        </View>
 
-      <TouchableOpacity onPress={onLogin} style={styles.loginBtn}>
-        <Text style={styles.loginText}>Confirmar</Text>
-      </TouchableOpacity>
+        <Text size={16} style={styles.signInText}>Tipo de Ingreso</Text>
+        <View style={styles.inputView}>
+          <Block flex center>
+              {/* <Select
+                  defaultIndex={1}
+                  options={[1, 2, 3, 4, 5]}
+                  style={styles.shadow}
+              /> */}
+          </Block>
+        </View>
 
-      <TouchableOpacity>
-        <Text style={styles.signInText}>Cancelar</Text>
-      </TouchableOpacity>
+
+        <TouchableOpacity onPress={onConfirmar} style={styles.loginBtn}>
+          <Text style={styles.loginText}>Confirmar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onCancelar} style={styles.loginBtn2}>
+          <Text style={styles.loginText}>Cancelar</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }
