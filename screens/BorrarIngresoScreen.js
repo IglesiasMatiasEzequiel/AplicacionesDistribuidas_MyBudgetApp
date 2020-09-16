@@ -51,12 +51,14 @@ export default class Ingresos extends React.Component {
       <Block flex>  
         <Text h6 style={{marginBottom: theme.SIZES.BASE / 20}}> </Text>
         <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <Block center>
-            <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
-                    onPress={() => navigation.navigate('NuevoIngreso')}>
-              Seleciones rango de fecha:
-            </Button>
-          </Block>         
+          <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
+                    onPress={() => navigation.navigate('Ingresos')}>
+              Ultimo Mes
+          </Button>
+          <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
+                    onPress={() => navigation.navigate('Ingresos')}>
+              Ultima Semana
+          </Button>    
         </Block>
       </Block>
     )
