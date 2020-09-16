@@ -7,7 +7,7 @@ const screenStyles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: theme.COLORS.DEFAULT,
-    padding: 20,
+    padding: 20
   },
   containerColumns: {
     flex: 1,
@@ -105,6 +105,9 @@ const dropdownStyles = StyleSheet.create({
   dropdown: {
     backgroundColor: "#FAFAFA",
   },
+  dropdownItem: {
+    justifyContent: "flex-start"
+  }
 });
 
 const textboxStyles = StyleSheet.create({
@@ -121,6 +124,15 @@ const textboxStyles = StyleSheet.create({
     height: 50,
     color: "black",
   },
+});
+
+const radioButtonStyles = StyleSheet.create({
+  rbContainer: {
+
+  },
+  rbText: {
+
+  }
 });
 
 const tableStyles = StyleSheet.create({
@@ -167,4 +179,5 @@ export {
   dropdownStyles,
   tableStyles,
   titleStyles,
+  radioButtonStyles
 };

@@ -38,6 +38,7 @@ export default function CustomModal({
   errorBtnText,
   handleBtnOnError,
 }) {
+  isVisible = (isVisible === null || isVisible === undefined) ? false : isVisible;
   isSuccess = (isSuccess === null || isSuccess === undefined) ? true : isSuccess;
   showErrorBtn = (showErrorBtn === null || showErrorBtn === undefined) ? false : showErrorBtn;
 

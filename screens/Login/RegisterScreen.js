@@ -10,7 +10,7 @@ import {
 
 export default function LoginScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [modalData, setModalData] = React.useState(null);
   const [email, setEmail] = React.useState("");
   const [nombre, setNombre] = React.useState("");
   const [apellido, setApellido] = React.useState("");
@@ -29,12 +29,33 @@ export default function LoginScreen({ navigation }) {
 
     setTimeout(() => {
       setIsLoading(false);
-      setIsModalVisible(true);
-    }, 1500);
+      setModalData({ 
+        title: "¡Registro exitoso!",
+        message: "El registro se realizó correctamente.",
+        isVisible: true,
+        isSuccess: true,
+        successBtnText: "IR AL LOGIN"
+      });
+    }, 500);
   };
 
-  const onLogin = () => navigation.navigate("Login");
-  const onBack = () => navigation.navigate("Login");
+  const limpiarState = () => {
+    setEmail("");
+    setNombre("");
+    setApellido("");
+    setPassword("");
+    setRepeatPassword("");
+  }
+
+  const onLogin = () => {
+    limpiarState();
+    navigation.navigate("Login");
+  }
+
+  const onBack = () => { 
+    limpiarState();
+    navigation.navigate("Login");
+  }
 
   return (
     <ScrollView style={screenStyles.screen}>
@@ -44,6 +65,7 @@ export default function LoginScreen({ navigation }) {
           placeholder="Email..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(text) => handleChangeEmail(text)}
+          value={email}
         />
       </View>
       <View style={textboxStyles.textboxContainer}>
@@ -52,6 +74,7 @@ export default function LoginScreen({ navigation }) {
           placeholder="Nombre..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(text) => handleChangeNombre(text)}
+          value={nombre}
         />
       </View>
       <View style={textboxStyles.textboxContainer}>
@@ -60,6 +83,7 @@ export default function LoginScreen({ navigation }) {
           placeholder="Apellido..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(text) => handleChangeApellido(text)}
+          value={apellido}
         />
       </View>
       <View style={textboxStyles.textboxContainer}>
@@ -69,6 +93,7 @@ export default function LoginScreen({ navigation }) {
           placeholder="Password..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(text) => handleChangePassword(text)}
+          value={password}
         />
       </View>
       <View style={textboxStyles.textboxContainer}>
@@ -78,6 +103,7 @@ export default function LoginScreen({ navigation }) {
           placeholder="Repetir password..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(text) => handleChangeRepeatPassword(text)}
+          value={repeatPassword}
         />
       </View>
 
@@ -91,12 +117,14 @@ export default function LoginScreen({ navigation }) {
       <CustomSpinner isLoading={isLoading} text={"Registrando usuario..."} />
 
       <CustomModal
-        title="¡Registro exitoso!"
-        message="El registro se realizó correctamente."
-        isVisible={!isLoading && isModalVisible}
-        successBtnText="IR AL LOGIN"
+        isSuccess={modalData?.isSuccess}
+        title={modalData?.title}
+        message={modalData?.message}
+        isVisible={modalData?.isVisible}
+        successBtnText={modalData?.successBtnText}
         handleBtnOnSuccess={onLogin}
       />
+
     </ScrollView>
   );
 }

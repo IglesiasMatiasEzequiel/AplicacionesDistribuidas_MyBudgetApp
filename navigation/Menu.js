@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { Block, Text, theme } from "galio-framework";
 import { useSafeArea } from "react-native-safe-area-context";
 
-import { Icon, Drawer as DrawerCustomItem } from '../components/';
+import { Icon, MenuItem } from '../components/';
 import { materialTheme } from "../constants/";
 
 const styles = StyleSheet.create({
@@ -80,7 +80,7 @@ export default function Menu({
         >
           {screens.map((item, index) => {
             return (
-              <DrawerCustomItem
+              <MenuItem
                 title={item}
                 key={index}
                 navigation={navigation}
@@ -91,7 +91,7 @@ export default function Menu({
         </ScrollView>
       </Block>
       <Block flex={0.3} style={{ paddingLeft: 7, paddingRight: 14 }}>
-        <DrawerCustomItem
+        <MenuItem
           title="Cerrar Sesión"
           navigation={navigation}
           focused={state.index === 8}

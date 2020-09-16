@@ -13,8 +13,7 @@ export default function DashboardStack(props) {
         component={DashboardScreen}
         options={{
           header: ({ navigation }) => (
-            <Header title="Home" navigation={navigation}
-            />
+            <Header title="Home" navigation={navigation}/>
           ),
         }}
       />

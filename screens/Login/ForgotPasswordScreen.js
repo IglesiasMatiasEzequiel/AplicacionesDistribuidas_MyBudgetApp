@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { Text, theme } from "galio-framework";
 import {
   screenStyles,
@@ -17,16 +10,8 @@ import {
 import { CustomSpinner, CustomModal } from "../../components";
 
 export default function LoginScreen({ navigation }) {
-  const styles = StyleSheet.create({
-    messageContainer: {
-      padding: 30,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-  });
-
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [modalData, setModalData] = React.useState(null);
   const [email, setEmail] = React.useState("");
 
   const handleChangeEmail = (email) => setEmail(email);
@@ -36,7 +21,15 @@ export default function LoginScreen({ navigation }) {
 
     setTimeout(() => {
       setIsLoading(false);
-      setIsModalVisible(true);
+      
+      setModalData({ 
+        title: "¡Envío de mail exitoso!",
+        message: "Se le ha enviado un email a su correo para que pueda realizar el cambio de password.",
+        isVisible: true,
+        isSuccess: true,
+        successBtnText: "IR AL LOGIN"
+      });
+
     }, 1500);
   };
 
@@ -48,10 +41,11 @@ export default function LoginScreen({ navigation }) {
       <CustomSpinner isLoading={isLoading} />
 
       <CustomModal
-        title="¡Envío de mail exitoso!"
-        message="Se le ha enviado un email a su correo para que pueda realizar el cambio de password."
-        isVisible={!isLoading && isModalVisible}
-        successBtnText="IR AL LOGIN"
+        isSuccess={modalData?.isSuccess}
+        title={modalData?.title}
+        message={modalData?.message}
+        isVisible={modalData?.isVisible}
+        successBtnText={modalData?.successBtnText}
         handleBtnOnSuccess={onLogin}
       />
 
@@ -68,6 +62,7 @@ export default function LoginScreen({ navigation }) {
           placeholder="Email..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(text) => handleChangeEmail(text)}
+          value={email}
         />
       </View>
 

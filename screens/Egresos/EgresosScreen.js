@@ -16,25 +16,19 @@ export default function Egresos({ navigation }) {
   const onUltimoAnio = () => {};
   const onUltimoMes = () => {};
 
-  const tableHeaders = ["Tipo", "Destino", "Descripcion", "Monto"];
-  const columnWidth = [120, 120, 120, 120];
+  const tableHeaders = ["Tipo", "Categoria", "Medio Pago", "Cuotas", "Fecha", "Monto"];
+  const columnWidth = [120, 150, 120, 60, 120, 120];
 
   const tableData = [
-    ["P-Sueldo", "Cuenta", "Sueldo", "5000"],
-    ["P-Alquiler", "Cuenta", "Depto1", "3000"],
-    ["P-Alquiler", "Cuenta", "Depto2", "3200"],
-    ["P-Alquiler", "Cuenta", "Depto3", "3800"],
-    ["Extraordinario", "Efectivo", "Tio", "400"],
-    ["Extraordinario", "Efectivo", "Tio", "800"],
-    ["Extraordinario", "Efectivo", "Hermano", "500"],
-    ["Extraordinario", "Efectivo", "Hermano", "1000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+    ["Periódico", "Servicios - Luz", "Tarjeta Crédito", "1", "17/9/2020", "$ 5000"],
+    ["Periódico", "Servicios - Gas", "Tarjeta Crédito", "1", "17/9/2020", "$ 3000"],
+    ["Periódico", "Servicios - Cable", "Tarjeta Crédito", "1", "17/9/2020", "$ 3200"],
+    ["Periódico", "Servicios - Teléfono", "Tarjeta Crédito", "1", "17/9/2020", "$ 3800"],
+    ["Extraordinario", "-", "Efectivo", "-", "17/9/2020", "$ 400"],
+    ["Extraordinario", "-", "Efectivo", "-", "17/9/2020", "$ 800"],
+    ["Extraordinario", "-", "Efectivo", "-", "17/9/2020", "$ 500"],
+    ["Extraordinario", "-", "Efectivo", "-", "17/9/2020", "$ 1000"],
+    ["Extraordinario", "-", "Efectivo", "-", "17/9/2020", "$ 2000"]
   ];
 
   return (

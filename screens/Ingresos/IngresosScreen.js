@@ -16,25 +16,25 @@ export default function Ingresos({ navigation }) {
   const onUltimoAnio = () => {};
   const onUltimoMes = () => {};
 
-  const tableHeaders = ["Tipo", "Destino", "Descripcion", "Monto"];
-  const columnWidth = [120, 120, 120, 120];
+  const tableHeaders = ["Tipo", "Categoría", "Destino", "Descripcion", "Monto"];
+  const columnWidth = [120, 120, 120, 120, 120];
 
   const tableData = [
-    ["P-Sueldo", "Cuenta", "Sueldo", "5000"],
-    ["P-Alquiler", "Cuenta", "Depto1", "3000"],
-    ["P-Alquiler", "Cuenta", "Depto2", "3200"],
-    ["P-Alquiler", "Cuenta", "Depto3", "3800"],
-    ["Extraordinario", "Efectivo", "Tio", "400"],
-    ["Extraordinario", "Efectivo", "Tio", "800"],
-    ["Extraordinario", "Efectivo", "Hermano", "500"],
-    ["Extraordinario", "Efectivo", "Hermano", "1000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+    ["Periódico", "Sueldo", "Cuenta Bancaria", "Sueldo", "$ 5000"],
+    ["Periódico", "Alquiler", "Cuenta Bancaria", "Depto1", "$ 3000"],
+    ["Periódico", "Alquiler", "Cuenta Bancaria", "Depto2", "$ 3200"],
+    ["Periódico", "Alquiler", "Cuenta Bancaria", "Depto3", "$ 3800"],
+    ["Extraordinario", "-", "Efectivo", "Tio", "$ 400"],
+    ["Extraordinario", "-", "Efectivo", "Tio", "$ 800"],
+    ["Extraordinario", "-", "Efectivo", "Hermano", "$ 500"],
+    ["Extraordinario", "-", "Efectivo", "Hermano", "$ 1000"],
+    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 2000"],
+    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 3000"],
+    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 4000"],
+    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 5000"],
+    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 6000"],
+    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 7000"],
+    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 8000"],
   ];
 
   return (

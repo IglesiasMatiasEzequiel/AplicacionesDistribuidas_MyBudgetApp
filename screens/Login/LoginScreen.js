@@ -30,7 +30,7 @@ export default function LoginScreen({ navigation }) {
   });
 
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [modalData, setModalData] = React.useState(null);
   const [email, setEmail] = React.useState("matiiglesias@uade.edu.ar");
   const [password, setPassword] = React.useState("123456");
 
@@ -52,13 +52,32 @@ export default function LoginScreen({ navigation }) {
           },
         });
       } else {
-        setIsModalVisible(true);
+        setModalData({ 
+          title: "Error",
+          message: "Oops, email y/o password incorrecto/s.",
+          isVisible: true,
+          isSuccess: false
+        });
       }
-    }, 1000);
+    }, 500);
   };
 
-  const onRegister = () => navigation.navigate("Register");
-  const onForgotPassword = () => navigation.navigate("ForgotPassword");
+  const limpiarState = () => {
+    setEmail("");
+    setPassword("");
+  }
+
+  const onCloseModal = () => setModalData({ ...modalData, isVisible: false });
+  
+  const onRegister = () => {
+    limpiarState();
+    navigation.navigate("Register");
+  }
+
+  const onForgotPassword = () => { 
+    limpiarState();
+    navigation.navigate("ForgotPassword");
+  }
 
   return (
     <ScrollView style={screenStyles.screen}>
@@ -99,10 +118,11 @@ export default function LoginScreen({ navigation }) {
       <CustomSpinner isLoading={isLoading} text={"Ingresando..."} />
 
       <CustomModal
-        isSuccess={false}
-        isVisible={!isLoading && isModalVisible}
-        successBtnText="Cerrar"
-        handleBtnOnSuccess={() => setIsModalVisible(false)}
+        isSuccess={modalData?.isSuccess}
+        title={modalData?.title}
+        message={modalData?.message}
+        isVisible={modalData?.isVisible}
+        handleBtnOnSuccess={onCloseModal}
       />
 
     </ScrollView>
