@@ -24,17 +24,13 @@ export default class Ingresos extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tableHead: ['Tipo', 'Destino', 'Descripciòn', 'Monto', 'Borrar'],
-      widthArr: [120, 80, 120, 50, 50],
+      tableHead: ['Banco', 'Descripcion', 'Numero', 'Borrar'],
+      widthArr: [120, 100, 200, 70],
       tableData: [
-        ['P-Sueldo', 'Cuenta', 'SueldoSueldo', '5000','X'],
-        ['P-Alquiler', 'Cuenta', 'Depto1', '3000','X'],
-        ['P-Alquiler', 'Cuenta', 'Depto2', '3200','X'],
-        ['P-Alquiler', 'Cuenta', 'Depto3', '3800','X'],
-        ['Extraordinario', 'Efectivo', 'Tio', '400','X'],
-        ['Extraordinario', 'Efectivo', 'Hermano', '500','X'],
-        ['Extraordinario', 'Efectivo', 'Hermano', '1000','X'],
-        ['Extraordinario', 'Efectivo', 'Amigos', '2000','X']
+        ['Santander', 'VISA', '1234 1234 1234 1234', 'X'],
+        ['Galicia', 'VISA', '1234 1234 1234 1234', 'X'],
+        ['Santander', 'AMEX', '1234 1234 1234 1234', 'X'],
+        ['Galicia', 'AMEX', '1234 1234 1234 1234', 'X'],
       ]
     }
   }
@@ -50,24 +46,14 @@ export default class Ingresos extends React.Component {
     return (
       <Block flex>  
         <Text h6 style={{marginBottom: theme.SIZES.BASE / 20}}> </Text>
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
-                    onPress={() => navigation.navigate('Ingresos')}>
-              Ultimo Mes
-          </Button>
-          <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
-                    onPress={() => navigation.navigate('Ingresos')}>
-              Ultima Semana
-          </Button>    
-        </Block>
       </Block>
     )
   }
   
   renderText = () => {
     return (
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Text h5 style={{marginBottom: theme.SIZES.BASE}}>Listado de ultimos Ingresos</Text>
+        <Block style={{ paddingHorizontal: theme.SIZES.BASE, width: width - (theme.SIZES.BASE * 2) }} >
+            <Text h5 style={{marginBottom: theme.SIZES.BASE}}>Listado Tarjetas</Text>
         </Block>
     )
   }
@@ -93,7 +79,7 @@ export default class Ingresos extends React.Component {
                   <TableWrapper key={index} style={styles.row}>
                       {
                       rowData.map((cellData, cellIndex) => (
-                          <Cell key={cellIndex} data={cellIndex === 4 ? element(cellData, index) : cellData} textStyle={styles.text}/>
+                          <Cell key={cellIndex} data={cellIndex === 3 ? element(cellData, index) : cellData} textStyle={styles.text}/>
                       ))
                       }
                   </TableWrapper>
@@ -125,7 +111,7 @@ const styles = StyleSheet.create({
     head: { height: 50, backgroundColor: '#f1f8ff' },
     text: { textAlign: 'center', fontWeight: '100', margin: 5  },
     row: { flexDirection: 'row', backgroundColor: '#fff' },
-    btn: { width: 58, height: 18, backgroundColor: '#78B7BB',  borderRadius: 2 },
+    btn: { width: 50, height: 18, backgroundColor: '#78B7BB',  borderRadius: 2 },
     btnText: { textAlign: 'center', color: '#fff' },
 
     components: {

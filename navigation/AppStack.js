@@ -4,12 +4,18 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import Login from '../screens/LoginScreen';
 import DashboardStack from '../navigation/DashboardStack';
+
 import IngresosStack from '../navigation/IngresosStack';
 import NuevoIngresoStack from '../navigation/NuevoIngresoStack';
 import BorrarIngresoStack from '../navigation/BorrarIngresoStack';
 import EgresosStack from '../navigation/EgresosStack'
 import NuevoEgresoStack from '../navigation/NuevoEgresoStack';
 import BorrarEgresoStack from '../navigation/BorrarEgresoStack';
+
+import TarjetasStack from '../navigation/TarjetasStack';
+import NuevaTarjetaStack from '../navigation/NuevaTarjetaStack';
+import BorrarTarjetaStack from '../navigation/BorrarTarjetaStack';
+import GastosTarjetaStack from '../navigation/GastosTarjetaStack';
 
 import CustomDrawerContent from './Menu';
 import { Icon } from '../components';
@@ -108,6 +114,64 @@ export default function AppStack(props) {
           )
         }}
       />
+
+      <Drawer.Screen
+        name="Tarjetas"
+        component={TarjetasStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="NuevaTarjeta"
+        component={NuevaTarjetaStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="BorrarTarjeta"
+        component={BorrarTarjetaStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="GastosTarjeta"
+        component={GastosTarjetaStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+
       <Drawer.Screen
         name="Cerrar Sesión"
         component={Login}

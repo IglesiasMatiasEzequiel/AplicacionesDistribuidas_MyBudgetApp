@@ -20,87 +20,83 @@ const { width } = Dimensions.get('screen');
 const thumbMeasure = (width - 48 - 32) / 3;
 
 export default class Ingresos extends React.Component {
+  
+    constructor(props) {
+        super(props);
+        this.state = {
+          tableHead: ['Fecha','Descripcion', 'Monto'],
+          widthArr: [100, 150, 100]
+        }
+      }
+    toggleSwitch = switchId => this.setState({ [switchId]: !this.state[switchId] });
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      tableHead: ['Tipo', 'Destino', 'Descripciòn', 'Monto', 'Borrar'],
-      widthArr: [120, 80, 120, 50, 50],
-      tableData: [
-        ['P-Sueldo', 'Cuenta', 'SueldoSueldo', '5000','X'],
-        ['P-Alquiler', 'Cuenta', 'Depto1', '3000','X'],
-        ['P-Alquiler', 'Cuenta', 'Depto2', '3200','X'],
-        ['P-Alquiler', 'Cuenta', 'Depto3', '3800','X'],
-        ['Extraordinario', 'Efectivo', 'Tio', '400','X'],
-        ['Extraordinario', 'Efectivo', 'Hermano', '500','X'],
-        ['Extraordinario', 'Efectivo', 'Hermano', '1000','X'],
-        ['Extraordinario', 'Efectivo', 'Amigos', '2000','X']
-      ]
+    renderButtons = () => {
+        const { navigation } = this.props;
+        return (
+        <Block flex>  
+            <Text h6 style={{marginBottom: theme.SIZES.BASE / 20}}> </Text>
+            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+            <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
+                        onPress={() => navigation.navigate('Tarjetas')}>
+                Ultimo Mes
+            </Button>
+            <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
+                        onPress={() => navigation.navigate('Tarjetas')}>
+                Ultima Semana
+            </Button>    
+            </Block>
+        </Block>
+        )
     }
-  }
   
-  _alertIndex(index) {
-    Alert.alert(`Se borror el registros seleccionado - Linea: ${index + 1}`);
-  }
-
-  toggleSwitch = switchId => this.setState({ [switchId]: !this.state[switchId] });
-
-  renderButtons = () => {
-    const { navigation } = this.props;
-    return (
-      <Block flex>  
-        <Text h6 style={{marginBottom: theme.SIZES.BASE / 20}}> </Text>
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
-                    onPress={() => navigation.navigate('Ingresos')}>
-              Ultimo Mes
-          </Button>
-          <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
-                    onPress={() => navigation.navigate('Ingresos')}>
-              Ultima Semana
-          </Button>    
-        </Block>
-      </Block>
-    )
-  }
-  
-  renderText = () => {
-    return (
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Text h5 style={{marginBottom: theme.SIZES.BASE}}>Listado de ultimos Ingresos</Text>
-        </Block>
-    )
-  }
+    renderText = () => {
+        return (
+            <Block style={{ paddingHorizontal: theme.SIZES.BASE, width: width - (theme.SIZES.BASE * 2) }} >
+                <Text h5 style={{marginBottom: theme.SIZES.BASE}}>Listado de ultimos gastos de la tarjeta XXXX-XXXX-XXXX-XXXX</Text>
+            </Block>
+        )
+    }
    
-  renderTableCell = () => {
-    const { navigation } = this.props;
-    const state = this.state;
-    const element = (data, index) => (
-      <TouchableOpacity onPress={() => this._alertIndex(index)}>
-        <View style={styles.btn}>
-          <Text style={styles.btnText}>Borrar</Text>
-        </View>
-      </TouchableOpacity>
-    );
+    renderTableCell = () => {
+        const { navigation } = this.props;
+        const state = this.state;
+        const tableData = [
+        ['10/10/2020', 'Compra 1', '5000'],
+        ['10/10/2020', 'Compra 1', '5000'],
+        ['10/10/2020', 'Compra 1', '5000'],
+        ['10/10/2020', 'Compra 1', '5000'],
+        ['10/10/2020', 'Sueldo', '5000'],
+        ['10/10/2020', 'Sueldo', '5000'],
+        ['10/10/2020', 'Sueldo', '5000'],
+        ['10/10/2020', 'Sueldo', '5000'],
+        ];
 
     return (
       <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <View style={styles.container}>
-              <Table borderStyle={{borderColor: 'transparent'}}>
-              <Row data={state.tableHead} style={styles.head} textStyle={styles.text}/>
-              {
-                  state.tableData.map((rowData, index) => (
-                  <TableWrapper key={index} style={styles.row}>
-                      {
-                      rowData.map((cellData, cellIndex) => (
-                          <Cell key={cellIndex} data={cellIndex === 4 ? element(cellData, index) : cellData} textStyle={styles.text}/>
-                      ))
-                      }
-                  </TableWrapper>
-                  ))
-              }
+        <View style={styles.container}>
+          <ScrollView horizontal>
+          <View>
+              <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+                <Row data={state.tableHead} widthArr={state.widthArr} style={styles.header} textStyle={styles.text}/>
               </Table>
-          </View>
+              <ScrollView style={styles.dataWrapper}>
+                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+                  {
+                    tableData.map((rowData, index) => (
+                      <Row
+                        key={index}
+                        data={rowData}
+                        widthArr={state.widthArr}
+                        style={[styles.row, index%2 && {backgroundColor: '#F7F6E7'}]}
+                        textStyle={styles.text}
+                      />
+                    ))
+                  }
+                </Table>
+              </ScrollView>
+            </View>
+          </ScrollView>
+        </View>
       </Block>
     )
   }

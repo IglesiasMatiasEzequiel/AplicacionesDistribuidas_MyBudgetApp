@@ -23,23 +23,6 @@ const thumbMeasure = (width - 48 - 32) / 3;
 
 export default class Ingresos extends React.Component {
 
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     tableHead: ['Tipo', 'Destino', 'Descripciòn', 'Monto'],
-  //     tableData: [
-  //       ['P-Sueldo', 'Cuenta', 'Sueldo', '5000'],
-  //       ['P-Alquiler', 'Cuenta', 'Depto1', '3000'],
-  //       ['P-Alquiler', 'Cuenta', 'Depto2', '3200'],
-  //       ['P-Alquiler', 'Cuenta', 'Depto3', '3800'],
-  //       ['Extraordinario', 'Efectivo', 'Tio', '400'],
-  //       ['Extraordinario', 'Efectivo', 'Hermano', '500'],
-  //       ['Extraordinario', 'Efectivo', 'Hermano', '1000'],
-  //       ['Extraordinario', 'Efectivo', 'Amigos', '2000']
-  //     ]
-  //   }
-  // }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -68,14 +51,8 @@ export default class Ingresos extends React.Component {
               Borrar Ingreso
             </Button>
           </Block>
+          
           <Block row space="evenly">
-            {/* <Block flex center>
-              <Select
-                defaultIndex={2020}
-                options={[2020, 2019, 2018]}
-                style={styles.shadow}
-              />
-            </Block> */}
             <Block flex center>
               <Button
                 center
@@ -97,6 +74,7 @@ export default class Ingresos extends React.Component {
               </Button>
             </Block>
           </Block>
+          
         </Block>
       </Block>
     )
@@ -127,14 +105,6 @@ export default class Ingresos extends React.Component {
     ];
 
     return (
-      // <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-      //     <View style={styles.container}>
-      //       <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
-      //         <Row data={state.tableHead} style={styles.head} textStyle={styles.text}/>
-      //         <Rows data={state.tableData} textStyle={styles.text}/>
-      //       </Table>
-      //     </View>
-      // </Block>
       <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
         <View style={styles.container}>
           <ScrollView horizontal>
@@ -180,9 +150,6 @@ export default class Ingresos extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  // container: { flex: 1, padding: 11, paddingTop: 10, backgroundColor: '#fff' },
-  // head: { height: 40, backgroundColor: '#f1f8ff' },
-  // text: { margin: 6 },
   
   container: { flex: 1, padding: 11, paddingTop: 10, backgroundColor: '#fff' },
   header: { height: 50, backgroundColor: '#f1f8ff'},
