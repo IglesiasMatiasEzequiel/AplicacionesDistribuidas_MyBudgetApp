@@ -1,5 +1,5 @@
 import React from 'react';
-import DashboardScreen from '../screens/DashboardScreen';
+import { DashboardScreen } from '../screens/index';
 import { Header } from '../components';
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -13,8 +13,7 @@ export default function DashboardStack(props) {
         component={DashboardScreen}
         options={{
           header: ({ navigation }) => (
-            <Header title="Home" navigation={navigation}
-            />
+            <Header title="Home" navigation={navigation}/>
           ),
         }}
       />

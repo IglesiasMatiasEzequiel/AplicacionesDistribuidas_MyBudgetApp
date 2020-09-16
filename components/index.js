@@ -1,21 +1,15 @@
 import Button from './Button';
-import Select from './Select';
 import Icon from './Icon';
-import Tabs from './Tabs';
-import Product from './Product';
-import Drawer from './Drawer';
+import MenuItem from './MenuItem';
 import Header from './Header';
-import Switch from './Switch';
 import CustomModal from './CustomModal';
+import CustomSpinner from './CustomSpinner';
 
 export {
   Button,
-  Select,
   Icon,
-  Tabs,
-  Product,
-  Drawer,
+  MenuItem,
   Header,
-  Switch,
-  CustomModal
+  CustomModal,
+  CustomSpinner
 };

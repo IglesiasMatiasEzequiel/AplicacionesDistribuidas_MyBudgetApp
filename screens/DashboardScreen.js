@@ -2,6 +2,12 @@ import React from "react";
 import { StyleSheet, Dimensions, ScrollView, View } from "react-native";
 import { Card } from "react-native-elements";
 import { PieChart } from "react-native-chart-kit";
+import {
+  screenStyles,
+  buttonStyles,
+  textboxStyles,
+  spinnerStyles,
+} from "../components/Styles";
 
 const { width } = Dimensions.get("screen");
 
@@ -118,18 +124,19 @@ export default class DashboardScreen extends React.Component {
     const today = new Date();
 
     return (
-      <ScrollView row middle style={styles.home}>
+      <ScrollView style={screenStyles.screen}>
         <Card>
           <Card.Title>Gastos de {months[today.getMonth()]}</Card.Title>
           <Card.Divider />
           <ScrollView horizontal>
             <PieChart
               data={gastosMes}
-              width={width}
+              width={350}
               height={220}
               chartConfig={chartConfig}
               accessor="gasto"
               backgroundColor="transparent"
+              absolute
             />
           </ScrollView>
         </Card>
@@ -139,11 +146,12 @@ export default class DashboardScreen extends React.Component {
           <ScrollView horizontal>
             <PieChart
               data={saldosCuentas}
-              width={width}
+              width={350}
               height={220}
               chartConfig={chartConfig}
               accessor="saldo"
               backgroundColor="transparent"
+              absolute
             />
           </ScrollView>
         </Card>

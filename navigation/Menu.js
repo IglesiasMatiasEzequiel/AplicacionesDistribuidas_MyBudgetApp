@@ -1,9 +1,9 @@
 import React from "react";
-import { ScrollView, StyleSheet, Image } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Block, Text, theme } from "galio-framework";
 import { useSafeArea } from "react-native-safe-area-context";
 
-import { Icon, Drawer as DrawerCustomItem } from '../components/';
+import { Icon, MenuItem } from '../components/';
 import { materialTheme } from "../constants/";
 
 const styles = StyleSheet.create({
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function CustomDrawerContent({
+export default function Menu({
   drawerPosition,
   navigation,
   profile,
@@ -80,7 +80,7 @@ export default function CustomDrawerContent({
         >
           {screens.map((item, index) => {
             return (
-              <DrawerCustomItem
+              <MenuItem
                 title={item}
                 key={index}
                 navigation={navigation}
@@ -91,7 +91,7 @@ export default function CustomDrawerContent({
         </ScrollView>
       </Block>
       <Block flex={0.3} style={{ paddingLeft: 7, paddingRight: 14 }}>
-        <DrawerCustomItem
+        <MenuItem
           title="Cerrar Sesión"
           navigation={navigation}
           focused={state.index === 8}
