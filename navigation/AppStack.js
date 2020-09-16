@@ -11,6 +11,8 @@ import BorrarIngresoStack from '../navigation/BorrarIngresoStack';
 
 import TarjetasStack from '../navigation/TarjetasStack';
 import NuevaTarjetaStack from '../navigation/NuevaTarjetaStack';
+import BorrarTarjetaStack from '../navigation/BorrarTarjetaStack';
+import GastosTarjetaStack from '../navigation/GastosTarjetaStack';
 
 import CustomDrawerContent from './Menu';
 import { Icon } from '../components';
@@ -127,6 +129,34 @@ export default function AppStack(props) {
       <Drawer.Screen
         name="NuevaTarjeta"
         component={NuevaTarjetaStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="BorrarTarjeta"
+        component={BorrarTarjetaStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="GastosTarjeta"
+        component={GastosTarjetaStack}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon
