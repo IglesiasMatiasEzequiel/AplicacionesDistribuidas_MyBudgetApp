@@ -7,6 +7,9 @@ import NuevoIngresoScreen from './Ingresos/NuevoIngresoScreen';
 import BorrarIngresoScreen from './Ingresos/BorrarIngresoScreen';
 import TarjetasScreen from './Tarjetas/TarjetasScreen';
 import NuevaTarjetaScreen from './Tarjetas/NuevaTarjetaScreen';
+import EgresosScreen from './Egresos/EgresosScreen';
+import NuevoEgresoScreen from './Egresos/NuevoEgresoScreen';
+import BorrarEgresoScreen from './Egresos/BorrarEgresoScreen';
 
 export {
     LoginScreen,
@@ -17,5 +20,8 @@ export {
     NuevoIngresoScreen,
     BorrarIngresoScreen,
     TarjetasScreen,
-    NuevaTarjetaScreen
+    NuevaTarjetaScreen,
+    EgresosScreen,
+    NuevoEgresoScreen,
+    BorrarEgresoScreen
 }

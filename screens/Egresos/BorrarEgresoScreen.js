@@ -11,7 +11,7 @@ import { CustomSpinner, CustomModal } from "../../components";
 import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
 import { Text } from "galio-framework";
 
-export default function BorrarIngresos({ navigation }) {
+export default function BorrarEgresos({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
 
@@ -36,8 +36,8 @@ export default function BorrarIngresos({ navigation }) {
     ["Extraordinario", "Efectivo", "Amigos", "2000", "X"],
   ];
 
-  const onUltimoMes = () => navigation.navigate("Ingresos");
-  const onUltimaSemana = () => navigation.navigate("Ingresos");
+  const onUltimoMes = () => navigation.navigate("Egresos");
+  const onUltimaSemana = () => navigation.navigate("Egresos");
   const onDeleteButton = () => {
     setIsLoading(true);
 
@@ -67,7 +67,7 @@ export default function BorrarIngresos({ navigation }) {
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
-          Últimos Ingresos
+          Últimos Egresos
         </Text>
       </View>
 
@@ -118,7 +118,7 @@ export default function BorrarIngresos({ navigation }) {
 
       <CustomModal
         title="¡Borrado exitoso!"
-        message="El ingreso se eliminó correctamente."
+        message="El egreso se eliminó correctamente."
         isVisible={!isLoading && isModalVisible}
         successBtnText="Volver"
         handleBtnOnSuccess={() => setIsModalVisible(false)}

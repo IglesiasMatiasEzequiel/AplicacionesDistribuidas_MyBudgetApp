@@ -7,6 +7,9 @@ import TarjetasStack from './Tarjetas/TarjetasStack';
 import NuevaTarjetaStack from './Tarjetas/NuevaTarjetaStack';
 import BorrarTarjetaStack from './Tarjetas/BorrarTarjetaStack';
 import GastosTarjetaStack from './Tarjetas/GastosTarjetaStack';
+import BorrarEgresoStack from './Egresos/BorrarEgresoStack';
+import EgresosStack from './Egresos/EgresosStack';
+import NuevoEgresoStack from './Egresos/NuevoEgresoStack';
 
 export {
     Menu,
@@ -17,5 +20,8 @@ export {
     TarjetasStack,
     NuevaTarjetaStack,
     BorrarTarjetaStack,
-    GastosTarjetaStack
+    GastosTarjetaStack,
+    BorrarEgresoStack,
+    EgresosStack,
+    NuevoEgresoStack
 }

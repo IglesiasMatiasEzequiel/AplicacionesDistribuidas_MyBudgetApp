@@ -3,7 +3,22 @@ import { Dimensions } from 'react-native';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { LoginScreen } from '../screens/index';
-import { Menu, DashboardStack, IngresosStack, NuevoIngresoStack, BorrarIngresoStack, TarjetasStack, NuevaTarjetaStack, BorrarTarjetaStack, GastosTarjetaStack } from '../navigation/index';
+import 
+{ 
+  Menu, 
+  DashboardStack, 
+  IngresosStack, 
+  NuevoIngresoStack, 
+  BorrarIngresoStack, 
+  TarjetasStack, 
+  NuevaTarjetaStack, 
+  BorrarTarjetaStack, 
+  GastosTarjetaStack,
+  EgresosStack,
+  NuevoEgresoStack,
+  BorrarEgresoStack
+} 
+from '../navigation/index';
 
 import { Icon } from '../components';
 import { materialTheme } from "../constants/";
@@ -168,6 +183,48 @@ export default function AppStack(props) {
               size={16}
               name="ios-log-in"
               family="ionicon"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="Egresos"
+        component={EgresosStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="NuevoEgreso"
+        component={NuevoEgresoStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="BorrarEgreso"
+        component={BorrarEgresoStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
               color={focused ? "white" : materialTheme.COLORS.MUTED}
             />
           )
