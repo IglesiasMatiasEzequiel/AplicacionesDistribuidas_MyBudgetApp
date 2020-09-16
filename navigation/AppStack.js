@@ -7,6 +7,9 @@ import DashboardStack from '../navigation/DashboardStack';
 import IngresosStack from '../navigation/IngresosStack';
 import NuevoIngresoStack from '../navigation/NuevoIngresoStack';
 import BorrarIngresoStack from '../navigation/BorrarIngresoStack';
+import EgresosStack from '../navigation/EgresosStack'
+import NuevoEgresoStack from '../navigation/NuevoEgresoStack';
+import BorrarEgresoStack from '../navigation/BorrarEgresoStack';
 
 import CustomDrawerContent from './Menu';
 import { Icon } from '../components';
@@ -114,6 +117,48 @@ export default function AppStack(props) {
               size={16}
               name="ios-log-in"
               family="ionicon"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="Egresos"
+        component={EgresosStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="NuevoEgreso"
+        component={NuevoEgresoStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="BorrarEgreso"
+        component={BorrarEgresoStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
               color={focused ? "white" : materialTheme.COLORS.MUTED}
             />
           )
