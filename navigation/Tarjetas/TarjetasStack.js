@@ -1,19 +1,19 @@
 import React from 'react';
-import NuevaTarjetaScreen from '../screens/NuevaTarjetaScreen';
-import { Header } from '../components';
+import { TarjetasScreen } from '../../screens/index';
+import { Header } from '../../components';
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
 
-export default function NuevaTarjetaStack(props) {
+export default function TarjetasStack(props) {
     return (
       <Stack.Navigator mode="card" headerMode="screen">
         <Stack.Screen
-          name="NuevaTarjeta"
-          component={NuevaTarjetaScreen}
+          name="Tarjetas"
+          component={TarjetasScreen}
           options={{
             header: ({ navigation, scene }) => (
-              <Header title="NuevaTarjeta" scene={scene} navigation={navigation} />
+              <Header title="Tarjetas" scene={scene} navigation={navigation} />
             )
           }}
         />

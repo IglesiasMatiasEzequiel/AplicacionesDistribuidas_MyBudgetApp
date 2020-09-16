@@ -13,7 +13,7 @@ import {
 import { Alert } from 'react-native';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { Button, Block, Text, Input, theme } from 'galio-framework';
-import { materialTheme, products, Images } from '../constants';
+import { materialTheme, products, Images } from '../../constants';
 
 const { width } = Dimensions.get('screen');
 

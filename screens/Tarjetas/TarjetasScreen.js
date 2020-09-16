@@ -2,7 +2,7 @@ import React from "react";
 import { View, TextInput, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from "react-native";
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Text, theme } from "galio-framework";
-import CustomModal from '../components/CustomModal';
+import CustomModal from '../../components/CustomModal';
 
 const { width } = Dimensions.get("screen");
 

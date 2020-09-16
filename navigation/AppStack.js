@@ -2,17 +2,9 @@ import React from 'react';
 import { Dimensions } from 'react-native';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
-import Login from '../screens/LoginScreen';
-import DashboardStack from '../navigation/DashboardStack';
+import { LoginScreen } from '../screens/index';
+import { Menu, DashboardStack, IngresosStack, NuevoIngresoStack, BorrarIngresoStack, TarjetasStack, NuevaTarjetaStack } from '../navigation/index';
 
-import IngresosStack from '../navigation/IngresosStack';
-import NuevoIngresoStack from '../navigation/NuevoIngresoStack';
-import BorrarIngresoStack from '../navigation/BorrarIngresoStack';
-
-import TarjetasStack from '../navigation/TarjetasStack';
-import NuevaTarjetaStack from '../navigation/NuevaTarjetaStack';
-
-import CustomDrawerContent from './Menu';
 import { Icon } from '../components';
 import { materialTheme } from "../constants/";
 
@@ -28,7 +20,7 @@ export default function AppStack(props) {
     <Drawer.Navigator
       style={{ flex: 1 }}
       drawerContent={props => (
-        <CustomDrawerContent {...props} profile={profile} />
+        <Menu {...props} profile={profile} />
       )}
       drawerStyle={{
         backgroundColor: "white",
@@ -141,7 +133,7 @@ export default function AppStack(props) {
 
       <Drawer.Screen
         name="Cerrar Sesión"
-        component={Login}
+        component={LoginScreen}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon

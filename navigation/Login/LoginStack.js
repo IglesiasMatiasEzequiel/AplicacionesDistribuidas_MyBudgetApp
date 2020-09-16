@@ -1,11 +1,9 @@
 import React from "react";
 import { View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
-import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
-import AppStack from "./AppStack";
-import { Header } from '../components';
+import { AppStack } from '../../navigation/index';
+import { LoginScreen, RegisterScreen, ForgotPasswordScreen } from '../../screens/index';
+import { Header } from '../../components';
 
 const Stack = createStackNavigator();
 

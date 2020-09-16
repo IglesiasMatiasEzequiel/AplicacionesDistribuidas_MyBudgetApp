@@ -2,11 +2,11 @@ import React from "react";
 import { View, TextInput, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from "react-native";
 import Spinner from 'react-native-loading-spinner-overlay';
 import { Text, theme } from "galio-framework";
-import CustomModal from '../components/CustomModal';
+import CustomModal from '../../components/CustomModal';
 
 const { width } = Dimensions.get("screen");
 
-export default function LoginScreen({ navigation }) {
+export default function NuevaTarjetaScreen({ navigation }) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -41,6 +41,16 @@ export default function LoginScreen({ navigation }) {
       marginTop: 40,
       marginBottom: theme.SIZES.BASE,
     },
+    registerBtn2: {
+        width: width - theme.SIZES.BASE * 2,
+        backgroundColor: "#F44336",
+        borderRadius: 5,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 10,
+        marginBottom: theme.SIZES.BASE,
+      },
     registerText: {
       color: "white",
     },
@@ -51,30 +61,40 @@ export default function LoginScreen({ navigation }) {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [email, setEmail] = React.useState("");
+
+
   const [nombre, setNombre] = React.useState("");
   const [apellido, setApellido] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [repeatPassword, setRepeatPassword] = React.useState("");
+  const [banco, setBanco] = React.useState("");
+  const [tarjeta, setTarjeta] = React.useState("");
+  const [vencimiento, setVencimiento] = React.useState("");
+  const [cierreResumen, setCierreResumen] = React.useState("");
+  const [vencimientoResumen, setVencimientoResumen] = React.useState("");
 
-  const handleChangeEmail = (email) => setEmail(email);
+ 
   const handleChangeNombre = (nombre) => setNombre(nombre);
   const handleChangeApellido = (apellido) => setApellido(apellido);
-  const handleChangePassword = (password) => setPassword(password);
-  const handleChangeRepeatPassword = (repeatPassword) => setRepeatPassword(repeatPassword);
+  const handleChangeBanco = (banco) => setBanco(banco);
+  const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
+  const handleChangeVencimimento = (vencimiento) => setVencimiento(vencimiento);
+  const handleChangeCierreResumen = (cierreResumen) => setCierreResumen(cierreResumem);
+  const handleChangeVencimientoResumen = (vencimientoResumen) => setVencimientoResumen(vencimientoResumem);
 
-  const onRegister = () => { 
+  const onCrear = () => { 
 
     setIsLoading(true);
 
     setTimeout(() => { 
       setIsLoading(false);
       setIsModalVisible(true);
-    }, 1500);
+    }, 1000);
   }
 
-  const onLogin = () => navigation.navigate("Login");
-  const onBack = () => navigation.navigate("Login");
+  const onTarjetas = () => { 
+    setIsModalVisible(false);
+    navigation.navigate("Tarjetas");
+  }
+  const onBack = () => navigation.navigate("Tarjetas");
 
   return (
     <ScrollView>
@@ -87,20 +107,12 @@ export default function LoginScreen({ navigation }) {
 
         <CustomModal 
           title="¡Registro exitoso!"
-          message="El registro se realizó correctamente."
+          message="El registro de la tarjeta se realizó correctamente."
           isVisible={!isLoading && isModalVisible} 
-          successBtnText="IR AL LOGIN"
-          handleBtnOnSuccess={onLogin}
+          successBtnText="IR A TARJETAS"
+          handleBtnOnSuccess={onTarjetas}
           />
 
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Email..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeEmail(text)}
-          />
-        </View>
         <View style={styles.inputView}>
           <TextInput
             style={styles.inputText}
@@ -115,35 +127,57 @@ export default function LoginScreen({ navigation }) {
             placeholder="Apellido..."
             placeholderTextColor={theme.COLORS.PLACEHOLDER}
             onChangeText={(text) => handleChangeApellido(text)}
+          />
+        </View>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Banco..."
+            placeholderTextColor={theme.COLORS.PLACEHOLDER}
+            onChangeText={(text) => handleChangeBanco(text)}
             value=""
           />
         </View>
         <View style={styles.inputView}>
           <TextInput
-            secureTextEntry
             style={styles.inputText}
-            placeholder="Password..."
+            placeholder="Ingrese numeros de la tarjeta ..."
             placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangePassword(text)}
+            onChangeText={(text) => handleChangeTarjeta(text)}
+          />
+        </View>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Fecha de Vencimiento..."
+            placeholderTextColor={theme.COLORS.PLACEHOLDER}
+            onChangeText={(text) => handleChangeVencimimento(text)}
+          />
+        </View>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.inputText}
+            placeholder="Fecha de Cierre del Resumen..."
+            placeholderTextColor={theme.COLORS.PLACEHOLDER}
+            onChangeText={(text) => handleChangeCierreResumen(text)}
             value=""
           />
         </View>
         <View style={styles.inputView}>
           <TextInput
-            secureTextEntry
             style={styles.inputText}
-            placeholder="Repetir password..."
+            placeholder="Fecha de Vencimiento del Resumen..."
             placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeRepeatPassword(text)}
+            onChangeText={(text) => handleChangeVencimientoResumen(text)}
             value=""
           />
         </View>
 
-        <TouchableOpacity onPress={onRegister} style={styles.registerBtn}>
-          <Text style={styles.registerText}>REGISTRARSE</Text>
+        <TouchableOpacity onPress={onCrear} style={styles.registerBtn}>
+          <Text style={styles.registerText}>CREAR</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onBack}>
-          <Text style={styles.back}>Volver</Text>
+        <TouchableOpacity onPress={onBack} style={styles.registerBtn2}>
+          <Text style={styles.registerText}>Volver</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

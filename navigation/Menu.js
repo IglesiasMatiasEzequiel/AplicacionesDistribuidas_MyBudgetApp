@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet, Image } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Block, Text, theme } from "galio-framework";
 import { useSafeArea } from "react-native-safe-area-context";
 
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function CustomDrawerContent({
+export default function Menu({
   drawerPosition,
   navigation,
   profile,
