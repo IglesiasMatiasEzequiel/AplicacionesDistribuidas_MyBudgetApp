@@ -22,7 +22,7 @@ export default function TarjetasStack(props) {
           component={NuevaTarjetaScreen}
           options={{
             header: ({ navigation, scene }) => (
-              <Header title="NuevaTarjeta" scene={scene} navigation={navigation} />
+              <Header title="Nueva Tarjeta" scene={scene} navigation={navigation} />
             )
           }}
         />

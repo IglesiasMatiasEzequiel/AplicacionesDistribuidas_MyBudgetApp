@@ -60,6 +60,13 @@ const categoriasIngresoData = [
   { label: "Facturación", value: "3" }
 ];
 
+const bancosData = [
+  { label: "Banco Galicia", value: "1" },
+  { label: "BBVA Francés", value: "2" },
+  { label: "HSBC", value: "3" },
+  { label: "Banco Santander", value: "4" },
+]
+
 export {
   cantCuotasData,
   mediosPagoData,
@@ -67,5 +74,6 @@ export {
   categoriasEgresoData,
   destinosData,
   tiposIngresoData,
-  categoriasIngresoData
+  categoriasIngresoData,
+  bancosData
 };

@@ -1,185 +1,136 @@
 import React from "react";
-import { View, TextInput, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from "react-native";
-import Spinner from 'react-native-loading-spinner-overlay';
-import { Text, theme } from "galio-framework";
-import CustomModal from '../../components/CustomModal';
+import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
-const { width } = Dimensions.get("screen");
+import { Text, theme } from "galio-framework";
+import DropDownPicker from "react-native-dropdown-picker";
+import { CustomSpinner, CustomModal } from "../../components";
+import { bancosData } from "../../components/Data";
+import {
+  screenStyles,
+  buttonStyles,
+  textboxStyles,
+  dropdownStyles,
+} from "../../components/Styles";
 
 export default function NuevaTarjetaScreen({ navigation }) {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.COLORS.DEFAULT,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    inputView: {
-      width: width - theme.SIZES.BASE * 2,
-      backgroundColor: "white",
-      borderRadius: 5,
-      height: 50,
-      marginBottom: 20,
-      justifyContent: "center",
-      padding: 20,
-    },
-    inputText: {
-      height: 50,
-      color: "black",
-    },
-    back: {
-      color: "black",
-      fontSize: 11,
-    },
-    registerBtn: {
-      width: width - theme.SIZES.BASE * 2,
-      backgroundColor: "#69037B",
-      borderRadius: 5,
-      height: 50,
-      alignItems: "center",
-      justifyContent: "center",
-      marginTop: 40,
-      marginBottom: theme.SIZES.BASE,
-    },
-    registerBtn2: {
-        width: width - theme.SIZES.BASE * 2,
-        backgroundColor: "#F44336",
-        borderRadius: 5,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 10,
-        marginBottom: theme.SIZES.BASE,
-      },
-    registerText: {
-      color: "white",
-    },
-    spinnerTextStyle: {
-      color: '#FFF'
-    },
-  });
-
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [modalData, setModalData] = React.useState(null);
 
-
-  const [nombre, setNombre] = React.useState("");
-  const [apellido, setApellido] = React.useState("");
-  const [banco, setBanco] = React.useState("");
+  const [banco, setBanco] = React.useState(null);
   const [tarjeta, setTarjeta] = React.useState("");
   const [vencimiento, setVencimiento] = React.useState("");
   const [cierreResumen, setCierreResumen] = React.useState("");
   const [vencimientoResumen, setVencimientoResumen] = React.useState("");
 
- 
-  const handleChangeNombre = (nombre) => setNombre(nombre);
-  const handleChangeApellido = (apellido) => setApellido(apellido);
   const handleChangeBanco = (banco) => setBanco(banco);
   const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
-  const handleChangeVencimimento = (vencimiento) => setVencimiento(vencimiento);
-  const handleChangeCierreResumen = (cierreResumen) => setCierreResumen(cierreResumem);
-  const handleChangeVencimientoResumen = (vencimientoResumen) => setVencimientoResumen(vencimientoResumem);
+  const handleChangeVencimiento = (vencimiento) => setVencimiento(vencimiento);
+  const handleChangeCierreResumen = (cierreResumen) =>
+    setCierreResumen(cierreResumem);
+  const handleChangeVencimientoResumen = (vencimientoResumen) =>
+    setVencimientoResumen(vencimientoResumem);
 
-  const onCrear = () => { 
+  const limpiarState = () => {
+    setIsLoading(false);
+    setModalData({ ...modalData, isVisible: false });
+    setBanco(null);
+    setTarjeta("");
+    setVencimiento("");
+    setCierreResumen("");
+    setVencimientoResumen("");
+  };
 
+  const onConfirmar = () => {
     setIsLoading(true);
 
-    setTimeout(() => { 
+    setTimeout(() => {
       setIsLoading(false);
-      setIsModalVisible(true);
-    }, 1000);
-  }
+      setModalData({
+        message: "La tarjeta se guardó correctamente.",
+        isVisible: true,
+        isSuccess: true,
+        successBtnText: "Aceptar",
+      });
+    }, 500);
+  };
 
-  const onTarjetas = () => { 
-    setIsModalVisible(false);
+  const onBack = () => {
+    limpiarState();
     navigation.navigate("Tarjetas");
-  }
-  const onBack = () => navigation.navigate("Tarjetas");
+  };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Spinner
-          visible={isLoading}
-          textContent={"Cargando..."}
-          textStyle={styles.spinnerTextStyle}
+    <ScrollView style={screenStyles.screen}>
+      <View>
+        <DropDownPicker
+          items={bancosData}
+          defaultValue={banco}
+          placeholder="Seleccione un banco."
+          containerStyle={dropdownStyles.dropdownContainer}
+          style={dropdownStyles.dropdown}
+          itemStyle={dropdownStyles.dropdownItem}
+          onChangeItem={(item) => handleChangeBanco(item.value)}
         />
-
-        <CustomModal 
-          title="¡Registro exitoso!"
-          message="El registro de la tarjeta se realizó correctamente."
-          isVisible={!isLoading && isModalVisible} 
-          successBtnText="IR A TARJETAS"
-          handleBtnOnSuccess={onTarjetas}
-          />
-
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Nombre..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeNombre(text)}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Apellido..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeApellido(text)}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Banco..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeBanco(text)}
-            value=""
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Ingrese numeros de la tarjeta ..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeTarjeta(text)}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Fecha de Vencimiento..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeVencimimento(text)}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Fecha de Cierre del Resumen..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeCierreResumen(text)}
-            value=""
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Fecha de Vencimiento del Resumen..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(text) => handleChangeVencimientoResumen(text)}
-            value=""
-          />
-        </View>
-
-        <TouchableOpacity onPress={onCrear} style={styles.registerBtn}>
-          <Text style={styles.registerText}>CREAR</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onBack} style={styles.registerBtn2}>
-          <Text style={styles.registerText}>Volver</Text>
-        </TouchableOpacity>
       </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Número tarjeta..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(tarjeta) => handleChangeTarjeta(tarjeta)}
+          value={tarjeta}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Fecha de Vencimiento..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(vencimiento) => handleChangeVencimiento(vencimiento)}
+          value={vencimiento}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="F. Cierre del Resúmen..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(cierreResumen) =>
+            handleChangeCierreResumen(cierreResumen)
+          }
+          value={cierreResumen}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="F. Vencimiento del Resúmen..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(vencimientoResumen) =>
+            handleChangeVencimientoResumen(vencimientoResumen)
+          }
+          value={vencimientoResumen}
+        />
+      </View>
+
+      <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Confirmar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
+        <Text style={buttonStyles.btnBackText}>Volver</Text>
+      </TouchableOpacity>
+
+      <CustomSpinner isLoading={isLoading} text={"Guardando Tarjeta..."} />
+
+      <CustomModal
+        isSuccess={modalData?.isSuccess}
+        title={modalData?.title}
+        message={modalData?.message}
+        isVisible={modalData?.isVisible}
+        successBtnText={modalData?.successBtnText}
+        handleBtnOnSuccess={onBack}
+      />
     </ScrollView>
   );
 }

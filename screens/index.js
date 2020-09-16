@@ -7,6 +7,8 @@ import NuevoIngresoScreen from './Ingresos/NuevoIngresoScreen';
 import BorrarIngresoScreen from './Ingresos/BorrarIngresoScreen';
 import TarjetasScreen from './Tarjetas/TarjetasScreen';
 import NuevaTarjetaScreen from './Tarjetas/NuevaTarjetaScreen';
+import GastosTarjetaScreen from './Tarjetas/GastosTarjetaScreen';
+import BorrarTarjetaScreen from './Tarjetas/BorrarTarjetaScreen';
 import EgresosScreen from './Egresos/EgresosScreen';
 import NuevoEgresoScreen from './Egresos/NuevoEgresoScreen';
 import BorrarEgresoScreen from './Egresos/BorrarEgresoScreen';
@@ -23,5 +25,7 @@ export {
     NuevaTarjetaScreen,
     EgresosScreen,
     NuevoEgresoScreen,
-    BorrarEgresoScreen
+    BorrarEgresoScreen,
+    GastosTarjetaScreen,
+    BorrarTarjetaScreen
 }

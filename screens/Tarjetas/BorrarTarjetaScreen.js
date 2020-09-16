@@ -1,206 +1,119 @@
-import React from 'react';
+import React from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import {
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Image,
-  ImageBackground,
-  Dimensions,
-  View
-} from 'react-native';
+  screenStyles,
+  buttonStyles,
+  tableStyles,
+  titleStyles,
+  radioButtonStyles,
+} from "../../components/Styles";
+import { CustomSpinner, CustomModal } from "../../components";
 
-import { Alert } from 'react-native';
-import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
-import { Button, Block, Text, Input, theme } from 'galio-framework';
-import { materialTheme, products, Images } from '../../constants';
+import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
+import { Text } from "galio-framework";
+import RadioButtonRN from "radio-buttons-react-native";
 
-const { width } = Dimensions.get('screen');
+export default function BorrarIngresos({ navigation }) {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [modalData, setModalData] = React.useState(null);
+  const [tipoBorrar, setTipoBorrar] = React.useState(null);
 
-const thumbMeasure = (width - 48 - 32) / 3;
+  const tableHeaders = ["",
+    "Número",
+    "Banco",
+    "F. Venc.",
+    "F. Cierre Resúmen",
+    "F. Venc. Resúmen",
+  ];
+  const columnWidth = [60, 150, 120, 120, 120, 120];
 
-export default class Ingresos extends React.Component {
+  const tableData = [
+    ["", "**** **** **** 0856", "Galicia", "12/24", "01/09/2020", "01/09/2020"],
+    ["", "**** **** **** 4562", "BBVA Francés", "12/22", "01/09/2020", "01/09/2020"],
+  ];
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      tableHead: ['Banco', 'Descripcion', 'Numero', 'Borrar'],
-      widthArr: [120, 100, 200, 70],
-      tableData: [
-        ['Santander', 'VISA', '1234 1234 1234 1234', 'X'],
-        ['Galicia', 'VISA', '1234 1234 1234 1234', 'X'],
-        ['Santander', 'AMEX', '1234 1234 1234 1234', 'X'],
-        ['Galicia', 'AMEX', '1234 1234 1234 1234', 'X'],
-      ]
-    }
-  }
-  
-  _alertIndex(index) {
-    Alert.alert(`Se borror el registros seleccionado - Linea: ${index + 1}`);
-  }
+  const onBorrar = () => {
+    setIsLoading(true);
 
-  toggleSwitch = switchId => this.setState({ [switchId]: !this.state[switchId] });
+    setTimeout(() => {
+      setIsLoading(false);
+      setModalData({
+        title: "¡Borrado exitoso!",
+        message: "La tarjeta se eliminó correctamente.",
+        isVisible: true,
+      });
+    }, 500);
+  };
 
-  renderButtons = () => {
-    const { navigation } = this.props;
-    return (
-      <Block flex>  
-        <Text h6 style={{marginBottom: theme.SIZES.BASE / 20}}> </Text>
-      </Block>
-    )
-  }
-  
-  renderText = () => {
-    return (
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE, width: width - (theme.SIZES.BASE * 2) }} >
-            <Text h5 style={{marginBottom: theme.SIZES.BASE}}>Listado Tarjetas</Text>
-        </Block>
-    )
-  }
-   
-  renderTableCell = () => {
-    const { navigation } = this.props;
-    const state = this.state;
-    const element = (data, index) => (
-      <TouchableOpacity onPress={() => this._alertIndex(index)}>
-        <View style={styles.btn}>
-          <Text style={styles.btnText}>Borrar</Text>
-        </View>
-      </TouchableOpacity>
-    );
+  const onCloseModal = () => setModalData({ ...modalData, isVisible: false });
 
-    return (
-      <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <View style={styles.container}>
-              <Table borderStyle={{borderColor: 'transparent'}}>
-              <Row data={state.tableHead} style={styles.head} textStyle={styles.text}/>
-              {
-                  state.tableData.map((rowData, index) => (
-                  <TableWrapper key={index} style={styles.row}>
-                      {
-                      rowData.map((cellData, cellIndex) => (
-                          <Cell key={cellIndex} data={cellIndex === 3 ? element(cellData, index) : cellData} textStyle={styles.text}/>
-                      ))
-                      }
+  const deleteButton = (data, index) => (
+    <TouchableOpacity onPress={onBorrar}>
+      <View style={buttonStyles.btnTable}>
+        <Text style={buttonStyles.btnText}>Borrar</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  return (
+    <ScrollView style={screenStyles.screen}>
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Mis Tarjetas
+        </Text>
+      </View>
+
+      <View style={tableStyles.tableContainer}>
+        <ScrollView horizontal>
+          <View>
+            <Table borderStyle={tableStyles.tableHeaderBorder}>
+              <Row
+                data={tableHeaders}
+                widthArr={columnWidth}
+                style={tableStyles.tableHeader}
+                textStyle={tableStyles.tableHeadertext}
+              />
+            </Table>
+            <ScrollView
+              style={[tableStyles.tableDataContainer, { height: 200 }]}
+            >
+              <Table borderStyle={tableStyles.tableDataBorder}>
+                {tableData.map((rowData, index) => (
+                  <TableWrapper
+                    key={index}
+                    style={[
+                      tableStyles.tableRow,
+                      index % 2 && { backgroundColor: "transparent" },
+                    ]}
+                  >
+                    {rowData.map((cellData, cellIndex) => (
+                      <Cell
+                        key={cellIndex}
+                        width={columnWidth[cellIndex]}
+                        data={
+                          cellIndex === 0
+                            ? deleteButton(cellData, index)
+                            : cellData
+                        }
+                        textStyle={tableStyles.tableRowtext}
+                      />
+                    ))}
                   </TableWrapper>
-                  ))
-              }
+                ))}
               </Table>
+            </ScrollView>
           </View>
-      </Block>
-    )
-  }
- 
-  render() {
-    return (
-      <Block flex center>
-        <ScrollView
-          style={styles.components}
-          showsVerticalScrollIndicator={false}>
-            {this.renderButtons()}
-            {this.renderText()}
-            {this.renderTableCell()}
         </ScrollView>
-      </Block>
-    );
-  }
+      </View>
+
+      <CustomSpinner isLoading={isLoading} text={"Eliminando..."} />
+
+      <CustomModal
+        title={modalData?.title}
+        message={modalData?.message}
+        isVisible={modalData?.isVisible}
+        handleBtnOnSuccess={onCloseModal}
+      />
+    </ScrollView>
+  );
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1, padding: 11, paddingTop: 10, backgroundColor: '#fff' },
-    head: { height: 50, backgroundColor: '#f1f8ff' },
-    text: { textAlign: 'center', fontWeight: '100', margin: 5  },
-    row: { flexDirection: 'row', backgroundColor: '#fff' },
-    btn: { width: 50, height: 18, backgroundColor: '#78B7BB',  borderRadius: 2 },
-    btnText: { textAlign: 'center', color: '#fff' },
-
-    components: {
-    },
-    title: {
-        paddingVertical: theme.SIZES.BASE,
-        paddingHorizontal: theme.SIZES.BASE * 2,
-    },
-    group: {
-        paddingTop: theme.SIZES.BASE * 3.75,
-    },
-    shadow: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 4,
-        shadowOpacity: 0.2,
-        elevation: 2,
-    },
-    button: {
-        marginBottom: theme.SIZES.BASE,
-        width: width - (theme.SIZES.BASE * 2),
-    },
-    optionsText: {
-        fontSize: theme.SIZES.BASE * 0.75,
-        color: '#4A4A4A',
-        fontWeight: "normal",
-        fontStyle: "normal",
-        letterSpacing: -0.29,
-    },
-    optionsButton: {
-        width: 'auto',
-        height: 34,
-        paddingHorizontal: theme.SIZES.BASE,
-        paddingVertical: 10,
-    },
-    input: {
-        borderBottomWidth: 1,
-    },
-    inputDefault: {
-        borderBottomColor: materialTheme.COLORS.PLACEHOLDER,
-    },
-    inputTheme: {
-        borderBottomColor: materialTheme.COLORS.PRIMARY,
-    },
-    inputTheme: {
-        borderBottomColor: materialTheme.COLORS.PRIMARY,
-    },
-    inputInfo: {
-        borderBottomColor: materialTheme.COLORS.INFO,
-    },
-    inputSuccess: {
-        borderBottomColor: materialTheme.COLORS.SUCCESS,
-    },
-    inputWarning: {
-        borderBottomColor: materialTheme.COLORS.WARNING,
-    },
-    inputDanger: {
-        borderBottomColor: materialTheme.COLORS.ERROR,
-    },
-    imageBlock: {
-        overflow: 'hidden',
-        borderRadius: 4,
-    },
-    rows: {
-        height: theme.SIZES.BASE * 2,
-    },
-    social: {
-        width: theme.SIZES.BASE * 3.5,
-        height: theme.SIZES.BASE * 3.5,
-        borderRadius: theme.SIZES.BASE * 1.75,
-        justifyContent: 'center',
-    },
-    category: {
-        backgroundColor: theme.COLORS.WHITE,
-        marginVertical: theme.SIZES.BASE / 2,
-        borderWidth: 0,
-    },
-    categoryTitle: {
-        height: '100%',
-        paddingHorizontal: theme.SIZES.BASE,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    albumThumb: {
-        borderRadius: 4,
-        marginVertical: 4,
-        alignSelf: 'center',
-        width: thumbMeasure,
-        height: thumbMeasure
-    },
-});

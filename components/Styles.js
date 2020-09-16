@@ -1,13 +1,14 @@
 import { StyleSheet, Dimensions } from "react-native";
 import { theme } from "galio-framework";
 
-const { width } = Dimensions.get("screen");
+const { width, height } = Dimensions.get("screen");
 
 const screenStyles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: theme.COLORS.DEFAULT,
-    padding: 20
+    padding: 20,
+    minHeight: height
   },
   containerColumns: {
     flex: 1,
@@ -75,7 +76,7 @@ const buttonStyles = StyleSheet.create({
     marginBottom: theme.SIZES.BASE,
   },
   btnTable: {
-    backgroundColor: "#CCC",
+    backgroundColor: "#AA3939",
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
