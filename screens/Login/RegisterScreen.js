@@ -1,13 +1,11 @@
 import React from "react";
 import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
-import Spinner from "react-native-loading-spinner-overlay";
 import { Text, theme } from "galio-framework";
-import CustomModal from "../../components/CustomModal";
+import { CustomSpinner, CustomModal } from "../../components";
 import {
   screenStyles,
   buttonStyles,
-  textboxStyles,
-  spinnerStyles,
+  textboxStyles
 } from "../../components/Styles";
 
 export default function LoginScreen({ navigation }) {
@@ -40,20 +38,6 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <Spinner
-        visible={isLoading}
-        textContent={"Cargando..."}
-        textStyle={spinnerStyles.spinnerText}
-      />
-
-      <CustomModal
-        title="¡Registro exitoso!"
-        message="El registro se realizó correctamente."
-        isVisible={!isLoading && isModalVisible}
-        successBtnText="IR AL LOGIN"
-        handleBtnOnSuccess={onLogin}
-      />
-
       <View style={textboxStyles.textboxContainer}>
         <TextInput
           style={textboxStyles.textbox}
@@ -103,6 +87,16 @@ export default function LoginScreen({ navigation }) {
       <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
         <Text style={buttonStyles.btnBackText}>Volver</Text>
       </TouchableOpacity>
+
+      <CustomSpinner isLoading={isLoading} text={"Registrando usuario..."} />
+
+      <CustomModal
+        title="¡Registro exitoso!"
+        message="El registro se realizó correctamente."
+        isVisible={!isLoading && isModalVisible}
+        successBtnText="IR AL LOGIN"
+        handleBtnOnSuccess={onLogin}
+      />
     </ScrollView>
   );
 }

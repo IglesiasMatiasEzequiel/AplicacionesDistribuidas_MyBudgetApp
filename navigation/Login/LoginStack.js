@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { AppStack } from '../../navigation/index';
+import AppStack from '../AppStack';
 import { LoginScreen, RegisterScreen, ForgotPasswordScreen } from '../../screens/index';
 import { Header } from '../../components';
 

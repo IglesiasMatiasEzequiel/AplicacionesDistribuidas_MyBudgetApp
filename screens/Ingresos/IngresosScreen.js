@@ -1,249 +1,109 @@
-import React from 'react';
+import React from "react";
+import { ScrollView, View, TouchableOpacity } from "react-native";
 import {
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
-  Dimensions,
-  View
-} from 'react-native';
+  screenStyles,
+  buttonStyles,
+  tableStyles,
+  titleStyles,
+} from "../../components/Styles";
 
-import { Table, Row, Rows } from 'react-native-table-component';
+import { Table, Row } from "react-native-table-component";
+import { Text } from "galio-framework";
 
-import { Button, Block, Text, Input, theme } from 'galio-framework';
+export default function Ingresos({ navigation }) {
+  const onNuevoIngreso = () => navigation.navigate("NuevoIngreso");
+  const onBorrarIngreso = () => navigation.navigate("BorrarIngreso");
+  const onUltimoAnio = () => {};
+  const onUltimoMes = () => {};
 
-import { materialTheme, products, Images } from '../../constants';
-import { Select, Icon, Header, Product, Switch } from '../../components';
+  const tableHeaders = ["Tipo", "Destino", "Descripcion", "Monto"];
+  const columnWidth = [120, 120, 120, 120];
 
+  const tableData = [
+    ["P-Sueldo", "Cuenta", "Sueldo", "5000"],
+    ["P-Alquiler", "Cuenta", "Depto1", "3000"],
+    ["P-Alquiler", "Cuenta", "Depto2", "3200"],
+    ["P-Alquiler", "Cuenta", "Depto3", "3800"],
+    ["Extraordinario", "Efectivo", "Tio", "400"],
+    ["Extraordinario", "Efectivo", "Tio", "800"],
+    ["Extraordinario", "Efectivo", "Hermano", "500"],
+    ["Extraordinario", "Efectivo", "Hermano", "1000"],
+    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+    ["Extraordinario", "Efectivo", "Amigos", "2000"],
+  ];
 
-const { width } = Dimensions.get('screen');
+  return (
+    <ScrollView style={screenStyles.screen}>
+      <TouchableOpacity onPress={onNuevoIngreso} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Nuevo Ingreso</Text>
+      </TouchableOpacity>
 
-const thumbMeasure = (width - 48 - 32) / 3;
+      <TouchableOpacity onPress={onBorrarIngreso} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Borrar Ingreso</Text>
+      </TouchableOpacity>
 
-export default class Ingresos extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      tableHead: ['Tipo', 'Destino', 'Descripcion', 'Monto'],
-      widthArr: [120, 80, 120, 50]
-    }
-  }
-
-  toggleSwitch = switchId => this.setState({ [switchId]: !this.state[switchId] });
-
-  renderButtons = () => {
-    const { navigation } = this.props;
-    return (
-      <Block flex>  
-        <Text size={12} style={styles.signInText} ></Text>
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <Block center>
-            <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
-                    onPress={() => navigation.navigate('NuevoIngreso')}>
-              Nuevo Ingreso
-            </Button>
-          </Block>
-          <Block center>
-            <Button shadowless color={materialTheme.COLORS.ACTIVE} style={[styles.button, styles.shadow]}
-                    onPress={() => navigation.navigate('BorrarIngreso')}>
-              Borrar Ingreso
-            </Button>
-          </Block>
-          
-          <Block row space="evenly">
-            <Block flex center>
-              <Button
-                center
-                shadowless
-                color={materialTheme.COLORS.DEFAULT}
-                textStyle={styles.optionsText}
-                style={[styles.optionsButton, styles.shadow]}>
-                Ultimo Año
-              </Button>
-            </Block>
-            <Block flex center>
-              <Button
-                center
-                shadowless
-                color={materialTheme.COLORS.DEFAULT}
-                textStyle={styles.optionsText}
-                style={[styles.optionsButton, styles.shadow]}>
-                Ultimo Mes
-              </Button>
-            </Block>
-          </Block>
-          
-        </Block>
-      </Block>
-    )
-  }
-  
-  renderText = () => {
-    return (
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Text h6 style={{marginBottom: theme.SIZES.BASE / 2}}> </Text>
-            <Text h5 style={{marginBottom: theme.SIZES.BASE / 2}}>Listado de ultimos Ingresos</Text>
-        </Block>
-    )
-  }
-   
-  renderTableCell = () => {
-    const { navigation } = this.props;
-    const state = this.state;
-    const tableData = [
-      ['P-Sueldo', 'Cuenta', 'Sueldo', '5000'],
-      ['P-Alquiler', 'Cuenta', 'Depto1', '3000'],
-      ['P-Alquiler', 'Cuenta', 'Depto2', '3200'],
-      ['P-Alquiler', 'Cuenta', 'Depto3', '3800'],
-      ['Extraordinario', 'Efectivo', 'Tio', '400'],
-      ['Extraordinario', 'Efectivo', 'Tio', '800'],
-      ['Extraordinario', 'Efectivo', 'Hermano', '500'],
-      ['Extraordinario', 'Efectivo', 'Hermano', '1000'],
-      ['Extraordinario', 'Efectivo', 'Amigos', '2000']
-    ];
-
-    return (
-      <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-        <View style={styles.container}>
-          <ScrollView horizontal>
-          <View>
-              <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                <Row data={state.tableHead} widthArr={state.widthArr} style={styles.header} textStyle={styles.text}/>
-              </Table>
-              <ScrollView style={styles.dataWrapper}>
-                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                  {
-                    tableData.map((rowData, index) => (
-                      <Row
-                        key={index}
-                        data={rowData}
-                        widthArr={state.widthArr}
-                        style={[styles.row, index%2 && {backgroundColor: '#F7F6E7'}]}
-                        textStyle={styles.text}
-                      />
-                    ))
-                  }
-                </Table>
-              </ScrollView>
-            </View>
-          </ScrollView>
+      <View style={[screenStyles.containerColumns]}>
+        <View style={{ width: "50%" }}>
+          <TouchableOpacity
+            onPress={onUltimoAnio}
+            style={[buttonStyles.btnFilter, { marginRight: 10 }]}
+          >
+            <Text style={buttonStyles.btnFilterText}>Ultimo Año</Text>
+          </TouchableOpacity>
         </View>
-      </Block>
-    )
-  }
- 
-  render() {
-    return (
-      <Block flex center>
-        <ScrollView
-          style={styles.components}
-          showsVerticalScrollIndicator={false}>
-            {this.renderButtons()}
-            {this.renderText()}
-            {this.renderTableCell()}
+        <View style={{ width: "50%" }}>
+          <TouchableOpacity
+            onPress={onUltimoMes}
+            style={[buttonStyles.btnFilter, { marginLeft: 10 }]}
+          >
+            <Text style={buttonStyles.btnFilterText}>Ultimo Mes</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Últimos Ingresos
+        </Text>
+      </View>
+
+      <View style={tableStyles.tableContainer}>
+        <ScrollView horizontal>
+          <View>
+            <Table borderStyle={tableStyles.tableHeaderBorder}>
+              <Row
+                data={tableHeaders}
+                widthArr={columnWidth}
+                style={tableStyles.tableHeader}
+                textStyle={tableStyles.tableHeadertext}
+              />
+            </Table>
+            <ScrollView
+              style={[tableStyles.tableDataContainer, { height: 200 }]}
+            >
+              <Table borderStyle={tableStyles.tableDataBorder}>
+                {tableData.map((rowData, index) => (
+                  <Row
+                    key={index}
+                    data={rowData}
+                    widthArr={columnWidth}
+                    style={[
+                      tableStyles.tableRow,
+                      index % 2 && { backgroundColor: "transparent" },
+                    ]}
+                    textStyle={tableStyles.tableRowtext}
+                  />
+                ))}
+              </Table>
+            </ScrollView>
+          </View>
         </ScrollView>
-      </Block>
-    );
-  }
+      </View>
+    </ScrollView>
+  );
 }
-
-const styles = StyleSheet.create({
-  
-  container: { flex: 1, padding: 11, paddingTop: 10, backgroundColor: '#fff' },
-  header: { height: 50, backgroundColor: '#f1f8ff'},
-  text: { textAlign: 'center', fontWeight: '100' },
-  //dataWrapper: { marginTop: -1 },
-  //row: { height: 20, backgroundColor: '#E7E6E1' },
-
-  components: {
-  },
-  title: {
-    paddingVertical: theme.SIZES.BASE,
-    paddingHorizontal: theme.SIZES.BASE * 2,
-  },
-  group: {
-    paddingTop: theme.SIZES.BASE * 3.75,
-  },
-  shadow: {
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    shadowOpacity: 0.2,
-    elevation: 2,
-  },
-  button: {
-    marginBottom: theme.SIZES.BASE,
-    width: width - (theme.SIZES.BASE * 2),
-  },
-  optionsText: {
-    fontSize: theme.SIZES.BASE * 0.75,
-    color: '#4A4A4A',
-    fontWeight: "normal",
-    fontStyle: "normal",
-    letterSpacing: -0.29,
-  },
-  optionsButton: {
-    width: 'auto',
-    height: 34,
-    paddingHorizontal: theme.SIZES.BASE,
-    paddingVertical: 10,
-  },
-  input: {
-    borderBottomWidth: 1,
-  },
-  inputDefault: {
-    borderBottomColor: materialTheme.COLORS.PLACEHOLDER,
-  },
-  inputTheme: {
-    borderBottomColor: materialTheme.COLORS.PRIMARY,
-  },
-  inputTheme: {
-    borderBottomColor: materialTheme.COLORS.PRIMARY,
-  },
-  inputInfo: {
-    borderBottomColor: materialTheme.COLORS.INFO,
-  },
-  inputSuccess: {
-    borderBottomColor: materialTheme.COLORS.SUCCESS,
-  },
-  inputWarning: {
-    borderBottomColor: materialTheme.COLORS.WARNING,
-  },
-  inputDanger: {
-    borderBottomColor: materialTheme.COLORS.ERROR,
-  },
-  imageBlock: {
-    overflow: 'hidden',
-    borderRadius: 4,
-  },
-  rows: {
-    height: theme.SIZES.BASE * 2,
-  },
-  social: {
-    width: theme.SIZES.BASE * 3.5,
-    height: theme.SIZES.BASE * 3.5,
-    borderRadius: theme.SIZES.BASE * 1.75,
-    justifyContent: 'center',
-  },
-  category: {
-    backgroundColor: theme.COLORS.WHITE,
-    marginVertical: theme.SIZES.BASE / 2,
-    borderWidth: 0,
-  },
-  categoryTitle: {
-    height: '100%',
-    paddingHorizontal: theme.SIZES.BASE,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  albumThumb: {
-    borderRadius: 4,
-    marginVertical: 4,
-    alignSelf: 'center',
-    width: thumbMeasure,
-    height: thumbMeasure
-  },
-});

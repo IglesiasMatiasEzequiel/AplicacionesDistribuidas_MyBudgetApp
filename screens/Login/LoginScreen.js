@@ -1,15 +1,24 @@
 import React from "react";
-import { View, TextInput, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { Text, theme } from "galio-framework";
-import Spinner from 'react-native-loading-spinner-overlay';
-import CustomModal from '../../components/CustomModal';
-import { screenStyles, buttonStyles, textboxStyles, spinnerStyles } from '../../components/Styles';
+import { CustomModal, CustomSpinner } from "../../components";
+import {
+  screenStyles,
+  buttonStyles,
+  textboxStyles
+} from "../../components/Styles";
 
 export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
     logoContainer: {
       alignItems: "center",
-      justifyContent: "center"
+      justifyContent: "center",
     },
     logo: {
       fontWeight: "bold",
@@ -17,7 +26,7 @@ export default function LoginScreen({ navigation }) {
       color: "#69037B",
       marginTop: 100,
       marginBottom: 100,
-    }
+    },
   });
 
   const [isLoading, setIsLoading] = React.useState(false);
@@ -28,26 +37,25 @@ export default function LoginScreen({ navigation }) {
   const handleChangeEmail = (email) => setEmail(email);
   const handleChangePassword = (password) => setPassword(password);
 
-  const onLogin = () => { 
-
+  const onLogin = () => {
     setIsLoading(true);
 
-    setTimeout(() => { 
-
-      if(true /* Si logueó bien*/){
-        setIsLoading(false);
+    setTimeout(() => {
+      setIsLoading(false);
+      if (true) {
         navigation.navigate("App", {
           profile: {
             email: email,
             nombre: "Matias", //Este dato viene del back una vez que loguea
             apellido: "Iglesias", //Este dato viene del back una vez que loguea
             password: password,
-          }});
+          },
+        });
       } else {
         setIsModalVisible(true);
       }
     }, 1000);
-  }
+  };
 
   const onRegister = () => navigation.navigate("Register");
   const onForgotPassword = () => navigation.navigate("ForgotPassword");
@@ -88,19 +96,15 @@ export default function LoginScreen({ navigation }) {
         <Text style={buttonStyles.btnBackText}>Registrarse</Text>
       </TouchableOpacity>
 
-      <Spinner
-        visible={isLoading}
-        textContent={"Ingresando..."}
-        textStyle={spinnerStyles.spinnerText}
+      <CustomSpinner isLoading={isLoading} text={"Ingresando..."} />
+
+      <CustomModal
+        isSuccess={false}
+        isVisible={!isLoading && isModalVisible}
+        successBtnText="Cerrar"
+        handleBtnOnSuccess={() => setIsModalVisible(false)}
       />
 
-      {/* <CustomModal 
-          title="¡Registro exitoso!"
-          message="El registro se realizó correctamente."
-          isVisible={!isLoading && isModalVisible} 
-          successBtnText="IR AL LOGIN"
-          handleBtnOnSuccess={onSuccessLogin}
-          /> */}
     </ScrollView>
   );
 }

@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { LoginScreen } from '../screens/index';
-import { Menu, DashboardStack, IngresosStack, NuevoIngresoStack, BorrarIngresoStack, TarjetasStack, NuevaTarjetaStack } from '../navigation/index';
+import { Menu, DashboardStack, IngresosStack, NuevoIngresoStack, BorrarIngresoStack, TarjetasStack, NuevaTarjetaStack, BorrarTarjetaStack, GastosTarjetaStack } from '../navigation/index';
 
 import { Icon } from '../components';
 import { materialTheme } from "../constants/";
@@ -119,6 +119,34 @@ export default function AppStack(props) {
       <Drawer.Screen
         name="NuevaTarjeta"
         component={NuevaTarjetaStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="BorrarTarjeta"
+        component={BorrarTarjetaStack}
+        options={{
+          drawerIcon: ({ focused }) => (
+            <Icon
+              size={16}
+              name="shop"
+              family="GalioExtra"
+              color={focused ? "white" : materialTheme.COLORS.MUTED}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen
+        name="GastosTarjeta"
+        component={GastosTarjetaStack}
         options={{
           drawerIcon: ({ focused }) => (
             <Icon
