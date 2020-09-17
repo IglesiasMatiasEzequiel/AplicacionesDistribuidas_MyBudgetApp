@@ -13,7 +13,7 @@ export default function CuentasBancariasStack(props) {
           component={CuentasBancariasScreen}
           options={{
             header: ({ navigation, scene }) => (
-              <Header title="CuentasBancarias" scene={scene} navigation={navigation} />
+              <Header title="Cuentas Bancarias" scene={scene} navigation={navigation} />
             )
           }}
         />
