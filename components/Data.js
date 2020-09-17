@@ -85,6 +85,21 @@ const estadosPrestamoData = [
   { label: "Vencido", value: "2" }
 ]
 
+const tipoPrestamoData = [
+  { label: "Realizado", value: "1" },
+  { label: "Tomado", value: "2" }
+]
+
+const cuentasData = [
+  { label: "Nro° 28505909 40090418135201 - Galicia", value: "1" },
+  { label: "Nro° 28503409 40090417835202 - BBVA Francés", value: "2" },
+]
+
+const tarjetasData = [
+  { label: "Nro° **** **** **** 0856 - Galicia", value: "1" },
+  { label: "Nro° **** **** **** 4562 - BBVA Francés", value: "2" }
+]
+
 export {
   cantCuotasData,
   mediosPagoData,
@@ -96,5 +111,8 @@ export {
   bancosData,
   tipoInversionData,
   periodosData,
-  estadosPrestamoData
+  estadosPrestamoData,
+  tipoPrestamoData,
+  cuentasData,
+  tarjetasData
 };

@@ -54,6 +54,17 @@ export default function BorrarIngresos({ navigation }) {
     }, 500);
   };
 
+  const limpiarState = () => {
+    setIsLoading(false);
+    setModalData({...modalData, isVisible: false});
+    setTipoBorrar(null);
+  };
+
+  const onBack = () => {
+    limpiarState();
+    navigation.navigate("Ingresos");
+  };
+
   const onCloseModal = () => setModalData({ ...modalData, isVisible: false });
 
   const deleteButton = (data, index) => (
@@ -145,6 +156,10 @@ export default function BorrarIngresos({ navigation }) {
           </View>
         </View>
       )}
+
+      <TouchableOpacity onPress={onBack} style={[buttonStyles.btnBack, { marginTop: 10 }]}>
+        <Text style={buttonStyles.btnBackText}>Volver</Text>
+      </TouchableOpacity>
 
       <CustomSpinner isLoading={isLoading} text={"Eliminando..."} />
 

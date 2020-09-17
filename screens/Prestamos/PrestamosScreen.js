@@ -25,34 +25,35 @@ export default function PrestamosScreen({ navigation }) {
     setEstadoPrestamo(null);
   };
 
-  const onNuevaInversion = () => {
+  const onNuevoPrestamo = () => {
     limpiarState();
-    navigation.navigate("NuevaInversion");
+    navigation.navigate("NuevoPrestamo");
   }
-  const onBorrarInversion= () => { 
+  const onBorrarPrestamo= () => { 
     limpiarState();
-    navigation.navigate("BorrarInversion"); }
+    navigation.navigate("BorrarPrestamo"); }
 
   const tableHeaders = [
     "Tipo",
     "Destino/Emisor",
     "Monto",
-    "Duracion",
+    "Intereses",
   ];
-  const columnWidth = [150, 80, 150, 150,200];
+  const columnWidth = [150, 200, 150, 120];
 
   const tableData = [
-    ["Accciones", "$5000", "01/12/2019", "", "Banco Galicia"],
-    ["Plazo Fijo", "$7000", "01/02/2020", "7 meses", ""],
+    ["Realizados", "Santiago Garcia", "$4000","%4"],
+    ["Tomados", "Banco Santander", "$10000", "%34"],
+    ["Tomados", "Banco Galicia", "$8000", "%23"],
   ];
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <TouchableOpacity onPress={onNuevaInversion} style={buttonStyles.btn}>
+      <TouchableOpacity onPress={onNuevoPrestamo} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Nuevo Prestamos</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBorrarInversion} style={buttonStyles.btn}>
+      <TouchableOpacity onPress={onBorrarPrestamo} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Borrar Prestamos</Text>
       </TouchableOpacity>
 

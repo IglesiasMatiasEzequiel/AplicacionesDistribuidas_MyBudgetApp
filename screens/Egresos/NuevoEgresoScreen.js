@@ -13,7 +13,9 @@ import {
   cantCuotasData,
   categoriasEgresoData,
   mediosPagoData,
-  tiposEgresoData
+  tiposEgresoData,
+  cuentasData,
+  tarjetasData
 } from "../../components/Data";
 
 export default function NuevoEgresoScren({ navigation }) {
@@ -28,6 +30,8 @@ export default function NuevoEgresoScren({ navigation }) {
   const [categoriaEgreso, setCategoriaEgreso] = React.useState(null);
   const [medioPago, setMedioPago] = React.useState(null);
   const [cuotas, setCuotas] = React.useState(null);
+  const [cuenta, setCuenta] = React.useState(null);
+  const [tarjeta, setTarjeta] = React.useState(null);
 
   const handleChangeFecha = (fecha) => setFecha(fecha);
   const handleChangeMonto = (monto) => setMonto(monto);
@@ -40,8 +44,11 @@ export default function NuevoEgresoScren({ navigation }) {
   const handleChangeMedioPago = (medioPago) => { 
     setMedioPago(medioPago);
     setCuotas(null);
+    setCuenta(null);
   };
   const handleChangeCuotas = (cuotas) => setCuotas(cuotas);
+  const handleChangeCuenta = (cuenta) => setCuenta(cuenta);
+  const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
 
   const limpiarState = () => {
     setIsLoading(false);
@@ -53,6 +60,8 @@ export default function NuevoEgresoScren({ navigation }) {
     setCategoriaEgreso(null);
     setMedioPago(null);
     setCuotas(null);
+    setCuenta(null);
+    setTarjeta(null);
   };
 
   const onConfirmar = () => {
@@ -138,7 +147,20 @@ export default function NuevoEgresoScren({ navigation }) {
           onChangeItem={(item) => handleChangeMedioPago(item.value)}
         />
       </View>
-      {(medioPago === "2" || medioPago === "3") && (
+      {medioPago === "2" && (
+        <View>
+          <DropDownPicker
+            items={tarjetasData}
+            defaultValue={tarjeta}
+            placeholder="Seleccione una tarjeta de crédito."
+            containerStyle={dropdownStyles.dropdownContainer}
+            style={dropdownStyles.dropdown}
+            itemStyle={dropdownStyles.dropdownItem}
+            onChangeItem={(item) => handleChangeTarjeta(item.value)}
+          />
+        </View>
+      )}
+      {medioPago === "2" && (
         <View>
           <DropDownPicker
             items={cantCuotasData}
@@ -148,6 +170,19 @@ export default function NuevoEgresoScren({ navigation }) {
             style={dropdownStyles.dropdown}
             itemStyle={dropdownStyles.dropdownItem}
             onChangeItem={(item) => handleChangeCuotas(item.value)}
+          />
+        </View>
+      )}
+      {medioPago === "3" && (
+        <View>
+          <DropDownPicker
+            items={cuentasData}
+            defaultValue={cuenta}
+            placeholder="Seleccione una cuenta."
+            containerStyle={dropdownStyles.dropdownContainer}
+            style={dropdownStyles.dropdown}
+            itemStyle={dropdownStyles.dropdownItem}
+            onChangeItem={(item) => handleChangeCuenta(item.value)}
           />
         </View>
       )}

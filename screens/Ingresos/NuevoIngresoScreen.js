@@ -13,6 +13,7 @@ import {
   destinosData,
   tiposIngresoData,
   categoriasIngresoData,
+  cuentasData
 } from "../../components/Data";
 
 export default function NuevoIngresoScren({ navigation }) {
@@ -26,6 +27,7 @@ export default function NuevoIngresoScren({ navigation }) {
   const [tipoIngreso, setTipoIngreso] = React.useState(null);
   const [categoriaIngreso, setCategoriaIngreso] = React.useState(null);
   const [destino, setDestino] = React.useState(null);
+  const [cuenta, setCuenta] = React.useState(null);
 
   const handleChangeFecha = (fecha) => setFecha(fecha);
   const handleChangeMonto = (monto) => setMonto(monto);
@@ -36,7 +38,11 @@ export default function NuevoIngresoScren({ navigation }) {
   };
   const handleChangeCategoriaIngreso = (categoriaIngreso) =>
     setCategoriaIngreso(categoriaIngreso);
-  const handleChangeDestino = (destino) => setDestino(destino);
+  const handleChangeDestino = (destino) => { 
+    setDestino(destino);
+    setCuenta(null);
+  }
+  const handleChangeCuenta = (cuenta) => setCuenta(cuenta);
 
   const limpiarState = () => {
     setIsLoading(false);
@@ -47,6 +53,7 @@ export default function NuevoIngresoScren({ navigation }) {
     setTipoIngreso(null);
     setCategoriaIngreso(null);
     setDestino(null);
+    setCuenta(null);
   };
 
   const onConfirmar = () => {
@@ -132,6 +139,19 @@ export default function NuevoIngresoScren({ navigation }) {
           onChangeItem={(item) => handleChangeDestino(item.value)}
         />
       </View>
+      {destino === "1" && (
+        <View>
+          <DropDownPicker
+            items={cuentasData}
+            defaultValue={cuenta}
+            placeholder="Seleccione una cuenta."
+            containerStyle={dropdownStyles.dropdownContainer}
+            style={dropdownStyles.dropdown}
+            itemStyle={dropdownStyles.dropdownItem}
+            onChangeItem={(item) => handleChangeCuenta(item.value)}
+          />
+        </View>
+      )}
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Confirmar</Text>

@@ -43,7 +43,7 @@ export default function Menu({
     { name: "CuentasBancarias", title: "Cuentas Bancarias"},
     { name: "Inversiones", title: "Inversiones"},
     { name: "Prestamos", title: "Prestamos"},
-    { name: "Presupuesto", title: "Presupuesto"}
+    { name: "Presupuestos", title: "Presupuesto"}
   ];
 
   return (

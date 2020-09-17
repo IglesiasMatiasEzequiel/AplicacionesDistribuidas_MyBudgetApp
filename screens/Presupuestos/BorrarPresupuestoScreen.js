@@ -13,24 +13,23 @@ import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
 import { Text } from "galio-framework";
 import RadioButtonRN from "radio-buttons-react-native";
 
-export default function BorrarPrestamo({ navigation }) {
+export default function BorrarPresupuesto({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
   const [tipoBorrar, setTipoBorrar] = React.useState(null);
 
   const tableHeaders = [
     "",
+    "Mes/Año",
     "Tipo",
-    "Destino/Emisor",
+    "Descripcion",
     "Monto",
-    "Intereses",
   ];
-  const columnWidth = [60,150, 200, 150, 120];
+  const columnWidth = [60, 100, 200, 200,100];
 
   const tableData = [
-    ["","Realizados", "Santiago Garcia", "$4000", "%4"],
-    ["","Tomados", "Banco Santander", "$10000", "%34"],
-    ["","Tomados", "Banco Galicia", "$8000", "%23"],
+    ["", "08/2020", "Alquiler", "Alquiler del mes de Agosto", "$5000"],
+    ["", "08/2020", "Luz/Gas/Agua", "Impuestos de mes en Agosto", "$7000"],
   ];
 
   const onBorrar = () => {
@@ -40,7 +39,7 @@ export default function BorrarPrestamo({ navigation }) {
       setIsLoading(false);
       setModalData({
         title: "¡Borrado exitoso!",
-        message: "El prestamo se eliminó correctamente.",
+        message: "El presupuesto se eliminó correctamente.",
         isVisible: true,
       });
     }, 500);
@@ -60,7 +59,7 @@ export default function BorrarPrestamo({ navigation }) {
     <ScrollView style={screenStyles.screen}>
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
-          Mis prestamos
+          Mis presupuestos
         </Text>
       </View>
 
