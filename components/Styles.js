@@ -1,14 +1,18 @@
 import { StyleSheet, Dimensions } from "react-native";
 import { theme } from "galio-framework";
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
 const screenStyles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: theme.COLORS.DEFAULT,
-    padding: 20,
-    minHeight: height
+    padding: 20
+  },
+  dashboardScreen: {
+    flex: 1,
+    backgroundColor: theme.COLORS.DEFAULT,
+    padding: 5
   },
   containerColumns: {
     flex: 1,

@@ -37,7 +37,7 @@ export default function MenuItem({ navigation, title, focused }) {
         return <MenuIcon name="md-arrow-round-back" focused={focused} />;
       case "Tarjetas":
         return <MenuIcon name="md-card" focused={focused} />;
-      case "Cuentas":
+      case "CuentasBancarias":
         return <MenuIcon name="md-briefcase" focused={focused} />;
       case "Inversiones":
         return <MenuIcon name="md-trending-up" focused={focused} />;

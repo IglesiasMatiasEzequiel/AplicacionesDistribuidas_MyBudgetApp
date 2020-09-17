@@ -18,6 +18,7 @@ import BorrarInversionScreen from './Inversiones/BorrarInversionScreen';
 import PrestamosScreen from './Prestamos/PrestamosScreen';
 import NuevoPrestamoScreen from './Prestamos/NuevoPrestamoScreen';
 import BorrarPrestamoScreen from './Prestamos/BorrarPrestamosScreen';
+import CuentasBancariasScreen from './Cuentas/CuentasBancariasScreen';
 
 export {
     LoginScreen,
@@ -39,5 +40,7 @@ export {
     BorrarInversionScreen,
     PrestamosScreen,
     NuevoPrestamoScreen,
-    BorrarPrestamoScreen
+    BorrarPrestamoScreen,
+    CuentasBancariasScreen
+
 }

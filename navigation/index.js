@@ -5,6 +5,7 @@ import EgresosStack from './EgresosStack';
 import TarjetasStack from './TarjetasStack';
 import InversionesStack from './InversionesStack';
 import PrestamosStack from './PrestamosStack';
+import CuentasBancariasStack from './CuentasBancariasStack'; 
 
 export {
     Menu,
@@ -13,5 +14,6 @@ export {
     EgresosStack,
     TarjetasStack,
     InversionesStack,
-    PrestamosStack
+    PrestamosStack,
+    CuentasBancariasStack
 }
