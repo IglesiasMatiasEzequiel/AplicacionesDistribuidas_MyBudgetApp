@@ -10,8 +10,10 @@ import
   IngresosStack, 
   EgresosStack,
   TarjetasStack,
+  InversionesStack,
+  PrestamosStack,
   CuentasBancariasStack
-} 
+}
 from '../navigation/index';
 
 const { width } = Dimensions.get("screen");
@@ -38,6 +40,8 @@ export default function AppStack(props) {
       <Drawer.Screen name="Ingresos" component={IngresosStack} />
       <Drawer.Screen name="Egresos" component={EgresosStack} />
       <Drawer.Screen name="Tarjetas" component={TarjetasStack} />
+      <Drawer.Screen name="Inversiones" component={InversionesStack} />
+      <Drawer.Screen name="Prestamos" component={PrestamosStack} />
       <Drawer.Screen name="CuentasBancarias" component={CuentasBancariasStack}/>
       <Drawer.Screen name="Cerrar Sesión" component={LoginScreen}/>
       

@@ -12,6 +12,12 @@ import BorrarTarjetaScreen from './Tarjetas/BorrarTarjetaScreen';
 import EgresosScreen from './Egresos/EgresosScreen';
 import NuevoEgresoScreen from './Egresos/NuevoEgresoScreen';
 import BorrarEgresoScreen from './Egresos/BorrarEgresoScreen';
+import InversionesScreen from './Inversiones/InversionesScreen';
+import NuevaInversionScreen from './Inversiones/NuevaInversionScreen';
+import BorrarInversionScreen from './Inversiones/BorrarInversionScreen';
+import PrestamosScreen from './Prestamos/PrestamosScreen';
+import NuevoPrestamoScreen from './Prestamos/NuevoPrestamoScreen';
+import BorrarPrestamoScreen from './Prestamos/BorrarPrestamosScreen';
 import CuentasBancariasScreen from './Cuentas/CuentasBancariasScreen';
 import VerCuentasScreen from './Cuentas/VerCuentasScreen';
 import BorrarCuentaScreen from './Cuentas/BorrarCuentaScreen';
@@ -32,8 +38,14 @@ export {
     BorrarEgresoScreen,
     GastosTarjetaScreen,
     BorrarTarjetaScreen,
-    CuentasBancariasScreen,
     VerCuentasScreen,
     BorrarCuentaScreen,
-    NuevaCuentaScreen
+    NuevaCuentaScreen,
+    InversionesScreen,
+    NuevaInversionScreen,
+    BorrarInversionScreen,
+    PrestamosScreen,
+    NuevoPrestamoScreen,
+    BorrarPrestamoScreen,
+    CuentasBancariasScreen
 }

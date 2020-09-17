@@ -67,6 +67,13 @@ const bancosData = [
   { label: "Banco Santander", value: "4" },
 ]
 
+const tipoInversionData = [
+  { label: "Acciones", value: "1" },
+  { label: "Plazo Fijo", value: "2" },
+  { label: "Fondo Comunes", value: "3" },
+  { label: "Bonos", value: "4" },
+]
+
 export {
   cantCuotasData,
   mediosPagoData,
@@ -75,5 +82,6 @@ export {
   destinosData,
   tiposIngresoData,
   categoriasIngresoData,
-  bancosData
+  bancosData,
+  tipoInversionData,
 };
