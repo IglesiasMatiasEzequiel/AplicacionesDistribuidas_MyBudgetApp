@@ -74,6 +74,11 @@ const tipoInversionData = [
   { label: "Bonos", value: "4" },
 ]
 
+const tipoPrestamoData = [
+  { label: "Realizado", value: "1" },
+  { label: "Tomado", value: "2" },
+]
+
 export {
   cantCuotasData,
   mediosPagoData,
@@ -84,4 +89,5 @@ export {
   categoriasIngresoData,
   bancosData,
   tipoInversionData,
+  tipoPrestamoData
 };

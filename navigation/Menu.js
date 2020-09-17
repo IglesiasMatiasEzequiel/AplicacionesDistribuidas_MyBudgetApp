@@ -43,7 +43,7 @@ export default function Menu({
     "CuentasBancarias",
     "Inversiones",
     "Prestamos",
-    "Presupuesto"
+    "Presupuestos"
   ];
 
   return (

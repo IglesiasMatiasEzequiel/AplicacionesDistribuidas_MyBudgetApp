@@ -18,6 +18,9 @@ import BorrarInversionScreen from './Inversiones/BorrarInversionScreen';
 import PrestamosScreen from './Prestamos/PrestamosScreen';
 import NuevoPrestamoScreen from './Prestamos/NuevoPrestamoScreen';
 import BorrarPrestamoScreen from './Prestamos/BorrarPrestamosScreen';
+import PresupuestosScreen from './Presupuestos/PresupuestosScreen';
+import NuevoPresupuestoScreen from './Presupuestos/NuevoPresupuestoScreen';
+import BorrarPresupuestoScreen from './Presupuestos/BorrarPresupuestoScreen';
 import CuentasBancariasScreen from './Cuentas/CuentasBancariasScreen';
 
 export {
@@ -41,6 +44,8 @@ export {
     PrestamosScreen,
     NuevoPrestamoScreen,
     BorrarPrestamoScreen,
+    PresupuestosScreen,
+    NuevoPresupuestoScreen,
+    BorrarPresupuestoScreen,
     CuentasBancariasScreen
-
 }

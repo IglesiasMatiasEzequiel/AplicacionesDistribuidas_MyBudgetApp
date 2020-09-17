@@ -122,7 +122,7 @@ export default function NuevaInversionScreen({ navigation }) {
         <Text style={buttonStyles.btnBackText}>Volver</Text>
       </TouchableOpacity>
 
-      <CustomSpinner isLoading={isLoading} text={"Guardando Tarjeta..."} />
+      <CustomSpinner isLoading={isLoading} text={"Guardando Prestamo..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}

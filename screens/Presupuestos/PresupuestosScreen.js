@@ -9,37 +9,36 @@ import {
 import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
-export default function PrestamosScreen({ navigation }) {
-  const onNuevoPrestamos = () => navigation.navigate("NuevoPrestamo");
-  const onBorrarPrestamo= () => navigation.navigate("BorrarPrestamo");
+export default function PresupuestosScreen({ navigation }) {
+  const onNuevoPresupuesto = () => navigation.navigate("NuevoPresupuesto");
+  const onBorrarPresupuesto= () => navigation.navigate("BorrarPresupuesto");
 
   const tableHeaders = [
+    "Mes/Año",
     "Tipo",
-    "Destino/Emisor",
+    "Descripcion",
     "Monto",
-    "Intereses",
   ];
-  const columnWidth = [150, 200, 150, 120];
+  const columnWidth = [ 100, 200, 200,100];
 
   const tableData = [
-    ["Realizados", "Santiago Garcia", "$4000","%4"],
-    ["Tomados", "Banco Santander", "$10000", "%34"],
-    ["Tomados", "Banco Galicia", "$8000", "%23"],
+    ["08/2020", "Alquiler", "Alquiler del mes de Agosto", "$5000"],
+    ["08/2020", "Luz/Gas/Agua", "Impuestos de mes en Agosto", "$7000"],
   ];
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <TouchableOpacity onPress={onNuevoPrestamos} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Nuevo Prestamos</Text>
+      <TouchableOpacity onPress={onNuevoPresupuesto} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Nuevo Presupuesto</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBorrarPrestamo} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Borrar Prestamos</Text>
+      <TouchableOpacity onPress={onBorrarPresupuesto} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Borrar Presupuesto</Text>
       </TouchableOpacity>
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
-          Mis prestamos
+          Mis presupuestos
         </Text>
       </View>
 
