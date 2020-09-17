@@ -22,6 +22,9 @@ import PresupuestosScreen from './Presupuestos/PresupuestosScreen';
 import NuevoPresupuestoScreen from './Presupuestos/NuevoPresupuestoScreen';
 import BorrarPresupuestoScreen from './Presupuestos/BorrarPresupuestoScreen';
 import CuentasBancariasScreen from './Cuentas/CuentasBancariasScreen';
+import VerCuentasScreen from './Cuentas/VerCuentasScreen';
+import BorrarCuentaScreen from './Cuentas/BorrarCuentaScreen';
+import NuevaCuentaScreen from './Cuentas/NuevaCuentaScreen';
 
 export {
     LoginScreen,
@@ -38,6 +41,9 @@ export {
     BorrarEgresoScreen,
     GastosTarjetaScreen,
     BorrarTarjetaScreen,
+    VerCuentasScreen,
+    BorrarCuentaScreen,
+    NuevaCuentaScreen,
     InversionesScreen,
     NuevaInversionScreen,
     BorrarInversionScreen,
