@@ -38,8 +38,8 @@ export default function AppStack(props) {
       <Drawer.Screen name="Ingresos" component={IngresosStack} />
       <Drawer.Screen name="Egresos" component={EgresosStack} />
       <Drawer.Screen name="Tarjetas" component={TarjetasStack} />
-      <Drawer.Screen name="Cerrar Sesión" component={LoginScreen}/>
       <Drawer.Screen name="CuentasBancarias" component={CuentasBancariasStack}/>
+      <Drawer.Screen name="Cerrar Sesión" component={LoginScreen}/>
       
     </Drawer.Navigator>
   );

@@ -40,7 +40,7 @@ export default function Menu({
     "Ingresos",
     "Egresos",
     "Tarjetas",
-    "Cuentas",
+    "CuentasBancarias",
     "Inversiones",
     "Prestamos",
     "Presupuesto"
