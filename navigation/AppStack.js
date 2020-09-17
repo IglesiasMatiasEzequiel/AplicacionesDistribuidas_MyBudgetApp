@@ -9,7 +9,9 @@ import
   DashboardStack, 
   IngresosStack, 
   EgresosStack,
-  TarjetasStack
+  TarjetasStack,
+  InversionesStack,
+  PrestamosStack
 } 
 from '../navigation/index';
 
@@ -37,6 +39,8 @@ export default function AppStack(props) {
       <Drawer.Screen name="Ingresos" component={IngresosStack} />
       <Drawer.Screen name="Egresos" component={EgresosStack} />
       <Drawer.Screen name="Tarjetas" component={TarjetasStack} />
+      <Drawer.Screen name="Inversiones" component={InversionesStack} />
+      <Drawer.Screen name="Prestamos" component={PrestamosStack} />
       <Drawer.Screen name="Cerrar Sesión" component={LoginScreen}/>
 
     </Drawer.Navigator>
