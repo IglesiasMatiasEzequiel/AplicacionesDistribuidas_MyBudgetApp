@@ -1,21 +1,23 @@
 import React from "react";
-import { StyleSheet, Dimensions, ScrollView, View } from "react-native";
+import {
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  View,
+  FlatList,
+  Text,
+} from "react-native";
 import { Card } from "react-native-elements";
 import { PieChart } from "react-native-chart-kit";
+import { Table, Row } from "react-native-table-component";
 import {
   screenStyles,
   buttonStyles,
-  textboxStyles,
-  spinnerStyles,
+  tableStyles,
+  titleStyles,
 } from "../components/Styles";
 
-const { width } = Dimensions.get("screen");
-
-const styles = StyleSheet.create({
-  home: {
-    width: width,
-  },
-});
+const { width, height } = Dimensions.get("screen");
 
 const months = [
   "Enero",
@@ -32,51 +34,46 @@ const months = [
   "Diciembre",
 ];
 const colors = [
-  "#69067A",
-  "#A00440",
-  "#5CA804",
-  "#A0B504",
-  "#10317C",
-  "#2C1180",
-  "#F2D548",
-  "#BA7D04",
+  "#FF7E7E",
+  "#FFB87E",
+  "#6BD86B",
+  "#58B2B2",
+  "#A063BF",
+  "#DA6CA8",
+  "#C8F277",
+  "#FDFF7E",
 ];
 
 const gastosMes = [
   {
     name: "Efectivo",
     gasto: 7557.8,
+    porc: 9,
     color: colors[0],
-    legendFontColor: colors[0],
-    legendFontSize: 15,
   },
   {
     name: "Débito Aut.",
     gasto: 12546.34,
+    porc: 11,
     color: colors[1],
-    legendFontColor: colors[1],
-    legendFontSize: 15,
   },
   {
     name: "Crédito",
     gasto: 15768.99,
+    porc: 14,
     color: colors[2],
-    legendFontColor: colors[2],
-    legendFontSize: 15,
   },
   {
     name: "Transferencia",
     gasto: 23421.34,
+    porc: 23,
     color: colors[3],
-    legendFontColor: colors[3],
-    legendFontSize: 15,
   },
   {
     name: "Débito",
     gasto: 31908.54,
+    porc: 43,
     color: colors[4],
-    legendFontColor: colors[4],
-    legendFontSize: 15,
   },
 ];
 
@@ -84,23 +81,20 @@ const saldosCuentas = [
   {
     name: "Banco Galicia",
     saldo: 75040.9,
+    porc: 68,
     color: colors[0],
-    legendFontColor: colors[0],
-    legendFontSize: 15,
   },
   {
     name: "BBVA Francés",
     saldo: 12546.34,
+    porc: 11,
     color: colors[1],
-    legendFontColor: colors[1],
-    legendFontSize: 15,
   },
   {
     name: "HSBC",
     saldo: 25768.99,
+    porc: 21,
     color: colors[2],
-    legendFontColor: colors[2],
-    legendFontSize: 15,
   },
 ];
 
@@ -119,41 +113,105 @@ const chartConfig = {
   },
 };
 
+const renderItemGasto = (item) => {
+  var gasto = item.item;
+  var descripcion =
+    "$ " + gasto.gasto + " (" + gasto.porc + "%) - " + gasto.name;
+
+  return (
+    <View>
+      <Text
+        style={{
+          color: item.item.color,
+          paddingTop: 5,
+          fontWeight: "bold",
+        }}
+      >
+        {descripcion}
+      </Text>
+    </View>
+  );
+};
+
+const renderItemSaldo = (item) => {
+  var saldo = item.item;
+  var descripcion = "$ " + saldo.saldo + " (" + saldo.porc + "%) - " + saldo.name;
+
+  return (
+    <View>
+      <Text
+        style={{
+          color: item.item.color,
+          paddingTop: 5,
+          fontWeight: "bold",
+        }}
+      >
+        {descripcion}
+      </Text>
+    </View>
+  );
+};
+
 export default class DashboardScreen extends React.Component {
   render() {
     const today = new Date();
 
     return (
-      <ScrollView style={screenStyles.screen}>
+      <ScrollView style={screenStyles.dashboardScreen}>
         <Card>
           <Card.Title>Gastos de {months[today.getMonth()]}</Card.Title>
           <Card.Divider />
-          <ScrollView horizontal>
-            <PieChart
+          <PieChart
+            data={gastosMes}
+            width={300}
+            height={300}
+            chartConfig={chartConfig}
+            accessor="gasto"
+            backgroundColor="transparent"
+            hasLegend={false}
+            paddingLeft={95}
+          />
+
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          >
+            <FlatList
               data={gastosMes}
-              width={350}
-              height={220}
-              chartConfig={chartConfig}
-              accessor="gasto"
-              backgroundColor="transparent"
-              absolute
+              renderItem={renderItemGasto}
+              keyExtractor={(item) => item.id}
             />
-          </ScrollView>
+          </View>
         </Card>
         <Card>
           <Card.Title>Saldos</Card.Title>
           <Card.Divider />
-          <ScrollView horizontal>
-            <PieChart
+          <PieChart
+            data={saldosCuentas}
+            width={300}
+            height={300}
+            chartConfig={chartConfig}
+            accessor="saldo"
+            backgroundColor="transparent"
+            hasLegend={false}
+            paddingLeft={95}
+          />
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          >
+            <FlatList
               data={saldosCuentas}
-              width={350}
-              height={220}
-              chartConfig={chartConfig}
-              accessor="saldo"
-              backgroundColor="transparent"
-              absolute
+              renderItem={renderItemSaldo}
+              keyExtractor={(item) => item.id}
             />
-          </ScrollView>
+          </View>
         </Card>
       </ScrollView>
     );
