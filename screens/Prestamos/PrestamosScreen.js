@@ -5,14 +5,33 @@ import {
   buttonStyles,
   tableStyles,
   titleStyles,
+  dropdownStyles
 } from "../../components/Styles";
+import {
+  estadosPrestamoData
+} from "../../components/Data";
+
+import DropDownPicker from "react-native-dropdown-picker";
 import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
 export default function PrestamosScreen({ navigation }) {
-  const onNuevaInversion = () => navigation.navigate("NuevaInversion");
-  const onBorrarInversion= () => navigation.navigate("BorrarInversion");
-  const onVerGastos = () => navigation.navigate("GastosTarjeta");
+
+  const [estadoPrestamo, setEstadoPrestamo] = React.useState(null);
+
+  const handleChangeEstadoPrestamo = (estadoPrestamo) => setEstadoPrestamo(estadoPrestamo);
+
+  const limpiarState = () => {
+    setEstadoPrestamo(null);
+  };
+
+  const onNuevaInversion = () => {
+    limpiarState();
+    navigation.navigate("NuevaInversion");
+  }
+  const onBorrarInversion= () => { 
+    limpiarState();
+    navigation.navigate("BorrarInversion"); }
 
   const tableHeaders = [
     "Tipo",
@@ -37,9 +56,27 @@ export default function PrestamosScreen({ navigation }) {
         <Text style={buttonStyles.btnText}>Borrar Prestamos</Text>
       </TouchableOpacity>
 
+      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
+          <Text h5 style={titleStyles.titleText}>
+            Filtros
+          </Text>
+      </View>
+
+      <DropDownPicker
+            items={estadosPrestamoData}
+            defaultValue={estadoPrestamo}
+            placeholder="Seleccione un estado."
+            containerStyle={dropdownStyles.dropdownContainer}
+            style={dropdownStyles.dropdown}
+            itemStyle={dropdownStyles.dropdownItem}
+            onChangeItem={(item) => handleChangeEstadoPrestamo(item.value)}
+          />
+
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
           Mis prestamos
+          {estadoPrestamo === "1" ? " activos"
+            : estadoPrestamo === "2" ? " vencidos" : ""}
         </Text>
       </View>
 

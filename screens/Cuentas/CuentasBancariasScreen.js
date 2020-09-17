@@ -10,36 +10,31 @@ import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
 export default function CuentasBancariasScreen({ navigation }) {
-  const onNuevaTarjeta = () => navigation.navigate("NuevaTarjeta");
-  const onBorrarTarjeta = () => navigation.navigate("BorrarTarjeta");
-  const onVerCuentasScreen = () => navigation.navigate("VerCuentasScreen");
+  const onNuevaCuenta = () => navigation.navigate("NuevaCuenta");
+  const onAdministrarCuenta = () => navigation.navigate("AdministrarCuenta");
 
   const tableHeaders = [
-    "Número",
+    "Número Cuenta",
+    "Descripción",
     "Banco",
-    "F. Venc.",
-    "F. Cierre Resúmen",
-    "F. Venc. Resúmen",
+    "Número Tarjeta",
+    "F. Venc.",,
   ];
-  const columnWidth = [150, 120, 120, 120, 120];
+  const columnWidth = [250, 200, 200, 120, 80];
 
   const tableData = [
-    ["**** **** **** 0856", "Galicia", "12/24", "01/09/2020", "01/09/2020"],
-    ["**** **** **** 4562", "BBVA Francés", "12/22", "01/09/2020", "01/09/2020"],
+    ["28505909 40090418135201", "Caja de ahorro - Galicia", "Galicia", "**** **** **** 9999", "12/24"],
+    ["28503409 40090417835202", "Caja de ahorro", "BBVA Francés", "**** **** **** 6789", "12/22"],
   ];
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <TouchableOpacity onPress={onNuevaTarjeta} style={buttonStyles.btn}>
+      <TouchableOpacity onPress={onNuevaCuenta} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Nueva Cuenta</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBorrarTarjeta} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Borrar Cuenta</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={onVerCuentasScreen} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Ver Cuentas</Text>
+      <TouchableOpacity onPress={onAdministrarCuenta} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Administrar Cuentas</Text>
       </TouchableOpacity>
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>

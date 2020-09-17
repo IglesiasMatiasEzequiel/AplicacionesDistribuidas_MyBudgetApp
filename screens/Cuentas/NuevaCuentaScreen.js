@@ -10,34 +10,36 @@ import {
   buttonStyles,
   textboxStyles,
   dropdownStyles,
+  titleStyles,
 } from "../../components/Styles";
 
-export default function NuevaTarjetaScreen({ navigation }) {
+export default function NuevaCuentaScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
+  const [numeroCuenta, setNumeroCuenta] = React.useState("");
+  const [descripcion, setDescripcion] = React.useState("");
+  const [monto, setMonto] = React.useState("");
   const [banco, setBanco] = React.useState(null);
   const [tarjeta, setTarjeta] = React.useState("");
   const [vencimiento, setVencimiento] = React.useState("");
-  const [cierreResumen, setCierreResumen] = React.useState("");
-  const [vencimientoResumen, setVencimientoResumen] = React.useState("");
 
+  const handleChangeNumeroCuenta = (numeroCuenta) => setNumeroCuenta(numeroCuenta);
+  const handleChangeDescripcion = (descripcion) => setDescripcion(descripcion);
+  const handleChangeMonto = (monto) => setMonto(monto);
   const handleChangeBanco = (banco) => setBanco(banco);
   const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
   const handleChangeVencimiento = (vencimiento) => setVencimiento(vencimiento);
-  const handleChangeCierreResumen = (cierreResumen) =>
-    setCierreResumen(cierreResumem);
-  const handleChangeVencimientoResumen = (vencimientoResumen) =>
-    setVencimientoResumen(vencimientoResumem);
 
   const limpiarState = () => {
     setIsLoading(false);
     setModalData({ ...modalData, isVisible: false });
+    setNumeroCuenta("");
+    setDescripcion("");
+    setMonto("");
     setBanco(null);
     setTarjeta("");
     setVencimiento("");
-    setCierreResumen("");
-    setVencimientoResumen("");
   };
 
   const onConfirmar = () => {
@@ -46,7 +48,7 @@ export default function NuevaTarjetaScreen({ navigation }) {
     setTimeout(() => {
       setIsLoading(false);
       setModalData({
-        message: "La tarjeta se guardó correctamente.",
+        message: "La cuenta se guardó correctamente.",
         isVisible: true,
         isSuccess: true,
         successBtnText: "Aceptar",
@@ -56,11 +58,53 @@ export default function NuevaTarjetaScreen({ navigation }) {
 
   const onBack = () => {
     limpiarState();
-    navigation.navigate("Tarjetas");
+    navigation.navigate("CuentasBancarias");
   };
 
   return (
     <ScrollView style={screenStyles.screen}>
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Cuenta
+        </Text>
+      </View>
+
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Número cuenta..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(numeroCuenta) =>
+            handleChangeNumeroCuenta(numeroCuenta)
+          }
+          value={numeroCuenta}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Descripción..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(descripcion) => handleChangeDescripcion(descripcion)}
+          value={descripcion}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Monto..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(monto) => handleChangeMonto(monto)}
+          value={monto}
+        />
+      </View>
+
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Tarjeta de débito
+        </Text>
+      </View>
+
       <View>
         <DropDownPicker
           items={bancosData}
@@ -90,28 +134,6 @@ export default function NuevaTarjetaScreen({ navigation }) {
           value={vencimiento}
         />
       </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="F. Cierre del Resúmen..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(cierreResumen) =>
-            handleChangeCierreResumen(cierreResumen)
-          }
-          value={cierreResumen}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="F. Vencimiento del Resúmen..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(vencimientoResumen) =>
-            handleChangeVencimientoResumen(vencimientoResumen)
-          }
-          value={vencimientoResumen}
-        />
-      </View>
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Confirmar</Text>
@@ -121,7 +143,7 @@ export default function NuevaTarjetaScreen({ navigation }) {
         <Text style={buttonStyles.btnBackText}>Volver</Text>
       </TouchableOpacity>
 
-      <CustomSpinner isLoading={isLoading} text={"Guardando Tarjeta..."} />
+      <CustomSpinner isLoading={isLoading} text={"Guardando Cuenta..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}

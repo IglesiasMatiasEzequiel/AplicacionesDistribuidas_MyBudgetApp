@@ -5,14 +5,34 @@ import {
   buttonStyles,
   tableStyles,
   titleStyles,
+  dropdownStyles
 } from "../../components/Styles";
+import {
+  periodosData
+} from "../../components/Data";
+
+import DropDownPicker from "react-native-dropdown-picker";
 import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
 export default function InversionesScreen({ navigation }) {
-  const onNuevaInversion = () => navigation.navigate("NuevaInversion");
-  const onBorrarInversion= () => navigation.navigate("BorrarInversion");
-  const onVerGastos = () => navigation.navigate("GastosTarjeta");
+
+  const [periodo, setPeriodo] = React.useState(null);
+
+  const handleChangePeriodo = (periodo) => setPeriodo(periodo);
+
+  const limpiarState = () => {
+    setPeriodo(null);
+  };
+
+  const onNuevaInversion = () => { 
+    limpiarState();
+    navigation.navigate("NuevaInversion"); 
+  }
+  const onBorrarInversion= () => { 
+    limpiarState();
+    navigation.navigate("BorrarInversion");
+  }
 
   const tableHeaders = [
     "Tipo",
@@ -24,8 +44,8 @@ export default function InversionesScreen({ navigation }) {
   const columnWidth = [150, 80, 150, 150,200];
 
   const tableData = [
-    ["Accciones", "$5000", "01/12/2019", "", "Banco Galicia"],
-    ["Plazo Fijo", "$7000", "01/02/2020", "7 meses", ""],
+    ["Accciones", "$5000", "01/12/2019", "-", "Banco Galicia"],
+    ["Plazo Fijo", "$7000", "01/02/2020", "7 meses", "-"],
   ];
 
   return (
@@ -38,9 +58,28 @@ export default function InversionesScreen({ navigation }) {
         <Text style={buttonStyles.btnText}>Borrar Inversion</Text>
       </TouchableOpacity>
 
+      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
+          <Text h5 style={titleStyles.titleText}>
+            Filtros
+          </Text>
+      </View>
+
+      <DropDownPicker
+            items={periodosData}
+            defaultValue={periodo}
+            placeholder="Seleccione un periodo."
+            containerStyle={dropdownStyles.dropdownContainer}
+            style={dropdownStyles.dropdown}
+            itemStyle={dropdownStyles.dropdownItem}
+            onChangeItem={(item) => handleChangePeriodo(item.value)}
+          />
+
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
           Mis Inversiones
+          {periodo === "1" ? " semanales"
+            : periodo === "2" ? " mensuales"
+            : periodo === "3" ? " anuales" : ""}
         </Text>
       </View>
 

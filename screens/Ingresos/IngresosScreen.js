@@ -5,16 +5,34 @@ import {
   buttonStyles,
   tableStyles,
   titleStyles,
+  dropdownStyles
 } from "../../components/Styles";
+import {
+  periodosData
+} from "../../components/Data";
 
+import DropDownPicker from "react-native-dropdown-picker";
 import { Table, Row } from "react-native-table-component";
 import { Text } from "galio-framework";
 
 export default function Ingresos({ navigation }) {
-  const onNuevoIngreso = () => navigation.navigate("NuevoIngreso");
-  const onBorrarIngreso = () => navigation.navigate("BorrarIngreso");
-  const onUltimoAnio = () => {};
-  const onUltimoMes = () => {};
+
+  const [periodo, setPeriodo] = React.useState(null);
+
+  const handleChangePeriodo = (periodo) => setPeriodo(periodo);
+
+  const limpiarState = () => {
+    setPeriodo(null);
+  };
+
+  const onNuevoIngreso = () => {
+    limpiarState();
+    navigation.navigate("NuevoIngreso");
+  }
+  const onBorrarIngreso = () => { 
+    limpiarState();
+    navigation.navigate("BorrarIngreso"); 
+  }
 
   const tableHeaders = ["Tipo", "Categoría", "Destino", "Descripcion", "Monto"];
   const columnWidth = [120, 120, 120, 120, 120];
@@ -47,29 +65,29 @@ export default function Ingresos({ navigation }) {
         <Text style={buttonStyles.btnText}>Borrar Ingreso</Text>
       </TouchableOpacity>
 
-      <View style={[screenStyles.containerColumns]}>
-        <View style={{ width: "50%" }}>
-          <TouchableOpacity
-            onPress={onUltimoAnio}
-            style={[buttonStyles.btnFilter, { marginRight: 10 }]}
-          >
-            <Text style={buttonStyles.btnFilterText}>Ultimo Año</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ width: "50%" }}>
-          <TouchableOpacity
-            onPress={onUltimoMes}
-            style={[buttonStyles.btnFilter, { marginLeft: 10 }]}
-          >
-            <Text style={buttonStyles.btnFilterText}>Ultimo Mes</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
+          <Text h5 style={titleStyles.titleText}>
+            Filtros
+          </Text>
       </View>
 
-      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-        <Text h5 style={titleStyles.titleText}>
-          Últimos Ingresos
-        </Text>
+      <DropDownPicker
+            items={periodosData}
+            defaultValue={periodo}
+            placeholder="Seleccione un periodo."
+            containerStyle={dropdownStyles.dropdownContainer}
+            style={dropdownStyles.dropdown}
+            itemStyle={dropdownStyles.dropdownItem}
+            onChangeItem={(item) => handleChangePeriodo(item.value)}
+          />
+
+      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
+          <Text h5 style={titleStyles.titleText}>
+            Ingresos
+            {periodo === "1" ? " de la semana"
+            : periodo === "2" ? " del mes"
+            : periodo === "3" ? " del año" : ""}
+          </Text>
       </View>
 
       <View style={tableStyles.tableContainer}>

@@ -6,15 +6,24 @@ import {
   titleStyles,
   dropdownStyles,
 } from "../../components/Styles";
-import DropDownPicker from "react-native-dropdown-picker";
+import {
+  periodosData
+} from "../../components/Data";
 
+import DropDownPicker from "react-native-dropdown-picker";
 import { Table, Row } from "react-native-table-component";
 import { Text } from "galio-framework";
 
 export default function Ingresos({ navigation }) {
+  
   const [tarjeta, setTarjeta] = React.useState(null);
+  const [periodo, setPeriodo] = React.useState(null);
 
-  const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
+  const handleChangeTarjeta = (tarjeta) => {
+    setTarjeta(tarjeta);
+    setPeriodo(null);
+  }
+  const handleChangePeriodo = (periodo) => setPeriodo(periodo);
 
   const tableHeaders = ["Tipo", "Categoria", "Cuotas", "Fecha", "Monto"];
   const columnWidth = [120, 150, 60, 120, 120];
@@ -39,6 +48,13 @@ export default function Ingresos({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
+
+      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
+          <Text h5 style={titleStyles.titleText}>
+            Filtros
+          </Text>
+      </View>
+
       <DropDownPicker
         items={misTarjetasData}
         defaultValue={tarjeta}
@@ -50,18 +66,28 @@ export default function Ingresos({ navigation }) {
         zIndex={5000}
       />
 
+      <DropDownPicker
+            items={periodosData}
+            defaultValue={periodo}
+            placeholder="Seleccione un periodo."
+            containerStyle={dropdownStyles.dropdownContainer}
+            style={dropdownStyles.dropdown}
+            itemStyle={dropdownStyles.dropdownItem}
+            onChangeItem={(item) => handleChangePeriodo(item.value)}
+            zIndex={5000}
+          />
+
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
-          Gastos de la tarjeta
+          Gastos 
+          {periodo === "1" ? " semanales "
+            : periodo === "2" ? " mensuales "
+            : periodo === "3" ? " anuales " : ""}
+          de la tarjeta
         </Text>
-        {tarjeta != null && (
-          <Text h6 style={titleStyles.titleText}>
-            {misTarjetasData[parseInt(tarjeta) - 1]?.label}
-          </Text>
-        )}
       </View>
 
-      {tarjeta != null && (
+      {tarjeta != null && periodo != null && (
         <View>
           <View style={tableStyles.tableContainer}>
             <ScrollView horizontal>

@@ -36,14 +36,14 @@ export default function Menu({
   const insets = useSafeArea();
 
   const screens = [
-    "Home",
-    "Ingresos",
-    "Egresos",
-    "Tarjetas",
-    "CuentasBancarias",
-    "Inversiones",
-    "Prestamos",
-    "Presupuesto"
+    { name: "Home", title: "Home"},
+    { name: "Ingresos", title: "Ingresos"},
+    { name: "Egresos", title: "Egresos"},
+    { name: "Tarjetas", title: "Tarjetas"},
+    { name: "CuentasBancarias", title: "Cuentas Bancarias"},
+    { name: "Inversiones", title: "Inversiones"},
+    { name: "Prestamos", title: "Prestamos"},
+    { name: "Presupuesto", title: "Presupuesto"}
   ];
 
   return (
@@ -81,7 +81,8 @@ export default function Menu({
           {screens.map((item, index) => {
             return (
               <MenuItem
-                title={item}
+                name={item.name}
+                title={item.title}
                 key={index}
                 navigation={navigation}
                 focused={state.index === index}
@@ -92,6 +93,7 @@ export default function Menu({
       </Block>
       <Block flex={0.3} style={{ paddingLeft: 7, paddingRight: 14 }}>
         <MenuItem
+          name="Login"
           title="Cerrar Sesión"
           navigation={navigation}
           focused={state.index === 8}

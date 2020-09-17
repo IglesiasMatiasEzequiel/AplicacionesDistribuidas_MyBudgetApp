@@ -5,31 +5,29 @@ import {
   buttonStyles,
   tableStyles,
   titleStyles,
-  radioButtonStyles,
 } from "../../components/Styles";
 import { CustomSpinner, CustomModal } from "../../components";
 
 import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
 import { Text } from "galio-framework";
-import RadioButtonRN from "radio-buttons-react-native";
 
-export default function BorrarIngresos({ navigation }) {
+export default function AdministrarCuentas({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
-  const [tipoBorrar, setTipoBorrar] = React.useState(null);
 
-  const tableHeaders = ["",
-    "Número",
+  const tableHeaders = ["Acciones",
+    "Número Cuenta",
+    "Descripción",
+    "Monto",
     "Banco",
-    "F. Venc.",
-    "F. Cierre Resúmen",
-    "F. Venc. Resúmen",
+    "Número Tarjeta",
+    "F. Venc.",,
   ];
-  const columnWidth = [60, 150, 120, 120, 120, 120];
+  const columnWidth = [120, 250, 150, 200, 120, 80];
 
   const tableData = [
-    ["", "**** **** **** 0856", "Galicia", "12/24", "01/09/2020", "01/09/2020"],
-    ["", "**** **** **** 4562", "BBVA Francés", "12/22", "01/09/2020", "01/09/2020"],
+    ["", "28505909 40090418135201", "Caja de ahorro - Galicia", "$45600", "Galicia", "**** **** **** 9999", "12/24"],
+    ["", "28503409 40090417835202", "Caja de ahorro", "$75300", "BBVA Francés", "**** **** **** 6789", "12/22"],
   ];
 
   const onBorrar = () => {
@@ -39,7 +37,20 @@ export default function BorrarIngresos({ navigation }) {
       setIsLoading(false);
       setModalData({
         title: "¡Borrado exitoso!",
-        message: "La tarjeta se eliminó correctamente.",
+        message: "La cuenta se eliminó correctamente.",
+        isVisible: true,
+      });
+    }, 500);
+  };
+
+  const onEditar = () => {
+    setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setModalData({
+        title: "¡Borrado exitoso!",
+        message: "La cuenta se eliminó correctamente.",
         isVisible: true,
       });
     }, 500);
@@ -47,19 +58,26 @@ export default function BorrarIngresos({ navigation }) {
 
   const onCloseModal = () => setModalData({ ...modalData, isVisible: false });
 
-  const deleteButton = (data, index) => (
-    <TouchableOpacity onPress={onBorrar}>
-      <View style={buttonStyles.btnTable}>
-        <Text style={buttonStyles.btnText}>Borrar</Text>
-      </View>
-    </TouchableOpacity>
+  const renderButtons = (data, index) => (
+    <View style={screenStyles.containerColumns}>
+      <TouchableOpacity onPress={onBorrar} style={{ width: "50%"}}>
+        <View style={buttonStyles.btnTableEdit}>
+          <Text style={buttonStyles.btnText}>Editar</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onEditar} style={{ width: "50%"}}>
+        <View style={buttonStyles.btnTable}>
+          <Text style={buttonStyles.btnText}>Borrar</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
     <ScrollView style={screenStyles.screen}>
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
-          Mis Tarjetas
+          Mis Cuentas
         </Text>
       </View>
 
@@ -92,7 +110,7 @@ export default function BorrarIngresos({ navigation }) {
                         width={columnWidth[cellIndex]}
                         data={
                           cellIndex === 0
-                            ? deleteButton(cellData, index)
+                            ? renderButtons(cellData, index)
                             : cellData
                         }
                         textStyle={tableStyles.tableRowtext}
@@ -106,7 +124,7 @@ export default function BorrarIngresos({ navigation }) {
         </ScrollView>
       </View>
 
-      <CustomSpinner isLoading={isLoading} text={"Eliminando..."} />
+      <CustomSpinner isLoading={isLoading} text={"Eliminando Cuenta..."} />
 
       <CustomModal
         title={modalData?.title}

@@ -85,6 +85,18 @@ const buttonStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  btnTableDelete: {
+    backgroundColor: "#AA3939",
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  btnTableEdit: {
+    backgroundColor: "#2D882D",
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   btnText: {
     color: "white",
   },
@@ -150,12 +162,12 @@ const tableStyles = StyleSheet.create({
   },
   tableHeaderBorder: {
     borderWidth: 0,
-    borderColor: "#C1C0B9",
+    borderColor: "#C1C0B9"
   },
   tableHeadertext: {
     textAlign: "center",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   tableDataContainer: {
     marginTop: -1,

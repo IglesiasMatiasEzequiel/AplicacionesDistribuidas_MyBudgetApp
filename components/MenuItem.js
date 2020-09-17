@@ -25,10 +25,10 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function MenuItem({ navigation, title, focused }) {
+export default function MenuItem({ navigation, name, title, focused }) {
   renderIcon = () => {
 
-    switch (title) {
+    switch (name) {
       case "Home":
         return <MenuIcon name="md-home" focused={focused} />;
       case "Ingresos":
@@ -45,7 +45,7 @@ export default function MenuItem({ navigation, title, focused }) {
         return <MenuIcon name="md-contacts" focused={focused} />;
       case "Presupuesto":
         return <MenuIcon name="md-today" focused={focused} />;
-      case "Cerrar Sesión":
+      case "Login":
         return <MenuIcon name="md-log-out" focused={focused} />;
       default:
         return null;
@@ -56,7 +56,7 @@ export default function MenuItem({ navigation, title, focused }) {
     <TouchableOpacity
       style={{ height: 55 }}
       onPress={() => {
-        navigation.navigate(title);
+        navigation.navigate(name);
       }}
     >
       <Block
