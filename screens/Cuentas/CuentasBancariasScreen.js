@@ -9,10 +9,9 @@ import {
 import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
-export default function TarjetasScreen({ navigation }) {
+export default function CuentasBancariasScreen({ navigation }) {
   const onNuevaTarjeta = () => navigation.navigate("NuevaTarjeta");
   const onBorrarTarjeta = () => navigation.navigate("BorrarTarjeta");
-  const onVerGastos = () => navigation.navigate("GastosTarjeta");
 
   const tableHeaders = [
     "Número",
@@ -31,20 +30,16 @@ export default function TarjetasScreen({ navigation }) {
   return (
     <ScrollView style={screenStyles.screen}>
       <TouchableOpacity onPress={onNuevaTarjeta} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Nueva Tarjeta</Text>
+        <Text style={buttonStyles.btnText}>Nuevo Tarjeta</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onBorrarTarjeta} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Borrar Tarjeta</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onVerGastos} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Ver Gastos</Text>
-      </TouchableOpacity>
-
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
-          Mis Tarjetas
+          Mis Cuentas
         </Text>
       </View>
 
