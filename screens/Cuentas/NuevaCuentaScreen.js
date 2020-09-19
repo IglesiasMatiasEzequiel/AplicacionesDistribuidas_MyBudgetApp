@@ -2,9 +2,10 @@ import React from "react";
 import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
 import { Text, theme } from "galio-framework";
+
 import DropDownPicker from "react-native-dropdown-picker";
 import { CustomSpinner, CustomModal } from "../../components";
-import { bancosData } from "../../components/Data";
+import { bancosData, entidadesEmisorasData } from "../../components/Data";
 import {
   screenStyles,
   buttonStyles,
@@ -18,16 +19,22 @@ export default function NuevaCuentaScreen({ navigation }) {
   const [modalData, setModalData] = React.useState(null);
 
   const [numeroCuenta, setNumeroCuenta] = React.useState("");
+  const [cbu, setCbu] = React.useState("");
+  const [alias, setAlias] = React.useState("");
   const [descripcion, setDescripcion] = React.useState("");
   const [monto, setMonto] = React.useState("");
   const [banco, setBanco] = React.useState(null);
+  const [entidadEmisora, setEntidadEmisora] = React.useState(null);
   const [tarjeta, setTarjeta] = React.useState("");
   const [vencimiento, setVencimiento] = React.useState("");
 
   const handleChangeNumeroCuenta = (numeroCuenta) => setNumeroCuenta(numeroCuenta);
+  const handleChangeCbu = (cbu) => setCbu(cbu);
+  const handleChangeAlias = (alias) => setAlias(alias);
   const handleChangeDescripcion = (descripcion) => setDescripcion(descripcion);
   const handleChangeMonto = (monto) => setMonto(monto);
   const handleChangeBanco = (banco) => setBanco(banco);
+  const handleChangeEntidadEmisora = (entidadEmisora) => setEntidadEmisora(entidadEmisora);
   const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
   const handleChangeVencimiento = (vencimiento) => setVencimiento(vencimiento);
 
@@ -35,9 +42,12 @@ export default function NuevaCuentaScreen({ navigation }) {
     setIsLoading(false);
     setModalData({ ...modalData, isVisible: false });
     setNumeroCuenta("");
+    setCbu("");
+    setAlias("");
     setDescripcion("");
     setMonto("");
     setBanco(null);
+    setEntidadEmisora(null);
     setTarjeta("");
     setVencimiento("");
   };
@@ -83,6 +93,24 @@ export default function NuevaCuentaScreen({ navigation }) {
       <View style={textboxStyles.textboxContainer}>
         <TextInput
           style={textboxStyles.textbox}
+          placeholder="CBU..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(cbu) => handleChangeCbu(cbu)}
+          value={cbu}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Alias..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(alias) => handleChangeAlias(alias)}
+          value={alias}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
           placeholder="Descripción..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(descripcion) => handleChangeDescripcion(descripcion)}
@@ -116,7 +144,18 @@ export default function NuevaCuentaScreen({ navigation }) {
           onChangeItem={(item) => handleChangeBanco(item.value)}
         />
       </View>
-      <View style={textboxStyles.textboxContainer}>
+      <View>
+        <DropDownPicker
+          items={entidadesEmisorasData}
+          defaultValue={entidadEmisora}
+          placeholder="Seleccione una entidad emisora."
+          containerStyle={dropdownStyles.dropdownContainer}
+          style={dropdownStyles.dropdown}
+          itemStyle={dropdownStyles.dropdownItem}
+          onChangeItem={(item) => handleChangeEntidadEmisora(item.value)}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}> 
         <TextInput
           style={textboxStyles.textbox}
           placeholder="Número tarjeta..."

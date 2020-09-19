@@ -4,7 +4,7 @@ import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
 import { CustomSpinner, CustomModal } from "../../components";
-import { bancosData } from "../../components/Data";
+import { bancosData, entidadesEmisorasData } from "../../components/Data";
 import {
   screenStyles,
   buttonStyles,
@@ -17,12 +17,14 @@ export default function NuevaTarjetaScreen({ navigation }) {
   const [modalData, setModalData] = React.useState(null);
 
   const [banco, setBanco] = React.useState(null);
+  const [entidadEmisora, setEntidadEmisora] = React.useState(null);
   const [tarjeta, setTarjeta] = React.useState("");
   const [vencimiento, setVencimiento] = React.useState("");
   const [cierreResumen, setCierreResumen] = React.useState("");
   const [vencimientoResumen, setVencimientoResumen] = React.useState("");
 
   const handleChangeBanco = (banco) => setBanco(banco);
+  const handleChangeEntidadEmisora = (entidadEmisora) => setEntidadEmisora(entidadEmisora);
   const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
   const handleChangeVencimiento = (vencimiento) => setVencimiento(vencimiento);
   const handleChangeCierreResumen = (cierreResumen) =>
@@ -34,6 +36,7 @@ export default function NuevaTarjetaScreen({ navigation }) {
     setIsLoading(false);
     setModalData({ ...modalData, isVisible: false });
     setBanco(null);
+    setEntidadEmisora(null);
     setTarjeta("");
     setVencimiento("");
     setCierreResumen("");
@@ -70,6 +73,17 @@ export default function NuevaTarjetaScreen({ navigation }) {
           style={dropdownStyles.dropdown}
           itemStyle={dropdownStyles.dropdownItem}
           onChangeItem={(item) => handleChangeBanco(item.value)}
+        />
+      </View>
+      <View>
+        <DropDownPicker
+          items={entidadesEmisorasData}
+          defaultValue={entidadEmisora}
+          placeholder="Seleccione una entidad emisora."
+          containerStyle={dropdownStyles.dropdownContainer}
+          style={dropdownStyles.dropdown}
+          itemStyle={dropdownStyles.dropdownItem}
+          onChangeItem={(item) => handleChangeEntidadEmisora(item.value)}
         />
       </View>
       <View style={textboxStyles.textboxContainer}>
