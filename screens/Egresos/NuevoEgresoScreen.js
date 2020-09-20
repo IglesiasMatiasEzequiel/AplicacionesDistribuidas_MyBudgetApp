@@ -8,6 +8,7 @@ import {
   buttonStyles,
   textboxStyles,
   dropdownStyles,
+  titleStyles
 } from "../../components/Styles";
 import {
   cantCuotasData,
@@ -15,19 +16,18 @@ import {
   mediosPagoData,
   tiposEgresoData,
   cuentasData,
-  tarjetasData
+  tarjetasData,
 } from "../../components/Data";
 
 export default function NuevoEgresoScren({ navigation }) {
-
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
   const [fecha, setFecha] = React.useState("");
   const [monto, setMonto] = React.useState("");
-  const [descripcion, setDescripcion] = React.useState("");
   const [tipoEgreso, setTipoEgreso] = React.useState(null);
   const [categoriaEgreso, setCategoriaEgreso] = React.useState(null);
+  const [detalleEgreso, setDetalleEgreso] = React.useState("");
   const [medioPago, setMedioPago] = React.useState(null);
   const [cuotas, setCuotas] = React.useState(null);
   const [cuenta, setCuenta] = React.useState(null);
@@ -35,13 +35,14 @@ export default function NuevoEgresoScren({ navigation }) {
 
   const handleChangeFecha = (fecha) => setFecha(fecha);
   const handleChangeMonto = (monto) => setMonto(monto);
-  const handleChangeDescripcion = (descripcion) => setDescripcion(descripcion);
-  const handleChangeTipoEgreso = (tipoEgreso) => { 
+  const handleChangeDetalleEgreso = (detalleEgreso) => setDetalleEgreso(detalleEgreso);
+  const handleChangeTipoEgreso = (tipoEgreso) => {
     setTipoEgreso(tipoEgreso);
     setCategoriaEgreso(null);
-  }
-  const handleChangeCategoriaEgreso = (categoriaEgreso) => setCategoriaEgreso(categoriaEgreso);
-  const handleChangeMedioPago = (medioPago) => { 
+  };
+  const handleChangeCategoriaEgreso = (categoriaEgreso) =>
+    setCategoriaEgreso(categoriaEgreso);
+  const handleChangeMedioPago = (medioPago) => {
     setMedioPago(medioPago);
     setCuotas(null);
     setCuenta(null);
@@ -52,7 +53,7 @@ export default function NuevoEgresoScren({ navigation }) {
 
   const limpiarState = () => {
     setIsLoading(false);
-    setModalData({...modalData, isVisible: false});
+    setModalData({ ...modalData, isVisible: false });
     setFecha("");
     setMonto("");
     setDescripcion("");
@@ -85,6 +86,13 @@ export default function NuevoEgresoScren({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
+
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Egreso
+        </Text>
+      </View>
+
       <View style={textboxStyles.textboxContainer}>
         <TextInput
           style={textboxStyles.textbox}
@@ -101,15 +109,6 @@ export default function NuevoEgresoScren({ navigation }) {
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(monto) => handleChangeMonto(monto)}
           value={monto}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Descripción ..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(descripcion) => handleChangeDescripcion(descripcion)}
-          value={descripcion}
         />
       </View>
       <View>
@@ -136,6 +135,24 @@ export default function NuevoEgresoScren({ navigation }) {
           />
         </View>
       )}
+      {tipoEgreso === "2" && (
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Detalle del egreso..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(detalleEgreso) => handleChangeDetalleEgreso(detalleEgreso)}
+          value={detalleEgreso}
+        />
+      </View>
+      )}
+
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Medio de Pago
+        </Text>
+      </View>
+
       <View>
         <DropDownPicker
           items={mediosPagoData}
@@ -161,15 +178,13 @@ export default function NuevoEgresoScren({ navigation }) {
         </View>
       )}
       {medioPago === "2" && (
-        <View>
-          <DropDownPicker
-            items={cantCuotasData}
-            defaultValue={cuotas}
-            placeholder="Seleccione la cantidad de cuotas."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangeCuotas(item.value)}
+        <View style={textboxStyles.textboxContainer}>
+          <TextInput
+            style={textboxStyles.textbox}
+            placeholder="Cuotas ..."
+            placeholderTextColor={theme.COLORS.PLACEHOLDER}
+            onChangeText={(item) => handleChangeCuotas(item.value)}
+            value={cuotas}
           />
         </View>
       )}
