@@ -17,24 +17,27 @@ export default function NuevaInversionScreen({ navigation }) {
   const [modalData, setModalData] = React.useState(null);
 
   const [tipo, setTipo] = React.useState(null);
-  const [dinero, setDinero] = React.useState("");
+  const [monto, setMonto] = React.useState("");
+  const [origen, setOrigen] = React.useState("");
   const [fechaInicio, setFechaInicio] = React.useState("");
-  const [nombreAcccion, setNombreAcccion] = React.useState("");
+  const [nombre, setNombre] = React.useState("");
   const [duracion, setDuracion] = React.useState("");
 
   const handleChangeTipo= (tipo) => setTipo(tipo);
-  const handleChangeDinero = (dinero) => setDinero(dinero);
+  const handleChangeMonto = (monto) => setDinero(monto);
+  const handleChangeOrigen = (origen) => setDinero(origen);
   const handleChangeFechaInicio = (fechaInicio) => setFechaInicio(fechaInicio);
-  const handleChangeNombreAcccion = (nombreAcccion) => setCierreResumen(nombreAcccion);
+  const handleChangeNombre = (nombre) => setNombre(nombre);
   const handleChangeDuracion = (duracion) => setDuracion(duracion);
 
   const limpiarState = () => {
     setIsLoading(false);
     setModalData({ ...modalData, isVisible: false });
     setTipo(null);
-    setDinero("");
+    setMonto("");
+    setOrigen("");
     setFechaInicio("");
-    setNombreAcccion("");
+    setNombre("");
     setDuracion("");
   };
 
@@ -73,10 +76,19 @@ export default function NuevaInversionScreen({ navigation }) {
       <View style={textboxStyles.textboxContainer}>
         <TextInput
           style={textboxStyles.textbox}
-          placeholder="Dinero..."
+          placeholder="Monto..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(dinero) => handleChangeDinero(dinero)}
-          value={dinero}
+          onChangeText={(monto) => handleChangeMonto(monto)}
+          value={monto}
+        />
+      </View>
+      <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Origen..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(origen) => handleChangeOrigen(origen)}
+          value={origen}
         />
       </View>
       <View style={textboxStyles.textboxContainer}>
@@ -95,11 +107,45 @@ export default function NuevaInversionScreen({ navigation }) {
           style={textboxStyles.textbox}
           placeholder="Nombre de la accion..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(nombreAcccion) => handleChangeNombreAcccion(nombreAcccion)}
-          value={nombreAcccion}
+          onChangeText={(nombre) => handleChangeNombre(nombre)}
+          value={nombre}
         />  
         </View>
       )}
+      {tipo === "2" && (
+        <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Nombre del Plazo fijo..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(nombre) => handleChangeNombre(nombre)}
+          value={nombre}
+        />  
+        </View>
+      )}
+      {tipo === "3" && (
+        <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Nombre del Fondo Comun..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(nombre) => handleChangeNombre(nombre)}
+          value={nombre}
+        />  
+        </View>
+      )}
+      {tipo === "4" && (
+        <View style={textboxStyles.textboxContainer}>
+        <TextInput
+          style={textboxStyles.textbox}
+          placeholder="Nombre del Bono..."
+          placeholderTextColor={theme.COLORS.PLACEHOLDER}
+          onChangeText={(nombre) => handleChangeNombre(nombre)}
+          value={nombre}
+        />  
+        </View>
+      )}
+
       {tipo === "2" && (
         <View style={textboxStyles.textboxContainer}>
         <TextInput
@@ -111,7 +157,6 @@ export default function NuevaInversionScreen({ navigation }) {
         />
         </View>
       )}
-
       
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
