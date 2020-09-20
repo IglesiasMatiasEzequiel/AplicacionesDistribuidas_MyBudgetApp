@@ -7,6 +7,7 @@ import InversionesStack from './InversionesStack';
 import PrestamosStack from './PrestamosStack';
 import PresupuestosStack from './PresupuestosStack';
 import CuentasBancariasStack from './CuentasBancariasStack'; 
+import NotificacionesStack from './NotificacionesStack'; 
 
 export {
     Menu,
@@ -17,5 +18,6 @@ export {
     InversionesStack,
     PrestamosStack,
     PresupuestosStack,
-    CuentasBancariasStack
+    CuentasBancariasStack,
+    NotificacionesStack
 }

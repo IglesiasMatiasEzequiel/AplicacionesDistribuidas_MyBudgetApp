@@ -55,7 +55,6 @@ export default function NuevoEgresoScren({ navigation }) {
     setModalData({ ...modalData, isVisible: false });
     setFecha("");
     setMonto("");
-    setDescripcion("");
     setTipoEgreso(null);
     setCategoriaEgreso(null);
     setMedioPago(null);

@@ -13,7 +13,8 @@ import
   CuentasBancariasStack,
   InversionesStack,
   PrestamosStack,
-  PresupuestosStack
+  PresupuestosStack,
+  NotificacionesStack
 }
 from '../navigation/index';
 
@@ -45,7 +46,8 @@ export default function AppStack(props) {
       <Drawer.Screen name="Inversiones" component={InversionesStack} />
       <Drawer.Screen name="Prestamos" component={PrestamosStack} />
       <Drawer.Screen name="Presupuestos" component={PresupuestosStack} />
-      <Drawer.Screen name="Cerrar Sesión" component={LoginScreen}/>
+      <Drawer.Screen name="Notificaciones" component={NotificacionesStack}/>
+      <Drawer.Screen name="CerrarSesion" component={LoginScreen}/>
 
     </Drawer.Navigator>
   );
