@@ -56,7 +56,7 @@ export default function MenuItem({ navigation, name, title, focused }) {
     <TouchableOpacity
       style={{ height: 55 }}
       onPress={() => {
-        navigation.navigate(name);
+        navigation.navigate(name, { screen: name });
       }}
     >
       <Block

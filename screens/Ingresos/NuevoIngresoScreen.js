@@ -4,6 +4,7 @@ import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
 import { CustomSpinner, CustomModal } from "../../components";
 import {
+  titleStyles,
   screenStyles,
   buttonStyles,
   textboxStyles,
@@ -77,6 +78,13 @@ export default function NuevoIngresoScren({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
+
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Ingreso
+        </Text>
+      </View>
+
       <View style={textboxStyles.textboxContainer}>
         <TextInput
           style={textboxStyles.textbox}
@@ -128,6 +136,13 @@ export default function NuevoIngresoScren({ navigation }) {
           />
         </View>
       )}
+
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Destino
+        </Text>
+      </View>
+
       <View>
         <DropDownPicker
           items={destinosData}
