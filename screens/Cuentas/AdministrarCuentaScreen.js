@@ -16,18 +16,16 @@ export default function AdministrarCuentas({ navigation }) {
   const [modalData, setModalData] = React.useState(null);
 
   const tableHeaders = ["Acciones",
-    "Número Cuenta",
+    "CBU",
     "Descripción",
     "Monto",
-    "Banco",
-    "Número Tarjeta",
-    "F. Venc.",,
+    "Banco"
   ];
-  const columnWidth = [120, 250, 150, 200, 120, 80];
+  const columnWidth = [150, 150, 200, 150, 120, 80];
 
   const tableData = [
-    ["", "28505909 40090418135201", "Caja de ahorro - Galicia", "$45600", "Galicia", "**** **** **** 9999", "12/24"],
-    ["", "28503409 40090417835202", "Caja de ahorro", "$75300", "BBVA Francés", "**** **** **** 6789", "12/22"],
+    ["", "40090418135201", "Caja de ahorro", "$45600", "Galicia" ],
+    ["", "40090417835202", "Caja de ahorro", "$75300", "BBVA Francés"],
   ];
 
   const onBorrar = () => {

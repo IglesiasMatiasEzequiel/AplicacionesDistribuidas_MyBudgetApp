@@ -16,12 +16,12 @@ import { Text } from "galio-framework";
 
 export default function Ingresos({ navigation }) {
   
-  const [tarjeta, setTarjeta] = React.useState(null);
+  const [cuenta, setCuenta] = React.useState(null);
   const [periodo, setPeriodo] = React.useState(null);
   const [montoTotal, setMontoTotal] = React.useState(null);
 
-  const handleChangeTarjeta = (tarjeta) => {
-    setTarjeta(tarjeta);
+  const handleChangeCuenta = (cuenta) => {
+    setCuenta(cuenta);
     setPeriodo(null);
   }
   const handleChangePeriodo = (periodo) => {
@@ -45,10 +45,10 @@ export default function Ingresos({ navigation }) {
     ],
   ];
 
-  const misTarjetasData = [
-    { label: "Banco Galicia - **** **** **** 0856", value: "1" },
-    { label: "BBVA Francés - **** **** **** 4562", value: "2" },
-  ];
+  const misCuentasData = [
+      { label: "CBU° 40090418135201 - Galicia", value: "1" },
+      { label: "CBU° 40090417835202 - BBVA Francés", value: "2" },
+    ];
 
   return (
     <ScrollView style={screenStyles.screen}>
@@ -60,13 +60,13 @@ export default function Ingresos({ navigation }) {
       </View>
 
       <DropDownPicker
-        items={misTarjetasData}
-        defaultValue={tarjeta}
-        placeholder="Seleccione una tarjeta."
+        items={misCuentasData}
+        defaultValue={cuenta}
+        placeholder="Seleccione una cuenta."
         containerStyle={dropdownStyles.dropdownContainer}
         style={dropdownStyles.dropdown}
         itemStyle={dropdownStyles.dropdownItem}
-        onChangeItem={(item) => handleChangeTarjeta(item.value)}
+        onChangeItem={(item) => handleChangeCuenta(item.value)}
         zIndex={5000}
       />
 
@@ -92,7 +92,7 @@ export default function Ingresos({ navigation }) {
         </Text>
       </View>
 
-      {tarjeta != null && periodo != null && (
+      {cuenta != null && periodo != null && (
         <View>
           <View style={tableStyles.tableContainer}>
             <ScrollView horizontal>
@@ -109,7 +109,7 @@ export default function Ingresos({ navigation }) {
                   style={[tableStyles.tableDataContainer, { height: 200 }]}
                 >
                   <Table borderStyle={tableStyles.tableDataBorder}>
-                    {tableData[parseInt(tarjeta) - 1].map((rowData, index) => (
+                    {tableData[parseInt(cuenta) - 1].map((rowData, index) => (
                       <Row
                         key={index}
                         data={rowData}

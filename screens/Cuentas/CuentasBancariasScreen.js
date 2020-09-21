@@ -12,19 +12,19 @@ import { Table, Row } from "react-native-table-component";
 export default function CuentasBancariasScreen({ navigation }) {
   const onNuevaCuenta = () => navigation.navigate("NuevaCuenta");
   const onAdministrarCuenta = () => navigation.navigate("AdministrarCuenta");
+  const onMovimientosCuenta = () => navigation.navigate("MovimientosCuenta");
 
   const tableHeaders = [
-    "Número Cuenta",
+    "CBU",
     "Descripción",
     "Banco",
-    "Número Tarjeta",
-    "F. Venc.",,
+    "Monto",
   ];
-  const columnWidth = [250, 200, 200, 120, 80];
+  const columnWidth = [150, 200, 150, 150, 80];
 
   const tableData = [
-    ["28505909 40090418135201", "Caja de ahorro - Galicia", "Galicia", "**** **** **** 9999", "12/24"],
-    ["28503409 40090417835202", "Caja de ahorro", "BBVA Francés", "**** **** **** 6789", "12/22"],
+    ["40090418135201", "Caja de ahorro", "Galicia", "$5000"],
+    ["40090417835202", "Caja de ahorro", "BBVA Francés", "$8500"],
   ];
 
   return (
@@ -35,6 +35,10 @@ export default function CuentasBancariasScreen({ navigation }) {
 
       <TouchableOpacity onPress={onAdministrarCuenta} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Administrar Cuentas</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={onMovimientosCuenta} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Ver Movimiento Cuentas</Text>
       </TouchableOpacity>
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>

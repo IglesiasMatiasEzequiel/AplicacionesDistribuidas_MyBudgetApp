@@ -18,14 +18,15 @@ export default function TarjetasScreen({ navigation }) {
     "Número",
     "Banco",
     "F. Venc.",
+    "Consumo del Mes",
     "F. Cierre Resúmen",
     "F. Venc. Resúmen",
   ];
-  const columnWidth = [150, 120, 120, 120, 120];
+  const columnWidth = [150, 120, 120, 120, 120, 120];
 
   const tableData = [
-    ["**** **** **** 0856", "Galicia", "12/24", "01/09/2020", "01/09/2020"],
-    ["**** **** **** 4562", "BBVA Francés", "12/22", "01/09/2020", "01/09/2020"],
+    ["**** **** **** 0856", "Galicia", "12/24", "$6000",  "01/09/2020", "01/09/2020"],
+    ["**** **** **** 4562", "BBVA Francés", "12/22", "$8500", "01/09/2020", "01/09/2020"],
   ];
 
   return (

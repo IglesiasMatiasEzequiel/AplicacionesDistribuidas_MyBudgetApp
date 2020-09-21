@@ -23,6 +23,7 @@ import NuevoPresupuestoScreen from './Presupuestos/NuevoPresupuestoScreen';
 import BorrarPresupuestoScreen from './Presupuestos/BorrarPresupuestoScreen';
 import CuentasBancariasScreen from './Cuentas/CuentasBancariasScreen';
 import AdministrarCuentaScreen from './Cuentas/AdministrarCuentaScreen';
+import MovimientosCuentaScreen from './Cuentas/MovimientosCuentaScreen';
 import NuevaCuentaScreen from './Cuentas/NuevaCuentaScreen';
 
 export {
@@ -41,6 +42,7 @@ export {
     GastosTarjetaScreen,
     BorrarTarjetaScreen,
     AdministrarCuentaScreen,
+    MovimientosCuentaScreen,
     NuevaCuentaScreen,
     InversionesScreen,
     NuevaInversionScreen,
