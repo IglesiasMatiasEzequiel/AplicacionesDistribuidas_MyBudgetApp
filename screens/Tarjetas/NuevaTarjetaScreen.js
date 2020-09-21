@@ -89,7 +89,7 @@ export default function NuevaTarjetaScreen({ navigation }) {
       <View style={textboxStyles.textboxContainer}>
         <TextInput
           style={textboxStyles.textbox}
-          placeholder="Número tarjeta..."
+          placeholder="Últimos 4 dígitos de la tarjeta..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
           onChangeText={(tarjeta) => handleChangeTarjeta(tarjeta)}
           value={tarjeta}

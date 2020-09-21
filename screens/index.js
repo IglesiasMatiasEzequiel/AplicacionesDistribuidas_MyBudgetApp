@@ -25,6 +25,7 @@ import CuentasBancariasScreen from './Cuentas/CuentasBancariasScreen';
 import AdministrarCuentaScreen from './Cuentas/AdministrarCuentaScreen';
 import MovimientosCuentaScreen from './Cuentas/MovimientosCuentaScreen';
 import NuevaCuentaScreen from './Cuentas/NuevaCuentaScreen';
+import NotificacionesScreen from './Notificaciones/NotificacionesScreen';
 
 export {
     LoginScreen,
@@ -53,5 +54,6 @@ export {
     PresupuestosScreen,
     NuevoPresupuestoScreen,
     BorrarPresupuestoScreen,
-    CuentasBancariasScreen
+    CuentasBancariasScreen,
+    NotificacionesScreen
 }

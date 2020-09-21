@@ -18,7 +18,6 @@ export default function NuevaCuentaScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
-  const [numeroCuenta, setNumeroCuenta] = React.useState("");
   const [cbu, setCbu] = React.useState("");
   const [alias, setAlias] = React.useState("");
   const [descripcion, setDescripcion] = React.useState("");
@@ -28,7 +27,6 @@ export default function NuevaCuentaScreen({ navigation }) {
   const [tarjeta, setTarjeta] = React.useState("");
   const [vencimiento, setVencimiento] = React.useState("");
 
-  const handleChangeNumeroCuenta = (numeroCuenta) => setNumeroCuenta(numeroCuenta);
   const handleChangeCbu = (cbu) => setCbu(cbu);
   const handleChangeAlias = (alias) => setAlias(alias);
   const handleChangeDescripcion = (descripcion) => setDescripcion(descripcion);
@@ -41,7 +39,6 @@ export default function NuevaCuentaScreen({ navigation }) {
   const limpiarState = () => {
     setIsLoading(false);
     setModalData({ ...modalData, isVisible: false });
-    setNumeroCuenta("");
     setCbu("");
     setAlias("");
     setDescripcion("");
@@ -79,17 +76,6 @@ export default function NuevaCuentaScreen({ navigation }) {
         </Text>
       </View>
 
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Número cuenta..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(numeroCuenta) =>
-            handleChangeNumeroCuenta(numeroCuenta)
-          }
-          value={numeroCuenta}
-        />
-      </View>
       <View style={textboxStyles.textboxContainer}>
         <TextInput
           style={textboxStyles.textbox}

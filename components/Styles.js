@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, StatusBar } from "react-native";
 import { theme } from "galio-framework";
 
 const { width } = Dimensions.get("screen");
@@ -188,6 +188,22 @@ const tableStyles = StyleSheet.create({
   },
 });
 
+const notificationStyles = StyleSheet.create({
+  notificationContainer: {
+    flex: 1
+  },
+  notification: {
+    backgroundColor: '#E7E6E1',
+    padding: 10,
+  },
+  notificationTitle: {
+    fontSize: 18,
+  },
+  notificationMessage: {
+    fontSize: 14,
+  }
+});
+
 export {
   screenStyles,
   messageStyles,
@@ -196,5 +212,6 @@ export {
   dropdownStyles,
   tableStyles,
   titleStyles,
-  radioButtonStyles
+  radioButtonStyles,
+  notificationStyles
 };

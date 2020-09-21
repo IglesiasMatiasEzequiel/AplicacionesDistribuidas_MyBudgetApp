@@ -19,7 +19,7 @@ const iPhoneX = () =>
 const NotificationsButton = ({ isWhite, style, navigation }) => (
   <TouchableOpacity
     style={[styles.button, style]}
-    onPress={() => navigation.navigate("Pro")}
+    onPress={() => navigation.navigate("Notificaciones")}
   >
     <Icon
       size={24}

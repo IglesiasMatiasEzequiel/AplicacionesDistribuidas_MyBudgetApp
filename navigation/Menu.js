@@ -91,12 +91,11 @@ export default function Menu({
           })}
         </ScrollView>
       </Block>
-      <Block flex={0.3} style={{ paddingLeft: 7, paddingRight: 14 }}>
+      <Block style={{ paddingLeft: 7, paddingRight: 14 }}>
         <MenuItem
           name="Login"
           title="Cerrar Sesión"
           navigation={navigation}
-          focused={state.index === 8}
         />
       </Block>
     </Block>

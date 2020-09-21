@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  StyleSheet,
-  Dimensions,
   ScrollView,
   View,
   FlatList,
@@ -9,15 +7,9 @@ import {
 } from "react-native";
 import { Card } from "react-native-elements";
 import { PieChart } from "react-native-chart-kit";
-import { Table, Row } from "react-native-table-component";
 import {
-  screenStyles,
-  buttonStyles,
-  tableStyles,
-  titleStyles,
+  screenStyles
 } from "../components/Styles";
-
-const { width, height } = Dimensions.get("screen");
 
 const months = [
   "Enero",
@@ -46,30 +38,35 @@ const colors = [
 
 const gastosMes = [
   {
+    id: 1,
     name: "Efectivo",
     gasto: 7557.8,
     porc: 9,
     color: colors[0],
   },
   {
+    id: 2,
     name: "Débito Aut.",
     gasto: 12546.34,
     porc: 11,
     color: colors[1],
   },
   {
+    id: 3,
     name: "Crédito",
     gasto: 15768.99,
     porc: 14,
     color: colors[2],
   },
   {
+    id: 4,
     name: "Transferencia",
     gasto: 23421.34,
     porc: 23,
     color: colors[3],
   },
   {
+    id: 5,
     name: "Débito",
     gasto: 31908.54,
     porc: 43,

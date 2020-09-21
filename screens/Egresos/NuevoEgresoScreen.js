@@ -11,7 +11,6 @@ import {
   titleStyles
 } from "../../components/Styles";
 import {
-  cantCuotasData,
   categoriasEgresoData,
   mediosPagoData,
   tiposEgresoData,
@@ -56,7 +55,6 @@ export default function NuevoEgresoScren({ navigation }) {
     setModalData({ ...modalData, isVisible: false });
     setFecha("");
     setMonto("");
-    setDescripcion("");
     setTipoEgreso(null);
     setCategoriaEgreso(null);
     setMedioPago(null);
@@ -188,7 +186,7 @@ export default function NuevoEgresoScren({ navigation }) {
           />
         </View>
       )}
-      {medioPago === "3" && (
+      {medioPago === "3" || medioPago === "4" || medioPago === "5" && (
         <View>
           <DropDownPicker
             items={cuentasData}
