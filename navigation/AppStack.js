@@ -24,13 +24,13 @@ const Drawer = createDrawerNavigator();
 
 export default function AppStack(props) {
   
-  const { profile } = props.route.params;
+  const { usuario } = props.route.params;
 
   return (
     <Drawer.Navigator
       style={{ flex: 1 }}
       drawerContent={props => (
-        <Menu {...props} profile={profile} />
+        <Menu {...props} usuario={usuario} />
       )}
       drawerStyle={{
         backgroundColor: "white",

@@ -8,6 +8,8 @@ import {
   textboxStyles
 } from "../../components/Styles";
 
+import { insertUsuario } from '../../components/DataBase';
+
 export default function LoginScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
@@ -26,8 +28,7 @@ export default function LoginScreen({ navigation }) {
 
   const onRegister = () => {
     setIsLoading(true);
-
-    setTimeout(() => {
+    insertUsuario(email, nombre, apellido, password, () => { 
       setIsLoading(false);
       setModalData({ 
         title: "¡Registro exitoso!",
@@ -36,7 +37,10 @@ export default function LoginScreen({ navigation }) {
         isSuccess: true,
         successBtnText: "IR AL LOGIN"
       });
-    }, 500);
+    }, () => { 
+      setIsLoading(false);
+      console.log('Error creando usuario...')
+    });
   };
 
   const limpiarState = () => {

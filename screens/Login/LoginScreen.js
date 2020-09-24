@@ -14,6 +14,8 @@ import {
   textboxStyles
 } from "../../components/Styles";
 
+import { login } from '../../components/DataBase';
+
 export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
     logoContainer: {
@@ -40,26 +42,33 @@ export default function LoginScreen({ navigation }) {
   const onLogin = () => {
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      if (true) {
-        navigation.navigate("App", {
-          profile: {
-            email: email,
-            nombre: "Matias", //Este dato viene del back una vez que loguea
-            apellido: "Iglesias", //Este dato viene del back una vez que loguea
-            password: password,
-          },
-        });
-      } else {
-        setModalData({ 
-          title: "Error",
-          message: "Oops, email y/o password incorrecto/s.",
-          isVisible: true,
-          isSuccess: false
-        });
+    login(email, password,
+      (data) => {
+        setIsLoading(false);
+
+        if (data && data.length === 1) {
+
+          var usuario = {
+            email: data[0].email,
+            nombre: data[0].nombre,
+            apellido: data[0].apellido,
+            password: data[0].password,
+          };
+
+          navigation.navigate("App", { usuario: usuario });
+        } else {
+          setModalData({
+            title: "Error",
+            message: "Oops, email y/o password incorrecto/s.",
+            isVisible: true,
+            isSuccess: false,
+          });
+        }
+      },
+      () => {
+        console.log('Ocurrió un error en la autenticación.')
       }
-    }, 500);
+    );
   };
 
   const limpiarState = () => {

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 export default function Menu({
   drawerPosition,
   navigation,
-  profile,
+  usuario,
   focused,
   state,
   ...rest
@@ -54,15 +54,15 @@ export default function Menu({
       <Block flex={0.25} style={styles.header}>
           <Block style={styles.profile}>
             <Text h5 color={"white"}>
-              {profile.apellido + ', ' + profile.nombre}
+              {usuario.apellido + ', ' + usuario.nombre}
             </Text>
           </Block>
         <Block row>
           <Text size={16} muted style={styles.seller}>
-            {profile.type ?? 'Sin perfil'}
+            {usuario?.type ?? 'Sin perfil'}
           </Text>
           <Text size={16} color={materialTheme.COLORS.WARNING}>
-            {profile.rating ?? '0'}{" "}
+            {usuario?.rating ?? '0'}{" "}
             <Icon name="shape-star" family="GalioExtra" size={14} />
           </Text>
         </Block>
