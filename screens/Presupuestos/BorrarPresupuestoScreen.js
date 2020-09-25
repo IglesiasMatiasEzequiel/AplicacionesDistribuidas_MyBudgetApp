@@ -13,36 +13,65 @@ import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
 import { Text } from "galio-framework";
 import RadioButtonRN from "radio-buttons-react-native";
 
+import { deletePresupuesto } from '../../components/DataBase';
+import { selectPresupuestos } from '../../components/DataBase';
+
 export default function BorrarPresupuesto({ navigation }) {
+  const [idUsuario, setUsuario] = React.useState("1");
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
   const [tipoBorrar, setTipoBorrar] = React.useState(null);
 
   const tableHeaders = [
     "",
-    "Mes/Año",
     "Tipo",
-    "Descripcion",
     "Monto",
+    "FechaInicio",
   ];
-  const columnWidth = [60, 100, 200, 200,100];
+  const columnWidth = [60, 100, 100, 100];
 
   const tableData = [
-    ["", "08/2020", "Alquiler", "Alquiler del mes de Agosto", "$5000"],
-    ["", "08/2020", "Luz/Gas/Agua", "Impuestos de mes en Agosto", "$7000"],
+    ["", "Alquiler", "$5000", "10/10/2020"],
+    ["", "Luz/Gas/Agua", "$7000", "10/10/2020"],
   ];
+  selectPresupuestos( idUsuario, (data) => { 
+    var presupuesto = {
+      id: data[0].id,
+      email: data[0].tipo,
+      nombre: data[0].monto,
+      apellido: data[0].fechaInicio,
+    };
+
+  }, () => { 
+    setIsLoading(false);
+    console.log('Error buscando presupuestos...')
+  });
+
 
   const onBorrar = () => {
     setIsLoading(true);
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    //   setModalData({
+    //     title: "¡Borrado exitoso!",
+    //     message: "El presupuesto se eliminó correctamente.",
+    //     isVisible: true,
+    //   });
+    // }, 500);
 
-    setTimeout(() => {
+    deletePresupuesto( id, idUsuario, () => { 
       setIsLoading(false);
-      setModalData({
+      setModalData({ 
         title: "¡Borrado exitoso!",
         message: "El presupuesto se eliminó correctamente.",
         isVisible: true,
+        isSuccess: true,
+        successBtnText: "Aceptar",
       });
-    }, 500);
+    }, () => { 
+      setIsLoading(false);
+      console.log('Error creando presupuesto...')
+    });
   };
 
   const onCloseModal = () => setModalData({ ...modalData, isVisible: false });

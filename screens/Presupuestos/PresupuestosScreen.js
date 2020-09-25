@@ -10,20 +10,20 @@ import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
 export default function PresupuestosScreen({ navigation }) {
+  const [idUsuario, setUsuario] = React.useState("1");
   const onNuevoPresupuesto = () => navigation.navigate("NuevoPresupuesto");
   const onBorrarPresupuesto= () => navigation.navigate("BorrarPresupuesto");
 
   const tableHeaders = [
-    "Mes/Año",
     "Tipo",
-    "Descripcion",
     "Monto",
+    "FechaInicio",
   ];
-  const columnWidth = [ 100, 200, 200,100];
+  const columnWidth = [ 100, 100, 100];
 
   const tableData = [
-    ["08/2020", "Alquiler", "Alquiler del mes de Agosto", "$5000"],
-    ["08/2020", "Luz/Gas/Agua", "Impuestos de mes en Agosto", "$7000"],
+    ["Alquiler", "$5000" , "10/10/2020"],
+    ["Luz/Gas/Agua", "$7000", "10/10/2020"],
   ];
 
   return (

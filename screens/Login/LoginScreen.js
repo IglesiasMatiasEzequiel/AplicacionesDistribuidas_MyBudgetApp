@@ -33,8 +33,8 @@ export default function LoginScreen({ navigation }) {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
-  const [email, setEmail] = React.useState("matiiglesias@uade.edu.ar");
-  const [password, setPassword] = React.useState("123456");
+  const [email, setEmail] = React.useState("lucas@gmail.com");
+  const [password, setPassword] = React.useState("1234");
 
   const handleChangeEmail = (email) => setEmail(email);
   const handleChangePassword = (password) => setPassword(password);
@@ -49,6 +49,7 @@ export default function LoginScreen({ navigation }) {
         if (data && data.length === 1) {
 
           var usuario = {
+            id: data[0].id,
             email: data[0].email,
             nombre: data[0].nombre,
             apellido: data[0].apellido,
