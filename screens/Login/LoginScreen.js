@@ -12,10 +12,9 @@ import {
   buttonStyles,
 } from "../../components/Styles";
 
-import { validateRequired } from "../../components/Validations";
-
 import { login } from '../../components/DataBase';
 import { setUser, cleanSession } from '../../components/Session';
+import { validateRequired } from "../../components/Validations";
 
 export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
@@ -91,9 +90,9 @@ export default function LoginScreen({ navigation }) {
             isSuccess: false,
           });
         }
+      }, () => {
+        console.log("Ocurrió un error en la autenticación.");
       });
-    } else {
-      console.log("Ocurrió un error en la autenticación.");
     }
   };
 
