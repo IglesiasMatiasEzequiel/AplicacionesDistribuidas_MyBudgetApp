@@ -10,7 +10,6 @@ import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
 export default function PresupuestosScreen({ navigation }) {
-  const [idUsuario, setUsuario] = React.useState("1");
   const onNuevoPresupuesto = () => navigation.navigate("NuevoPresupuesto");
   const onBorrarPresupuesto= () => navigation.navigate("BorrarPresupuesto");
 

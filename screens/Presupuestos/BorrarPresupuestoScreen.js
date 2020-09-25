@@ -17,7 +17,6 @@ import { deletePresupuesto } from '../../components/DataBase';
 import { selectPresupuestos } from '../../components/DataBase';
 
 export default function BorrarPresupuesto({ navigation }) {
-  const [idUsuario, setUsuario] = React.useState("1");
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
   const [tipoBorrar, setTipoBorrar] = React.useState(null);
@@ -45,6 +44,7 @@ export default function BorrarPresupuesto({ navigation }) {
   }, () => { 
     setIsLoading(false);
     console.log('Error buscando presupuestos...')
+    tableData
   });
 
 
