@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   View,
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  ScrollView
 } from "react-native";
 import { Text, theme } from "galio-framework";
 import { CustomModal, CustomSpinner } from "../../components";
@@ -15,6 +15,7 @@ import {
 } from "../../components/Styles";
 
 import { login } from '../../components/DataBase';
+import { setUser, cleanSession } from '../../components/Session';
 
 export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
@@ -40,35 +41,54 @@ export default function LoginScreen({ navigation }) {
   const handleChangePassword = (password) => setPassword(password);
 
   const onLogin = () => {
-    setIsLoading(true);
 
-    login(email, password,
-      (data) => {
-        setIsLoading(false);
+    cleanSession();
 
-        if (data && data.length === 1) {
+    validateForm(() => {
+      setIsLoading(true);
 
-          var usuario = {
-            email: data[0].email,
-            nombre: data[0].nombre,
-            apellido: data[0].apellido,
-            password: data[0].password,
-          };
+      login(email, password,
+        (data) => {
+          setIsLoading(false);
+  
+          if (data && data.length === 1) {
+  
+            var usuario = {
+              id: data[0].id,
+              email: data[0].email,
+              nombre: data[0].nombre,
+              apellido: data[0].apellido,
+              password: data[0].password,
+            };
 
-          navigation.navigate("App", { usuario: usuario });
-        } else {
-          setModalData({
-            title: "Error",
-            message: "Oops, email y/o password incorrecto/s.",
-            isVisible: true,
-            isSuccess: false,
-          });
+            setUser(usuario);
+  
+            navigation.navigate("App", { usuario: usuario });
+            
+          } else {
+            setModalData({
+              title: "Error",
+              message: "Oops, email y/o password incorrecto/s.",
+              isVisible: true,
+              isSuccess: false,
+            });
+          }
+        },
+        () => {
+          console.log('Ocurrió un error en la autenticación.')
         }
-      },
-      () => {
-        console.log('Ocurrió un error en la autenticación.')
-      }
-    );
+      );
+    }, () => {
+      
+    });
+  };
+
+  const validateForm = (successCallback, errorCallback) => {
+    if(true){
+      successCallback();
+    }else{
+      errorCallback();
+    }
   };
 
   const limpiarState = () => {

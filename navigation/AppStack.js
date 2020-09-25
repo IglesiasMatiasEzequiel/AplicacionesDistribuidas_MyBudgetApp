@@ -23,7 +23,7 @@ const { width } = Dimensions.get("screen");
 const Drawer = createDrawerNavigator();
 
 export default function AppStack(props) {
-  
+
   const { usuario } = props.route.params;
 
   return (
