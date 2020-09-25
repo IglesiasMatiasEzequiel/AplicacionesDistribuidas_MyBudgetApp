@@ -133,14 +133,24 @@ const textboxStyles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 5,
     height: 50,
-    marginBottom: 15,
     justifyContent: "center",
     padding: 20,
+  },
+  textboxContainerError: {
+    borderWidth: 1,
+    borderColor: "red"
   },
   textbox: {
     height: 50,
     color: "black",
   },
+  validationText: {
+    color: "red",
+    fontSize: 12,
+    fontWeight: "bold",
+    paddingLeft: 5,
+    paddingBottom: 10
+  }
 });
 
 const radioButtonStyles = StyleSheet.create({

@@ -4,6 +4,7 @@ import MenuItem from './MenuItem';
 import Header from './Header';
 import CustomModal from './CustomModal';
 import CustomSpinner from './CustomSpinner';
+import Textbox from './Textbox';
 
 export {
   Button,
@@ -11,5 +12,6 @@ export {
   MenuItem,
   Header,
   CustomModal,
-  CustomSpinner
+  CustomSpinner,
+  Textbox
 };

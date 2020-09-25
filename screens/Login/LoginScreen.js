@@ -1,18 +1,18 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
   View,
-  TextInput,
+  Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView
 } from "react-native";
-import { Text, theme } from "galio-framework";
-import { CustomModal, CustomSpinner } from "../../components";
+import { Textbox, CustomModal, CustomSpinner } from "../../components";
 import {
   screenStyles,
   buttonStyles,
-  textboxStyles
 } from "../../components/Styles";
+
+import { validateRequired } from "../../components/Validations";
 
 import { login } from '../../components/DataBase';
 import { setUser, cleanSession } from '../../components/Session';
@@ -34,61 +34,86 @@ export default function LoginScreen({ navigation }) {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
-  const [email, setEmail] = React.useState("matiiglesias@uade.edu.ar");
-  const [password, setPassword] = React.useState("123456");
+  
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-  const handleChangeEmail = (email) => setEmail(email);
-  const handleChangePassword = (password) => setPassword(password);
+  const [validations, setValidations] = React.useState({
+    email: true,
+    password: true
+  });
 
-  const onLogin = () => {
+  const [validationMessages, setValidationMessages] = React.useState({
+    email: "",
+    password: ""
+  });
 
+  const handleChangeEmail = (email) => { 
+    setValidations(prevState => ({ ...prevState, email: true }));
+    setEmail(email);
+  }
+  const handleChangePassword = (password) => {
+    setValidations(prevState => ({ ...prevState, password: true }));
+    setPassword(password);
+  }
+
+  const onLogin = async () => {
     cleanSession();
 
-    validateForm(() => {
+    const isValidForm = await validateForm();
+
+    if (isValidForm) {
+
       setIsLoading(true);
 
-      login(email, password,
-        (data) => {
-          setIsLoading(false);
-  
-          if (data && data.length === 1) {
-  
-            var usuario = {
-              id: data[0].id,
-              email: data[0].email,
-              nombre: data[0].nombre,
-              apellido: data[0].apellido,
-              password: data[0].password,
-            };
+      login(email, password, (data) => {
+        setIsLoading(false);
 
-            setUser(usuario);
-  
-            navigation.navigate("App", { usuario: usuario });
-            
-          } else {
-            setModalData({
-              title: "Error",
-              message: "Oops, email y/o password incorrecto/s.",
-              isVisible: true,
-              isSuccess: false,
-            });
-          }
-        },
-        () => {
-          console.log('Ocurrió un error en la autenticación.')
+        if (data && data.length === 1) {
+          limpiarState();
+
+          var usuario = {
+            id: data[0].id,
+            email: data[0].email,
+            nombre: data[0].nombre,
+            apellido: data[0].apellido,
+            password: data[0].password,
+          };
+
+          setUser(usuario);
+
+          navigation.navigate("App", { usuario: usuario });
+        } else {
+          setModalData({
+            title: "Error",
+            message: "Oops, email y/o password incorrecto/s.",
+            isVisible: true,
+            isSuccess: false,
+          });
         }
-      );
-    }, () => {
-      
-    });
+      });
+    } else {
+      console.log("Ocurrió un error en la autenticación.");
+    }
   };
 
-  const validateForm = (successCallback, errorCallback) => {
-    if(true){
-      successCallback();
-    }else{
-      errorCallback();
+  const validateForm = async () => {
+  
+    const isEmailValid = await validateRequired(email);
+
+    if(!isEmailValid){
+      setValidations(prevState => ({ ...prevState, email: false }));
+      setValidationMessages(prevState => ({ ...prevState, email: "El email es requerido..." }));
     }
+
+    const isPasswordValid = await validateRequired(password);
+
+    if(!isPasswordValid){
+      setValidations(prevState => ({ ...prevState, password: false }));
+      setValidationMessages(prevState => ({ ...prevState, password: "El password es requerido..." }));
+    }
+    
+    return isEmailValid && isPasswordValid;
   };
 
   const limpiarState = () => {
@@ -113,25 +138,21 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.logoContainer}>
         <Text style={styles.logo}>MyBudgetApp</Text>
       </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
+      <Textbox
           placeholder="Email..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(text) => handleChangeEmail(text)}
+          handleChange={handleChangeEmail}
           value={email}
+          isValid={validations.email}
+          validationMessage={validationMessages.email}
         />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          secureTextEntry
-          style={textboxStyles.textbox}
+      <Textbox
           placeholder="Password..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(text) => handleChangePassword(text)}
+          handleChange={handleChangePassword}
           value={password}
+          isValid={validations.password}
+          validationMessage={validationMessages.password}
+          isPassword={true}
         />
-      </View>
       <TouchableOpacity onPress={onForgotPassword} style={buttonStyles.btnBack}>
         <Text style={buttonStyles.btnBackText}>Olvidaste tu password?</Text>
       </TouchableOpacity>
