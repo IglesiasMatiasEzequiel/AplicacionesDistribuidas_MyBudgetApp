@@ -12,6 +12,9 @@ import {
   dropdownStyles,
 } from "../../components/Styles";
 
+import { insertPresupuesto } from '../../components/DataBase';
+import { getUser} from '../../components/Session';
+
 export default function NuevoPresupuestoScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
@@ -21,7 +24,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
   const [mesAño, setMesAño] = React.useState("");
 
   const handleChangeTipo= (tipo) => setTipo(tipo);
-  const handleChangeMonto = (monto) => setDinero(monto);
+  const handleChangeMonto = (monto) => setMonto(monto);
   const handleChangeMesAño = (mesAño) => setMesAño(mesAño);
 
   const limpiarState = () => {
@@ -32,18 +35,23 @@ export default function NuevoPresupuestoScreen({ navigation }) {
     setMesAño("");
   };
 
-  const onConfirmar = () => {
+  const onConfirmar = async () => {
     setIsLoading(true);
-
-    setTimeout(() => {
+    const idUsuario = getUser().id;
+    const Usuario = getUser();
+    console.log(Usuario);
+    insertPresupuesto(idUsuario, tipo, monto, fechaInicio, () => { 
       setIsLoading(false);
-      setModalData({
+      setModalData({ 
         message: "El presupuesto se guardó correctamente.",
         isVisible: true,
         isSuccess: true,
         successBtnText: "Aceptar",
       });
-    }, 500);
+    }, () => { 
+      setIsLoading(false);
+      console.log('Error creando presupuesto...')
+    });
   };
 
   const onBack = () => {
