@@ -116,14 +116,20 @@ const buttonStyles = StyleSheet.create({
 const dropdownStyles = StyleSheet.create({
   dropdownContainer: {
     width: width - 40,
-    height: 50,
-    marginBottom: 15,
+    height: 50,   
   },
   dropdown: {
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#FAFAFA"
+  },
+  dropdownError: {
+    borderColor: "red",
+    borderWidth: 1
   },
   dropdownItem: {
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
+  },
+  dropdownLabelError: {
+    color: 'red'
   }
 });
 

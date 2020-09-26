@@ -12,7 +12,7 @@ import {
   dropdownStyles,
 } from "../../components/Styles";
 
-import { insertPresupuesto } from '../../components/DataBase';
+import { PresupuestosQueries } from "../../database";
 import { getUser} from '../../components/Session';
 
 export default function NuevoPresupuestoScreen({ navigation }) {
@@ -40,7 +40,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
     const idUsuario = getUser().id;
     const Usuario = getUser();
     console.log(Usuario);
-    insertPresupuesto(idUsuario, tipo, monto, fechaInicio, () => { 
+    PresupuestosQueries._insert(idUsuario, tipo, monto, fechaInicio, () => { 
       setIsLoading(false);
       setModalData({ 
         message: "El presupuesto se guardó correctamente.",

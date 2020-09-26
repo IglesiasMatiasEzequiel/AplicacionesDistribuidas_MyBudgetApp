@@ -12,7 +12,7 @@ import {
   dropdownStyles,
 } from "../../components/Styles";
 
-import { insertPrestamo } from '../../components/DataBase';
+import { PrestamosQueries } from "../../database";
 import { getUser} from '../../components/Session';
 
 export default function NuevoPrestamoScreen({ navigation }) {
@@ -46,18 +46,18 @@ export default function NuevoPrestamoScreen({ navigation }) {
     const idUsuario = getUser().id;
     const Usuario = getUser();
     console.log(Usuario);
-    insertPrestamo(idUsuario, tipo, tipoPersona, monto, intereses, () => {
-      setIsLoading(false);
-      setModalData({
-        message: "El prestamo se guardó correctamente.",
-        isVisible: true,
-        isSuccess: true,
-        successBtnText: "Aceptar",
-      });
-    }, () => {
-      setIsLoading(false);
-      console.log('Error creando presupuesto...')
-    });
+    // PrestamosQueries._insert(idUsuario, tipo, tipoPersona, monto, intereses, () => {
+    //   setIsLoading(false);
+    //   setModalData({
+    //     message: "El prestamo se guardó correctamente.",
+    //     isVisible: true,
+    //     isSuccess: true,
+    //     successBtnText: "Aceptar",
+    //   });
+    // }, () => {
+    //   setIsLoading(false);
+    //   console.log('Error creando presupuesto...')
+    // });
   };
 
   const onBack = () => {

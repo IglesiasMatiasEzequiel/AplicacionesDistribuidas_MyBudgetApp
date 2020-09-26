@@ -13,8 +13,7 @@ import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
 import { Text } from "galio-framework";
 import RadioButtonRN from "radio-buttons-react-native";
 
-import { deletePresupuesto } from '../../components/DataBase';
-import { selectPresupuestos } from '../../components/DataBase';
+import { PresupuestosQueries } from "../../database";
 
 export default function BorrarPresupuesto({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -33,7 +32,8 @@ export default function BorrarPresupuesto({ navigation }) {
     ["", "Alquiler", "$5000", "10/10/2020"],
     ["", "Luz/Gas/Agua", "$7000", "10/10/2020"],
   ];
-  selectPresupuestos( idUsuario, (data) => { 
+  
+  PresupuestosQueries._selectAll(idUsuario, (data) => { 
     var presupuesto = {
       id: data[0].id,
       email: data[0].tipo,
@@ -59,7 +59,7 @@ export default function BorrarPresupuesto({ navigation }) {
     //   });
     // }, 500);
 
-    deletePresupuesto( id, idUsuario, () => { 
+    PresupuestosQueries._deleteById( id, idUsuario, () => { 
       setIsLoading(false);
       setModalData({ 
         title: "¡Borrado exitoso!",

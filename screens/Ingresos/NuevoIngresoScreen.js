@@ -1,14 +1,12 @@
 import React from "react";
-import { View, TextInput, ScrollView, TouchableOpacity } from "react-native";
-import { Text, theme } from "galio-framework";
-import DropDownPicker from "react-native-dropdown-picker";
-import { CustomSpinner, CustomModal } from "../../components";
+import { View, ScrollView, TouchableOpacity } from "react-native";
+import { Text } from "galio-framework";
+import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
+
 import {
   titleStyles,
   screenStyles,
-  buttonStyles,
-  textboxStyles,
-  dropdownStyles,
+  buttonStyles
 } from "../../components/Styles";
 import {
   destinosData,
@@ -16,59 +14,166 @@ import {
   categoriasIngresoData,
   cuentasData
 } from "../../components/Data";
+import { 
+  insertIngreso 
+} from "../../database/DataBase";
+import { validateRequired } from "../../components/Validations";
 
 export default function NuevoIngresoScren({ navigation }) {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
-  const [fecha, setFecha] = React.useState("");
-  const [monto, setMonto] = React.useState("");
-  const [descripcion, setDescripcion] = React.useState("");
-  const [tipoIngreso, setTipoIngreso] = React.useState(null);
-  const [categoriaIngreso, setCategoriaIngreso] = React.useState(null);
-  const [destino, setDestino] = React.useState(null);
-  const [cuenta, setCuenta] = React.useState(null);
+  const [form, setForm] = React.useState({
+    fecha: "",
+    monto: "",
+    descripcion: "",
+    tipoIngreso: null,
+    categoriaIngreso: null,
+    destino: null,
+    cuenta: null
+  });
 
-  const handleChangeFecha = (fecha) => setFecha(fecha);
-  const handleChangeMonto = (monto) => setMonto(monto);
-  const handleChangeDescripcion = (descripcion) => setDescripcion(descripcion);
-  const handleChangeTipoIngreso = (tipoIngreso) => {
-    setTipoIngreso(tipoIngreso);
-    setCategoriaIngreso(null);
+  const [validations, setValidations] = React.useState({
+    fecha: true,
+    monto: true,
+    descripcion: true,
+    tipoIngreso: true,
+    categoriaIngreso: true,
+    destino: true,
+    cuenta: true
+  });
+
+  const [validationMessages, setValidationMessages] = React.useState({
+    fecha: "",
+    monto: "",
+    descripcion: "",
+    tipoIngreso: "",
+    categoriaIngreso: "",
+    destino: "",
+    cuenta: ""
+  });
+
+  const handleChange = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
   };
-  const handleChangeCategoriaIngreso = (categoriaIngreso) =>
-    setCategoriaIngreso(categoriaIngreso);
-  const handleChangeDestino = (destino) => { 
-    setDestino(destino);
-    setCuenta(null);
+
+  const handleChangeTipoIngreso = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value, categoriaIngreso: null }));
+  };
+
+  const handleChangeDestino = (prop, value) => { 
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value, cuenta: null }));
   }
-  const handleChangeCuenta = (cuenta) => setCuenta(cuenta);
 
   const limpiarState = () => {
-    setIsLoading(false);
-    setModalData({...modalData, isVisible: false});
-    setFecha("");
-    setMonto("");
-    setDescripcion("");
-    setTipoIngreso(null);
-    setCategoriaIngreso(null);
-    setDestino(null);
-    setCuenta(null);
+    
+    setForm({
+      fecha: "",
+      monto: "",
+      descripcion: "",
+      tipoIngreso: null,
+      categoriaIngreso: null,
+      destino: null,
+      cuenta: null,
+    });
+
+    setValidations({
+      fecha: true,
+      monto: true,
+      descripcion: true,
+      tipoIngreso: true,
+      categoriaIngreso: true,
+      destino: true,
+      cuenta: true,
+    });
+
+    setValidationMessages({
+      fecha: "",
+      monto: "",
+      descripcion: "",
+      tipoIngreso: "",
+      categoriaIngreso: "",
+      destino: "",
+      cuenta: "",
+    });
   };
 
-  const onConfirmar = () => {
-    setIsLoading(true);
+  const onConfirmar = async () => {
+    
+    const isValidForm = await validateForm();
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setModalData({
-        message: "El ingreso se guardó correctamente.",
-        isVisible: true,
-        isSuccess: true,
-        successBtnText: "Aceptar",
-      });
-    }, 500);
+    if (isValidForm) {
+      setIsLoading(true);
+    
+      var obj = {
+        idUsuario: "1",
+        fecha: form.fecha,
+        monto: form.monto,
+        tipoIngreso: form.tipoIngreso,
+        categoriaIngreso: form.categoriaIngreso,
+        destino: form.destino,
+        cuenta: form.cuenta
+      }
+
+      insertIngreso(obj,
+        (data) => {
+          setIsLoading(false);
+          setModalData({
+            message: "El ingreso se guardó correctamente.",
+            isVisible: true,
+            isSuccess: true,
+            successBtnText: "Aceptar",
+          });
+        },
+        (error) => {
+          console.log("Ocurrió un error al insertar el ingreso. - " + error);
+        }
+      );
+    }
+  };
+
+  const validateForm = async () => {
+    const isFechaValid = await validateRequired(form.fecha);
+    const isMontoValid = await validateRequired(form.monto);
+    const isTipoIngresoValid = await validateRequired(form.tipoIngreso);
+    const isDestinoValid = await validateRequired(form.destino);
+    
+    var isCuentaValid = true;
+    var isCategoriaIngresoValid = true;
+        
+    if(form.tipoIngreso === "1"){ //Periódico mensual
+      isCategoriaIngresoValid = await validateRequired(form.categoriaIngreso);
+    }
+
+    if(form.destino === "1"){ //Cuenta bancaria
+      isCuentaValid = await validateRequired(form.cuenta);
+    }
+
+    setValidations((prevState) => ({
+      ...prevState,
+      fecha: isFechaValid,
+      monto: isMontoValid,
+      tipoIngreso: isTipoIngresoValid,
+      categoriaIngreso: isCategoriaIngresoValid,
+      destino: isDestinoValid,
+      cuenta: isCuentaValid
+    }));
+
+    setValidationMessages((prevState) => ({
+      ...prevState,
+      fecha: !isFechaValid ? "La fecha es requerida..." : "",
+      monto: !isMontoValid ? "El monto es requerido..." : "",
+      tipoIngreso: !isTipoIngresoValid ? "Debe seleccionar un tipo de ingreso..." : "",
+      categoriaIngreso: !isCategoriaIngresoValid ? "Debe seleccionar una categoría de ingreso..." : "",
+      destino: !isDestinoValid ? "Debe seleccionar un destino..." : "",
+      cuenta: !isCuentaValid ? "Debe seleccionar una cuenta..." : ""
+    }));
+
+    return isFechaValid && isMontoValid && isTipoIngresoValid && isCategoriaIngresoValid && isDestinoValid && isCuentaValid;
   };
 
   const onBack = () => {
@@ -78,63 +183,55 @@ export default function NuevoIngresoScren({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
-
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
           Ingreso
         </Text>
       </View>
 
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Fecha..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(fecha) => handleChangeFecha(fecha)}
-          value={fecha}
+      <Textbox
+        propName="fecha"
+        placeholder="Fecha..."
+        handleChange={handleChange}
+        value={form.fecha}
+        isValid={validations.fecha}
+        validationMessage={validationMessages.fecha}
+      />
+      <Textbox
+        propName="monto"
+        placeholder="Monto..."
+        handleChange={handleChange}
+        value={form.monto}
+        isValid={validations.monto}
+        validationMessage={validationMessages.monto}
+      />
+      <Textbox
+        propName="descripcion"
+        placeholder="Descripción..."
+        handleChange={handleChange}
+        value={form.descripcion}
+        isValid={validations.descripcion}
+        validationMessage={validationMessages.descripcion}
+      />
+      <Dropdown
+        propName="tipoIngreso"
+        items={tiposIngresoData}
+        defaultValue={form.tipoIngreso}
+        placeholder="Seleccione un tipo de ingreso."
+        handleChange={handleChangeTipoIngreso}
+        isValid={validations.tipoIngreso}
+        validationMessage={validationMessages.tipoIngreso}
+      />
+      {form.tipoIngreso === "1" && (
+        <Dropdown
+          propName="categoriaIngreso"
+          items={categoriasIngresoData}
+          defaultValue={form.categoriaIngreso}
+          placeholder="Seleccione una categoria."
+          handleChange={handleChange}
+          isValid={validations.categoriaIngreso}
+          validationMessage={validationMessages.categoriaIngreso}
         />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Monto..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(monto) => handleChangeMonto(monto)}
-          value={monto}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Descripción ..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(descripcion) => handleChangeDescripcion(descripcion)}
-          value={descripcion}
-        />
-      </View>
-      <View>
-        <DropDownPicker
-          items={tiposIngresoData}
-          defaultValue={tipoIngreso}
-          placeholder="Seleccione un tipo de ingreso."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeTipoIngreso(item.value)}
-        />
-      </View>
-      {tipoIngreso === "1" && (
-        <View>
-          <DropDownPicker
-            items={categoriasIngresoData}
-            defaultValue={categoriaIngreso}
-            placeholder="Seleccione una categoria."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangeCategoriaIngreso(item.value)}
-          />
-        </View>
       )}
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
@@ -143,29 +240,26 @@ export default function NuevoIngresoScren({ navigation }) {
         </Text>
       </View>
 
-      <View>
-        <DropDownPicker
+      <Dropdown
+          propName="destino"
           items={destinosData}
-          defaultValue={destino}
+          defaultValue={form.destino}
           placeholder="Seleccione un destino."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeDestino(item.value)}
+          handleChange={handleChangeDestino}
+          isValid={validations.destino}
+          validationMessage={validationMessages.destino}
         />
-      </View>
-      {destino === "1" && (
-        <View>
-          <DropDownPicker
-            items={cuentasData}
-            defaultValue={cuenta}
-            placeholder="Seleccione una cuenta."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangeCuenta(item.value)}
-          />
-        </View>
+
+      {form.destino === "1" && (
+        <Dropdown
+          propName="cuenta"
+          items={cuentasData}
+          defaultValue={form.cuenta}
+          placeholder="Seleccione un cuenta."
+          handleChange={handleChange}
+          isValid={validations.cuenta}
+          validationMessage={validationMessages.cuenta}
+        />
       )}
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>

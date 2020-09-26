@@ -5,6 +5,7 @@ import Header from './Header';
 import CustomModal from './CustomModal';
 import CustomSpinner from './CustomSpinner';
 import Textbox from './Textbox';
+import Dropdown from './Dropdown';
 
 export {
   Button,
@@ -13,5 +14,6 @@ export {
   Header,
   CustomModal,
   CustomSpinner,
-  Textbox
+  Textbox,
+  Dropdown
 };
