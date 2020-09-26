@@ -1,7 +1,6 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import { Card } from "react-native-elements";
-import Modal from "react-native-modal";
 import { theme, Text } from "galio-framework";
 
 const styles = StyleSheet.create({
@@ -25,6 +24,13 @@ const styles = StyleSheet.create({
   successBtnText: {
     color: "white",
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+    backgroundColor: "rgba(0,0,0,.5)",
+  },
 });
 
 export default function CustomModal({
@@ -38,9 +44,10 @@ export default function CustomModal({
   errorBtnText,
   handleBtnOnError,
 }) {
-  isVisible = (isVisible === null || isVisible === undefined) ? false : isVisible;
-  isSuccess = (isSuccess === null || isSuccess === undefined) ? true : isSuccess;
-  showErrorBtn = (showErrorBtn === null || showErrorBtn === undefined) ? false : showErrorBtn;
+  isVisible = isVisible === null || isVisible === undefined ? false : isVisible;
+  isSuccess = isSuccess === null || isSuccess === undefined ? true : isSuccess;
+  showErrorBtn =
+    showErrorBtn === null || showErrorBtn === undefined ? false : showErrorBtn;
 
   title = title || (isSuccess ? "¡Operación exitosa!" : "Error");
   message =
@@ -53,30 +60,35 @@ export default function CustomModal({
   errorBtnText = errorBtnText || "Cancelar";
 
   return (
-    <Modal 
-      isVisible={isVisible}
-      backdropTransitionOutTiming={0}>
-      <Card>
-        <Card.Title>{title}</Card.Title>
-        <Card.Divider />
-        <View style={styles.messageContainer}>
-          <Text>{message}</Text>
-        </View>
-        <View>
-          <TouchableOpacity
-            onPress={handleBtnOnSuccess}
-            style={styles.successBtn}
-          >
-            <Text style={styles.successBtnText}>{successBtnText}</Text>
-          </TouchableOpacity>
-
-          {showErrorBtn && (
-            <TouchableOpacity onPress={handleBtnOnError}>
-              <Text style={styles.cancelBtnText}>{errorBtnText}</Text>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      presentationStyle="overFullScreen"
+      visible={isVisible}
+    >
+      <View style={styles.centeredView}>
+        <Card>
+          <Card.Title>{title}</Card.Title>
+          <Card.Divider />
+          <View style={styles.messageContainer}>
+            <Text>{message}</Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={handleBtnOnSuccess}
+              style={styles.successBtn}
+            >
+              <Text style={styles.successBtnText}>{successBtnText}</Text>
             </TouchableOpacity>
-          )}
-        </View>
-      </Card>
+
+            {showErrorBtn && (
+              <TouchableOpacity onPress={handleBtnOnError}>
+                <Text style={styles.cancelBtnText}>{errorBtnText}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </Card>
+      </View>
     </Modal>
   );
 }

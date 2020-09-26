@@ -4,6 +4,7 @@ import { theme } from "galio-framework";
 import { textboxStyles } from "./Styles";
 
 export default function Textbox({
+  propName,
   placeholder,
   handleChange,
   value,
@@ -27,7 +28,7 @@ export default function Textbox({
           style={textboxStyles.textbox}
           placeholder={placeholder}
           placeholderTextColor={ isValid ? theme.COLORS.PLACEHOLDER : "red" }
-          onChangeText={(text) => handleChange(text)}
+          onChangeText={(text) => handleChange(propName, text)}
           value={value}
           secureTextEntry={isPassword}
         />

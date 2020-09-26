@@ -75,16 +75,16 @@ export function deleteTables() {
 
 /* Usuarios */
 
-export function login (email, password, successCallback, errorCallback) {
+export function login (obj, successCallback, errorCallback) {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM Usuarios WHERE UPPER(email) = ? AND password = ?', [email.toUpperCase(), password],
+      tx.executeSql('SELECT * FROM Usuarios WHERE UPPER(email) = ? AND password = ?', [obj.email.toUpperCase(), obj.password],
         (txObj, { rows: { _array } }) => { successCallback(_array)},
         (txObj, error) => errorCallback())
     })
   }
-export function insertUsuario (email, nombre, apellido, password, successCallback, errorCallback) {
+export function insertUsuario (obj, successCallback, errorCallback) {
     db.transaction(tx => {
-      tx.executeSql("INSERT INTO Usuarios(email, nombre, apellido, password) VALUES (?, ?, ?, ?)", [email, nombre, apellido, password],
+      tx.executeSql("INSERT INTO Usuarios(email, nombre, apellido, password) VALUES (?, ?, ?, ?)", [obj.email, obj.nombre, obj.apellido, obj.password],
         (txObj, resultSet) => { successCallback(resultSet.insertId) } ,
         (txObj, error) => { errorCallback() })
     })

@@ -4,16 +4,13 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import { Textbox, CustomModal, CustomSpinner } from "../../components";
-import {
-  screenStyles,
-  buttonStyles,
-} from "../../components/Styles";
+import { screenStyles, buttonStyles } from "../../components/Styles";
 
-import { login } from '../../components/DataBase';
-import { setUser, cleanSession } from '../../components/Session';
+import { login } from "../../components/DataBase";
+import { setUser, cleanSession } from "../../components/Session";
 import { validateRequired } from "../../components/Validations";
 
 export default function LoginScreen({ navigation }) {
@@ -33,28 +30,26 @@ export default function LoginScreen({ navigation }) {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
-  
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+
+  const [form, setForm] = React.useState({
+    email: "",
+    password: "",
+  });
 
   const [validations, setValidations] = React.useState({
     email: true,
-    password: true
+    password: true,
   });
 
   const [validationMessages, setValidationMessages] = React.useState({
     email: "",
-    password: ""
+    password: "",
   });
 
-  const handleChangeEmail = (email) => { 
-    setValidations(prevState => ({ ...prevState, email: true }));
-    setEmail(email);
-  }
-  const handleChangePassword = (password) => {
-    setValidations(prevState => ({ ...prevState, password: true }));
-    setPassword(password);
-  }
+  const handleChange = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
+  };
 
   const onLogin = async () => {
     cleanSession();
@@ -62,96 +57,119 @@ export default function LoginScreen({ navigation }) {
     const isValidForm = await validateForm();
 
     if (isValidForm) {
-
       setIsLoading(true);
 
-      login(email, password, (data) => {
-        setIsLoading(false);
+      var loginObj = {
+        email: form.email,
+        password: form.password
+      }
 
-        if (data && data.length === 1) {
-          limpiarState();
+      login(loginObj, (data) => {
 
-          var usuario = {
-            id: data[0].id,
-            email: data[0].email,
-            nombre: data[0].nombre,
-            apellido: data[0].apellido,
-            password: data[0].password,
-          };
+          setIsLoading(false);
 
-          setUser(usuario);
+          if (data && data.length === 1) {
+            
+            limpiarState();
 
-          navigation.navigate("App", { usuario: usuario });
-        } else {
-          setModalData({
-            title: "Error",
-            message: "Oops, email y/o password incorrecto/s.",
-            isVisible: true,
-            isSuccess: false,
-          });
+            var usuario = {
+              id: data[0].id,
+              email: data[0].email,
+              nombre: data[0].nombre,
+              apellido: data[0].apellido,
+              password: data[0].password,
+            };
+
+            setUser(usuario);
+
+            navigation.navigate("App", { usuario: usuario });
+          } else {
+            setModalData({
+              title: "Error",
+              message: "Oops, email y/o password incorrecto/s.",
+              isVisible: true,
+              isSuccess: false,
+            });
+          }
+        },
+        () => {
+          console.log("Ocurrió un error en la autenticación.");
         }
-      }, () => {
-        console.log("Ocurrió un error en la autenticación.");
-      });
+      );
     }
   };
 
   const validateForm = async () => {
-  
-    const isEmailValid = await validateRequired(email);
+    const isEmailValid = await validateRequired(form.email);
+    const isPasswordValid = await validateRequired(form.password);
 
-    if(!isEmailValid){
-      setValidations(prevState => ({ ...prevState, email: false }));
-      setValidationMessages(prevState => ({ ...prevState, email: "El email es requerido..." }));
-    }
+    setValidations((prevState) => ({
+      ...prevState,
+      email: isEmailValid,
+      password: isPasswordValid,
+    }));
 
-    const isPasswordValid = await validateRequired(password);
+    setValidationMessages((prevState) => ({
+      ...prevState,
+      email: !isEmailValid ? "El email es requerido..." : "",
+      password: !isPasswordValid ? "El password es requerido..." : "",
+    }));
 
-    if(!isPasswordValid){
-      setValidations(prevState => ({ ...prevState, password: false }));
-      setValidationMessages(prevState => ({ ...prevState, password: "El password es requerido..." }));
-    }
-    
     return isEmailValid && isPasswordValid;
   };
 
   const limpiarState = () => {
-    setEmail("");
-    setPassword("");
-  }
+    setForm({
+      email: "",
+      password: "",
+    });
 
-  const onCloseModal = () => setModalData({ ...modalData, isVisible: false });
-  
+    setValidations({
+      email: true,
+      password: true,
+    });
+
+    setValidationMessages({
+      email: "",
+      password: "",
+    });
+  };
+
+  const onCloseModal = () => setModalData(prevState => ({ ...prevState, isVisible: false }));
+
   const onRegister = () => {
     limpiarState();
     navigation.navigate("Register");
-  }
+  };
 
-  const onForgotPassword = () => { 
+  const onForgotPassword = () => {
     limpiarState();
     navigation.navigate("ForgotPassword");
-  }
+  };
 
   return (
+
     <ScrollView style={screenStyles.screen}>
       <View style={styles.logoContainer}>
         <Text style={styles.logo}>MyBudgetApp</Text>
       </View>
       <Textbox
-          placeholder="Email..."
-          handleChange={handleChangeEmail}
-          value={email}
-          isValid={validations.email}
-          validationMessage={validationMessages.email}
-        />
+        propName="email"
+        placeholder="Email..."
+        handleChange={handleChange}
+        value={form.email}
+        isValid={validations.email}
+        validationMessage={validationMessages.email}
+      />
       <Textbox
-          placeholder="Password..."
-          handleChange={handleChangePassword}
-          value={password}
-          isValid={validations.password}
-          validationMessage={validationMessages.password}
-          isPassword={true}
-        />
+        propName="password"
+        placeholder="Password..."
+        handleChange={handleChange}
+        value={form.password}
+        isValid={validations.password}
+        validationMessage={validationMessages.password}
+        isPassword={true}
+      />
       <TouchableOpacity onPress={onForgotPassword} style={buttonStyles.btnBack}>
         <Text style={buttonStyles.btnBackText}>Olvidaste tu password?</Text>
       </TouchableOpacity>
@@ -164,7 +182,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={buttonStyles.btnBackText}>Registrarse</Text>
       </TouchableOpacity>
 
-      <CustomSpinner isLoading={isLoading} text={"Ingresando..."} />
+      <CustomSpinner isLoading={isLoading} text="Ingresando..." />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}
@@ -173,7 +191,6 @@ export default function LoginScreen({ navigation }) {
         isVisible={modalData?.isVisible}
         handleBtnOnSuccess={onCloseModal}
       />
-
     </ScrollView>
   );
 }
