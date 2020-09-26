@@ -3,6 +3,22 @@ const db = SQLite.openDatabase('db.MyBudgetApp');
 
 const debugMode = true;
 
+function log(debugMode, status, method, params, query, id, data) {
+  if (debugMode) {    
+    console.log({ 
+      status:status, 
+      method: method, 
+      query: query, 
+      params: params,
+      id: id,
+      data: data
+    });
+  }
+}
+
+logSuccess = (debugMode, method, params, query, id, data) => log(debugMode, "OK", method, params, query, id, data);
+logError = (debugMode, method, params, query, id, data) => log(debugMode, "ERROR", method, params, query, id, data);
+
 export function _createTable(tableName, query){
   db.transaction(tx => {
     tx.executeSql(query, null,
@@ -23,22 +39,11 @@ export function _insert(query, params, successCallback, errorCallback){
   db.transaction(tx => {
     tx.executeSql(query, params,
       (txObj, resultSet) => { 
-        if(debugMode){
-          console.log('SUCCESS');
-          console.log('method: _insert');
-          console.log('params: ' + params)
-          console.log('id: ' + (resultSet?.insertId ?? '-'));
-          console.log('query: ' + query);
-        }
+        logSuccess(debugMode, '_insert', params, query, resultSet?.insertId);
         successCallback(resultSet.insertId);
       },
       (txObj, error) => { 
-        if(debugMode){
-          console.log('ERROR');
-          console.log('method: _insert');
-          console.log('params: ' + params)
-          console.log('query: ' + query);
-        }
+        logError(debugMode, '_insert', params, query);
         errorCallback(error) 
       })
   })
@@ -49,8 +54,14 @@ export function _insert(query, params, successCallback, errorCallback){
 export function _select(query, params, successCallback, errorCallback) {
   db.transaction(tx => {
     tx.executeSql(query, params,
-      (txObj, { rows: { _array } }) => { successCallback(_array)},
-      (txObj, error) => errorCallback(error))
+      (txObj, { rows: { _array } }) => {
+        logSuccess(debugMode, '_select', params, query, null, _array);
+        successCallback(_array);
+      },
+      (txObj, error) => {
+        logError(debugMode, "_select", params, query);
+        errorCallback(error); 
+      })
   })
 }
 
