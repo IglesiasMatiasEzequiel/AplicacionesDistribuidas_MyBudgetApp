@@ -19,7 +19,7 @@ export function createTables() {
       tx.executeSql(
       "CREATE TABLE IF NOT EXISTS Prestamos (" +
           "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-          "idUsuario INTEGER FOREIGN KEY REFERENCES Usuario(id)," +
+          "idUsuario INTEGER REFERENCES Usuarios(id)," +
           "tipo VARCHAR(150)," +
           "tipoPersona VARCHAR(100)," + 
           "monto VARCHAR(100)," + 
@@ -32,7 +32,7 @@ export function createTables() {
     tx.executeSql(
     "CREATE TABLE IF NOT EXISTS Inversiones (" +
         "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-        "idUsuario INTEGER FOREIGN KEY REFERENCES Usuario(id)," +
+        "idUsuario INTEGER REFERENCES Usuarios(id)," +
         "tipo VARCHAR(150)," +
         "monto VARCHAR(100)," + 
         "origen VARCHAR(100)," + 
@@ -44,10 +44,10 @@ export function createTables() {
       tx.executeSql(
       "CREATE TABLE IF NOT EXISTS Presupuestos (" +
           "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-          "idUsuario INTEGER FOREIGN KEY REFERENCES Usuario(id)," +
+          "idUsuario INTEGER REFERENCES Usuarios(id)," +
           "tipo VARCHAR(100)," +
           "monto VARCHAR(100)," + 
-          "fechaInicio VARCHAR(10)," 
+          "fechaInicio VARCHAR(10))" 
       , null, () => { console.log('Tabla Presupuestos creada correctamente.')}, () => { console.log('ERROR - La Tabla Presupuestos no pudo ser creada.')},);
     });
 };
@@ -139,22 +139,20 @@ export function selectPrestamos (successCallback, errorCallback) {
 
 
 /* Presupuestos */
-
-export function insertPresupuesto (idUsuario, tipo, monto, fechaInicio) {
+export function insertPresupuesto (idUsuario, tipo, monto, fechaInicio, successCallback, errorCallback) {
   db.transaction(tx => {
-    tx.executeSql("INSERT INTO Presupuestos(idUsuario, tipo, dinero, fechaInicio) VALUES (?, ?, ?, ?)", [idUsuario, tipo, monto, fechaInicio],
+    tx.executeSql("INSERT INTO Presupuestos(idUsuario, tipo, monto, fechaInicio) VALUES (?, ?, ?, ?)", [idUsuario, tipo, monto, fechaInicio],
       (txObj, resultSet) => { successCallback(resultSet.insertId) } ,
       (txObj, error) => { errorCallback() })
   })
 }
 export function selectPresupuestoById (id, idUsuario, successCallback, errorCallback) {
   db.transaction(tx => {
-    tx.executeSql('SELECT * FROM Presupuestos WHERE id = ? idUsuario =?', [id,idUsuario],
-      (txObj, { rows: { _array } }) => { successCallback(_array)},
+    tx.executeSql('SELECT * FROM Presupuestos WHERE id = ? idUsuario = ?', [id,idUsuario],
+      (txObj, { rows: { _array } }) => { successCallback(_array)}, 
       (txObj, error) => errorCallback())
   })
 }
-
 export function selectPresupuestos (idUsuario, successCallback, errorCallback) {
   db.transaction(tx => {
     tx.executeSql('SELECT * FROM Presupuestos idUsuario = ?', [idUsuario],
@@ -162,15 +160,13 @@ export function selectPresupuestos (idUsuario, successCallback, errorCallback) {
       (txObj, error) => errorCallback())
   })
 }
-
 export function deletePresupuestoById (id, idUsuario, successCallback, errorCallback) {
   db.transaction(tx => {
-    tx.executeSql('DELETE FROM Presupuestos WHERE WHERE id = ? idUsuario =?', [id,idUsuario],
+    tx.executeSql('DELETE FROM Presupuestos WHERE WHERE id = ? idUsuario = ?', [id,idUsuario],
       (txObj, { rows: { _array } }) => { successCallback(_array)},
       (txObj, error) => errorCallback())
   })
 }
-
 /* Presupuestos */
 
 /*Inversiones*/

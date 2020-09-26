@@ -9,6 +9,8 @@ import {
 import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
+import { selectPresupuestos } from '../../components/DataBase';
+
 export default function PresupuestosScreen({ navigation }) {
   const onNuevoPresupuesto = () => navigation.navigate("NuevoPresupuesto");
   const onBorrarPresupuesto= () => navigation.navigate("BorrarPresupuesto");
@@ -19,6 +21,16 @@ export default function PresupuestosScreen({ navigation }) {
     "FechaInicio",
   ];
   const columnWidth = [ 100, 100, 100];
+
+  const idUsuario = 1;
+  selectPresupuestos(idUsuario, (data) => { 
+    console.log('Leyendo presupuestos')
+    console.log(data)
+  }, () => { 
+    console.log('Error leyendo presupuesto')
+    console.log(data)
+  });
+  
 
   const tableData = [
     ["Alquiler", "$5000" , "10/10/2020"],

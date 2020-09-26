@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
-import { CustomSpinner, CustomModal } from "../../components";
+import { Textbox,CustomSpinner, CustomModal } from "../../components";
 import { categoriasEgresoData } from "../../components/Data";
 import {
   screenStyles,
@@ -21,25 +21,24 @@ export default function NuevoPresupuestoScreen({ navigation }) {
 
   const [tipo, setTipo] = React.useState(null);
   const [monto, setMonto] = React.useState("");
-  const [mesAño, setMesAño] = React.useState("");
+  const [fechaInicio, setFechaInicio] = React.useState("");
 
   const handleChangeTipo= (tipo) => setTipo(tipo);
   const handleChangeMonto = (monto) => setMonto(monto);
-  const handleChangeMesAño = (mesAño) => setMesAño(mesAño);
+  const handleChangeFechaInicio = (fechaInicio) => setFechaInicio(fechaInicio);
 
   const limpiarState = () => {
     setIsLoading(false);
     setModalData({ ...modalData, isVisible: false });
     setTipo(null);
     setMonto("");
-    setMesAño("");
+    setFechaInicio("");
   };
 
   const onConfirmar = async () => {
     setIsLoading(true);
-    const idUsuario = getUser().id;
-    const Usuario = getUser();
-    console.log(Usuario);
+    const idUsuario = 1;
+    //console.log(idUsuario);
     insertPresupuesto(idUsuario, tipo, monto, fechaInicio, () => { 
       setIsLoading(false);
       setModalData({ 
@@ -72,24 +71,18 @@ export default function NuevoPresupuestoScreen({ navigation }) {
           onChangeItem={(item) => handleChangeTipo(item.value)}
         />
       </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
+       <Textbox
           placeholder="Dinero..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(monto) => handleChangeMonto(monto)}
+          handleChange={handleChangeMonto}
           value={monto}
         />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
+       <Textbox
           placeholder="Fecha de Inicio..."
           placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(mesAño) => handleChangeMesAño(mesAño)}
-          value={mesAño}
-        />
-      </View>      
+          handleChange={handleChangeFechaInicio}
+          value={fechaInicio}
+        />   
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Confirmar</Text>
