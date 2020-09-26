@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
-import { CustomSpinner, CustomModal } from "../../components";
+import { CustomSpinner, CustomModal, Textbox } from "../../components";
 import { tipoPrestamoData } from "../../components/Data";
 import {
   screenStyles,
@@ -11,6 +11,9 @@ import {
   textboxStyles,
   dropdownStyles,
 } from "../../components/Styles";
+
+import { insertPrestamo } from '../../components/DataBase';
+import { getUser} from '../../components/Session';
 
 export default function NuevoPrestamoScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -38,10 +41,12 @@ export default function NuevoPrestamoScreen({ navigation }) {
     setVencimiento("");
   };
 
-  const onConfirmar = () => {
+  const onConfirmar = async () => {
     setIsLoading(true);
-
-    setTimeout(() => {
+    const idUsuario = getUser().id;
+    const Usuario = getUser();
+    console.log(Usuario);
+    insertPrestamo(idUsuario, tipo, tipoPersona, monto, intereses, () => {
       setIsLoading(false);
       setModalData({
         message: "El prestamo se guardó correctamente.",
@@ -49,7 +54,10 @@ export default function NuevoPrestamoScreen({ navigation }) {
         isSuccess: true,
         successBtnText: "Aceptar",
       });
-    }, 500);
+    }, () => {
+      setIsLoading(false);
+      console.log('Error creando presupuesto...')
+    });
   };
 
   const onBack = () => {
@@ -70,6 +78,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
           onChangeItem={(item) => handleChangeTipo(item.value)}
         />
       </View>
+      
       <View style={textboxStyles.textboxContainer}>
         <TextInput
           style={textboxStyles.textbox}
