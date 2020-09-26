@@ -3,7 +3,7 @@ import { TouchableOpacity, ScrollView, Text } from "react-native";
 import { Textbox, CustomSpinner, CustomModal } from "../../components";
 import { screenStyles, buttonStyles } from "../../components/Styles";
 
-import { insertUsuario } from "../../components/DataBase";
+import { UsuariosQueries } from "../../database";
 import { validateRequired } from "../../components/Validations";
 
 export default function LoginScreen({ navigation }) {
@@ -52,7 +52,7 @@ export default function LoginScreen({ navigation }) {
         password: form.password
       }
 
-      insertUsuario(usuario, 
+      UsuariosQueries._insert(usuario, 
         () => {
           setIsLoading(false);
           setModalData({

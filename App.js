@@ -11,13 +11,13 @@ import LoginStack from "./navigation/LoginStack";
 import { enableScreens } from "react-native-screens";
 enableScreens();
 
-import { createTables, deleteTables } from './components/DataBase';
+import { createTables, dropTables } from './database';
 
 export default class App extends React.Component {
   
   constructor(props) {
     super(props);
-    //deleteTables();
+    //dropTables();
     createTables();
   }
 

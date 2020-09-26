@@ -9,7 +9,7 @@ import {
 import { Textbox, CustomModal, CustomSpinner } from "../../components";
 import { screenStyles, buttonStyles } from "../../components/Styles";
 
-import { login } from "../../components/DataBase";
+import { UsuariosQueries } from "../../database";
 import { setUser, cleanSession } from "../../components/Session";
 import { validateRequired } from "../../components/Validations";
 
@@ -64,7 +64,7 @@ export default function LoginScreen({ navigation }) {
         password: form.password
       }
 
-      login(loginObj, (data) => {
+      UsuariosQueries._login(loginObj, (data) => {
 
           setIsLoading(false);
 

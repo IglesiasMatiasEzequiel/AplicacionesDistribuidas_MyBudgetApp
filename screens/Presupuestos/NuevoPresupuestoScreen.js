@@ -13,7 +13,7 @@ import {
   dropdownStyles,
 } from "../../components/Styles";
 
-import { insertPresupuesto } from '../../components/DataBase';
+import { PresupuestosQueries } from "../../database";
 import { getUser} from '../../components/Session';
 
 export default function NuevoPresupuestoScreen({ navigation }) {
@@ -38,9 +38,10 @@ export default function NuevoPresupuestoScreen({ navigation }) {
 
   const onConfirmar = async () => {
     setIsLoading(true);
-    const idUsuario = 1;
-    //console.log(idUsuario);
-    insertPresupuesto(idUsuario, tipo, monto, fechaInicio, () => { 
+    const idUsuario = getUser().id;
+    const Usuario = getUser();
+    console.log(Usuario);
+    PresupuestosQueries._insert(idUsuario, tipo, monto, fechaInicio, () => { 
       setIsLoading(false);
       setModalData({ 
         message: "El presupuesto se guardó correctamente.",

@@ -1,6 +1,7 @@
 import React from "react";
 import {
   ScrollView,
+  SafeAreaView,
   View,
   FlatList,
   Text,
@@ -38,35 +39,35 @@ const colors = [
 
 const gastosMes = [
   {
-    id: 1,
+    id: "1",
     name: "Efectivo",
     gasto: 7557.8,
     porc: 9,
     color: colors[0],
   },
   {
-    id: 2,
+    id: "2",
     name: "Débito Aut.",
     gasto: 12546.34,
     porc: 11,
     color: colors[1],
   },
   {
-    id: 3,
+    id: "3",
     name: "Crédito",
     gasto: 15768.99,
     porc: 14,
     color: colors[2],
   },
   {
-    id: 4,
+    id: "4",
     name: "Transferencia",
     gasto: 23421.34,
     porc: 23,
     color: colors[3],
   },
   {
-    id: 5,
+    id: "5",
     name: "Débito",
     gasto: 31908.54,
     porc: 43,
@@ -76,18 +77,21 @@ const gastosMes = [
 
 const saldosCuentas = [
   {
+    id: "1",
     name: "Banco Galicia",
     saldo: 75040.9,
     porc: 68,
     color: colors[0],
   },
   {
+    id: "2",
     name: "BBVA Francés",
     saldo: 12546.34,
     porc: 11,
     color: colors[1],
   },
   {
+    id: "3",
     name: "HSBC",
     saldo: 25768.99,
     porc: 21,
@@ -169,7 +173,7 @@ export default class DashboardScreen extends React.Component {
             paddingLeft={95}
           />
 
-          <View
+          <SafeAreaView
             style={{
               justifyContent: "center",
               alignItems: "center",
@@ -181,7 +185,7 @@ export default class DashboardScreen extends React.Component {
               renderItem={renderItemGasto}
               keyExtractor={(item) => item.id}
             />
-          </View>
+          </SafeAreaView>
         </Card>
         <Card>
           <Card.Title>Saldos</Card.Title>
@@ -196,7 +200,7 @@ export default class DashboardScreen extends React.Component {
             hasLegend={false}
             paddingLeft={95}
           />
-          <View
+          <SafeAreaView
             style={{
               justifyContent: "center",
               alignItems: "center",
@@ -208,7 +212,7 @@ export default class DashboardScreen extends React.Component {
               renderItem={renderItemSaldo}
               keyExtractor={(item) => item.id}
             />
-          </View>
+          </SafeAreaView>
         </Card>
       </ScrollView>
     );
