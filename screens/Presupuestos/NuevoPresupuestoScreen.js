@@ -1,8 +1,9 @@
 import React from "react";
-import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, TextInput, TouchableOpacity, ScrollView, Platform} from "react-native";
 
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Textbox,CustomSpinner, CustomModal } from "../../components";
 import { categoriasEgresoData } from "../../components/Data";
 import {
@@ -21,7 +22,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
 
   const [tipo, setTipo] = React.useState(null);
   const [monto, setMonto] = React.useState("");
-  const [fechaInicio, setFechaInicio] = React.useState("");
+  const [fechaInicio, setFechaInicio] = React.useState(new Date(1598051730000));
 
   const handleChangeTipo= (tipo) => setTipo(tipo);
   const handleChangeMonto = (monto) => setMonto(monto);
@@ -83,6 +84,15 @@ export default function NuevoPresupuestoScreen({ navigation }) {
           handleChange={handleChangeFechaInicio}
           value={fechaInicio}
         />   
+
+<DateTimePicker
+          testID="dateTimePicker"
+          value={fechaInicio }
+
+          is24Hour={true}
+          display="default"
+          onChange={handleChangeFechaInicio}
+        />
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Confirmar</Text>

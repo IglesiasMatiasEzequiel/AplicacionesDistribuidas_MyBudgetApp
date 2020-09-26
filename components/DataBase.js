@@ -22,7 +22,7 @@ export function createTables() {
           "idUsuario INTEGER REFERENCES Usuarios(id)," +
           "tipo VARCHAR(150)," +
           "tipoPersona VARCHAR(100)," + 
-          "monto VARCHAR(100)," + 
+          "monto NUMERIC(10,2)," + 
           "intereses VARCHAR(50))"
       , null, () => { console.log('Tabla Prestamos creada correctamente.')}, () => { console.log('ERROR - La Tabla Prestamos no pudo ser creada.')},);
   });
@@ -46,8 +46,8 @@ export function createTables() {
           "id INTEGER PRIMARY KEY AUTOINCREMENT," +
           "idUsuario INTEGER REFERENCES Usuarios(id)," +
           "tipo VARCHAR(100)," +
-          "monto VARCHAR(100)," + 
-          "fechaInicio VARCHAR(10))" 
+          "monto NUMERIC(10,2)," + 
+          "fechaInicio DATE)" 
       , null, () => { console.log('Tabla Presupuestos creada correctamente.')}, () => { console.log('ERROR - La Tabla Presupuestos no pudo ser creada.')},);
     });
 };

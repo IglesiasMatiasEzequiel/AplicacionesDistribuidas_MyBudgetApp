@@ -32,8 +32,8 @@ export default function LoginScreen({ navigation }) {
   const [modalData, setModalData] = React.useState(null);
 
   const [form, setForm] = React.useState({
-    email: "",
-    password: "",
+    email: "lucas@gmail.com",
+    password: "1234",
   });
 
   const [validations, setValidations] = React.useState({
