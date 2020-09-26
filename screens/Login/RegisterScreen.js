@@ -1,31 +1,29 @@
 import React from "react";
 import { TouchableOpacity, ScrollView, Text } from "react-native";
 import { Textbox, CustomSpinner, CustomModal } from "../../components";
-import {
-  screenStyles,
-  buttonStyles
-} from "../../components/Styles";
+import { screenStyles, buttonStyles } from "../../components/Styles";
 
-import { insertUsuario } from '../../components/DataBase';
+import { insertUsuario } from "../../components/DataBase";
 import { validateRequired } from "../../components/Validations";
 
 export default function LoginScreen({ navigation }) {
-
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
-  const [email, setEmail] = React.useState("");
-  const [nombre, setNombre] = React.useState("");
-  const [apellido, setApellido] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [repeatPassword, setRepeatPassword] = React.useState("");
+  const [form, setForm] = React.useState({
+    email: "",
+    nombre: "",
+    apellido: "",
+    password: "",
+    repeatPassword: "",
+  });
 
   const [validations, setValidations] = React.useState({
     email: true,
     nombre: true,
     apellido: true,
     password: true,
-    repeatPassword: true
+    repeatPassword: true,
   });
 
   const [validationMessages, setValidationMessages] = React.useState({
@@ -33,39 +31,28 @@ export default function LoginScreen({ navigation }) {
     nombre: "",
     apellido: "",
     password: "",
-    repeatPassword: ""
+    repeatPassword: "",
   });
 
-  const handleChangeEmail = (email) => { 
-    setValidations(prevState => ({ ...prevState, email: true }));
-    setEmail(email); 
-  }
-  const handleChangeNombre = (nombre) => {
-    setValidations(prevState => ({ ...prevState, nombre: true }));
-    setNombre(nombre);
-  }
-  const handleChangeApellido = (apellido) => {
-    setValidations(prevState => ({ ...prevState, apellido: true }));
-    setApellido(apellido);
-  }
-  const handleChangePassword = (password) => {
-    setValidations(prevState => ({ ...prevState, password: true }));
-    setPassword(password);
-  }
-  const handleChangeRepeatPassword = (repeatPassword) => {
-    setValidations(prevState => ({ ...prevState, repeatPassword: true }));
-    setRepeatPassword(repeatPassword);
-  }
+  const handleChange = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
+  };
 
   const onRegister = async () => {
-    
     const isValidForm = await validateForm();
 
     if (isValidForm) {
-
       setIsLoading(true);
 
-      insertUsuario(email, nombre, apellido, password,
+      var usuario = {
+        email: form.email,
+        nombre: form.nombre,
+        apellido: form.apellido,
+        password: form.password
+      }
+
+      insertUsuario(usuario, 
         () => {
           setIsLoading(false);
           setModalData({
@@ -85,110 +72,127 @@ export default function LoginScreen({ navigation }) {
   };
 
   const validateForm = async () => {
-  
-    const isEmailValid = await validateRequired(email);
+    const isEmailValid = await validateRequired(form.email);
+    const isNombreValid = await validateRequired(form.nombre);
+    const isApellidoValid = await validateRequired(form.apellido);
+    const isPasswordValid = await validateRequired(form.password);
+    const isRepeatPasswordValid = await validateRequired(form.repeatPassword);
 
-    if(!isEmailValid){
-      setValidations(prevState => ({ ...prevState, email: false }));
-      setValidationMessages(prevState => ({ ...prevState, email: "El email es requerido..." }));
-    }
+    var isValidPasswords =
+      isPasswordValid && isRepeatPasswordValid && form.password == form.repeatPassword;
 
-    const isNombreValid = await validateRequired(nombre);
+    setValidations((prevState) => ({
+      ...prevState,
+      email: isEmailValid,
+      nombre: isNombreValid,
+      apellido: isApellidoValid,
+      password: isPasswordValid,
+      repeatPassword: isRepeatPasswordValid && isValidPasswords,
+    }));
 
-    if(!isNombreValid){
-      setValidations(prevState => ({ ...prevState, nombre: false }));
-      setValidationMessages(prevState => ({ ...prevState, nombre: "El nombre es requerido..." }));
-    }
+    setValidationMessages((prevState) => ({
+      ...prevState,
+      email: !isEmailValid ? "El email es requerido..." : "",
+      nombre: !isNombreValid ? "El nombre es requerido..." : "",
+      apellido: !isApellidoValid ? "El apellido es requerido..." : "",
+      password: !isPasswordValid ? "El password es requerido..." : "",
+      repeatPassword: !isRepeatPasswordValid
+        ? "El otro password es requerido..."
+        : !isValidPasswords
+        ? "Las password no coinciden..."
+        : "",
+    }));
 
-    const isApellidoValid = await validateRequired(apellido);
-
-    if(!isApellidoValid){
-      setValidations(prevState => ({ ...prevState, apellido: false }));
-      setValidationMessages(prevState => ({ ...prevState, apellido: "El apellido es requerido..." }));
-    }
-
-    const isPasswordValid = await validateRequired(password);
-
-    if(!isPasswordValid){
-      setValidations(prevState => ({ ...prevState, password: false }));
-      setValidationMessages(prevState => ({ ...prevState, password: "El password es requerido..." }));
-    }
-
-    const isRepeatPasswordValid = await validateRequired(repeatPassword);
-
-    if(!isRepeatPasswordValid){
-      setValidations(prevState => ({ ...prevState, repeatPassword: false }));
-      setValidationMessages(prevState => ({ ...prevState, repeatPassword: "El campo repetir password es requerido..." }));
-    }
-
-    var isValidPasswords = true;
-
-    if(isPasswordValid && isRepeatPasswordValid && password != repeatPassword){
-      isValidPasswords = false;
-      setValidations(prevState => ({ ...prevState, repeatPassword: false }));
-      setValidationMessages(prevState => ({ ...prevState, repeatPassword: "Las password no coinciden..." }));
-    }
-    
-    return isEmailValid && isNombreValid && isApellidoValid && isPasswordValid && isRepeatPasswordValid && isValidPasswords;
+    return (
+      isEmailValid &&
+      isNombreValid &&
+      isApellidoValid &&
+      isPasswordValid &&
+      isRepeatPasswordValid &&
+      isValidPasswords
+    );
   };
 
   const limpiarState = () => {
-    setEmail("");
-    setNombre("");
-    setApellido("");
-    setPassword("");
-    setRepeatPassword("");
-  }
+    setForm({
+      email: "",
+      nombre: "",
+      apellido: "",
+      password: "",
+      repeatPassword: "",
+    });
+
+    setValidations({
+      email: true,
+      nombre: true,
+      apellido: true,
+      password: true,
+      repeatPassword: true,
+    });
+
+    setValidationMessages({
+      email: "",
+      nombre: "",
+      apellido: "",
+      password: "",
+      repeatPassword: "",
+    });
+  };
 
   const onLogin = () => {
     limpiarState();
     navigation.navigate("Login");
-  }
+  };
 
-  const onBack = () => { 
+  const onBack = () => {
     limpiarState();
     navigation.navigate("Login");
-  }
+  };
 
   return (
     <ScrollView style={screenStyles.screen}>
       <Textbox
-          placeholder="Email..."
-          handleChange={handleChangeEmail}
-          value={email}
-          isValid={validations.email}
-          validationMessage={validationMessages.email}
-        />
-        <Textbox
-          placeholder="Nombre..."
-          handleChange={handleChangeNombre}
-          value={nombre}
-          isValid={validations.nombre}
-          validationMessage={validationMessages.nombre}
-        />
-        <Textbox
-          placeholder="Apellido..."
-          handleChange={handleChangeApellido}
-          value={apellido}
-          isValid={validations.apellido}
-          validationMessage={validationMessages.apellido}
-        />
-        <Textbox
-          placeholder="Password..."
-          handleChange={handleChangePassword}
-          value={password}
-          isValid={validations.password}
-          validationMessage={validationMessages.password}
-          isPassword={true}
-        />
-        <Textbox
-          placeholder="Repetir password..."
-          handleChange={handleChangeRepeatPassword}
-          value={repeatPassword}
-          isValid={validations.repeatPassword}
-          validationMessage={validationMessages.repeatPassword}
-          isPassword={true}
-        />
+        propName="email"
+        placeholder="Email..."
+        handleChange={handleChange}
+        value={form.email}
+        isValid={validations.email}
+        validationMessage={validationMessages.email}
+      />
+      <Textbox
+        propName="nombre"
+        placeholder="Nombre..."
+        handleChange={handleChange}
+        value={form.nombre}
+        isValid={validations.nombre}
+        validationMessage={validationMessages.nombre}
+      />
+      <Textbox
+        propName="apellido"
+        placeholder="Apellido..."
+        handleChange={handleChange}
+        value={form.apellido}
+        isValid={validations.apellido}
+        validationMessage={validationMessages.apellido}
+      />
+      <Textbox
+        propName="password"
+        placeholder="Password..."
+        handleChange={handleChange}
+        value={form.password}
+        isValid={validations.password}
+        validationMessage={validationMessages.password}
+        isPassword={true}
+      />
+      <Textbox
+        propName="repeatPassword"
+        placeholder="Repetir password..."
+        handleChange={handleChange}
+        value={form.repeatPassword}
+        isValid={validations.repeatPassword}
+        validationMessage={validationMessages.repeatPassword}
+        isPassword={true}
+      />
 
       <TouchableOpacity onPress={onRegister} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>REGISTRARSE</Text>
@@ -207,7 +211,6 @@ export default function LoginScreen({ navigation }) {
         successBtnText={modalData?.successBtnText}
         handleBtnOnSuccess={onLogin}
       />
-
     </ScrollView>
   );
 }
