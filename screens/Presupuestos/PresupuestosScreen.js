@@ -23,12 +23,11 @@ export default function PresupuestosScreen({ navigation }) {
   const columnWidth = [ 100, 100, 100];
 
   const idUsuario = 1;
-  selectPresupuestos(idUsuario, (data) => { 
+  selectPresupuestos = async (idUsuario, (data) => { 
     console.log('Leyendo presupuestos')
     console.log(data)
   }, () => { 
     console.log('Error leyendo presupuesto')
-    console.log(data)
   });
   
 
