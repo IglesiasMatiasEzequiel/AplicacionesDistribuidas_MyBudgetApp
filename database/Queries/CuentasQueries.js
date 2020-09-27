@@ -2,7 +2,7 @@ import * as db from "../DataBase";
 
 const tableName = "Cuentas";
 
-export function _createTable() {
+export function _createTable(tx) {
   var query = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
   "id INTEGER PRIMARY KEY AUTOINCREMENT," +
   "idUsuario INTEGER, " +
@@ -18,11 +18,11 @@ export function _createTable() {
   "FOREIGN KEY(idBanco) REFERENCES Bancos(id), " +
   "FOREIGN KEY(idEntidadEmisora) REFERENCES EntidadesEmisoras(id))";
 
-  db._createTable(tableName, query);
+  db._createTable(tx, tableName, query);
 }
 
-export function _dropTable() {
-  db._dropTable(tableName);
+export function _dropTable(tx) {
+  db._dropTable(tx, tableName);
 }
 
 export function _selectAll(successCallback, errorCallback) {

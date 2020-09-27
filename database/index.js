@@ -1,3 +1,4 @@
+import * as DataBase from "./DataBase";
 import * as UsuariosQueries from "./Queries/UsuariosQueries";
 import * as IngresosQueries from './Queries/IngresosQueries';
 import * as EgresosQueries from './Queries/EgresosQueries';
@@ -22,46 +23,59 @@ import * as TiposPrestamoQueries from './Queries/TiposPrestamoQueries';
 
 export function createTables() {
 
-  MediosPagoQueries._createTable();
-  TiposIngresoQueries._createTable();
-  TiposEgresoQueries._createTable();
-  CategoriasEgresoQueries._createTable();
-  CategoriasIngresoQueries._createTable();
-  BancosQueries._createTable();
-  DestinosEgresoQueries._createTable();
-  DestinosIngresoQueries._createTable();
-  EntidadesEmisorasQueries._createTable();
-  EstadosPrestamoQueries._createTable();
-  PeriodosQueries._createTable();
-  TiposInversionQueries._createTable();
-  TiposPrestamoQueries._createTable();
+  //Abro una transacción para crear las tablas y llenarlas con datos..
+  DataBase._createTransaction((tx) => {
 
-  UsuariosQueries._createTable();
-  IngresosQueries._createTable();
-  PresupuestosQueries._createTable();
-  CuentasQueries._createTable();
+    /* Intento crear la tabla de usuarios, 
+     * Si pudo es porque no existía y luego creo las demás tablas
+     * Si NO pudo es porque las tablas ya fueron creadas */
+    UsuariosQueries._createTable(tx, () => {
+
+      /* Crear tablas secundarias */
+      MediosPagoQueries._createTable(tx);
+      TiposIngresoQueries._createTable(tx);
+      TiposEgresoQueries._createTable(tx);
+      CategoriasEgresoQueries._createTable(tx);
+      CategoriasIngresoQueries._createTable(tx);
+      BancosQueries._createTable(tx);
+      DestinosEgresoQueries._createTable(tx);
+      DestinosIngresoQueries._createTable(tx);
+      EntidadesEmisorasQueries._createTable(tx);
+      EstadosPrestamoQueries._createTable(tx);
+      PeriodosQueries._createTable(tx);
+      TiposInversionQueries._createTable(tx);
+      TiposPrestamoQueries._createTable(tx);
+    
+      /* Crear tablas principales */
+      IngresosQueries._createTable(tx);
+      PresupuestosQueries._createTable(tx);
+      CuentasQueries._createTable(tx);
+    });
+  });
 }
 
 export function dropTables() {
+  //Abro una transacción para crear las tablas y llenarlas con datos..
+  DataBase._createTransaction((tx) => {
+    MediosPagoQueries._dropTable(tx);
+    TiposIngresoQueries._dropTable(tx);
+    TiposEgresoQueries._dropTable(tx);
+    CategoriasEgresoQueries._dropTable(tx);
+    CategoriasIngresoQueries._dropTable(tx);
+    BancosQueries._dropTable(tx);
+    DestinosEgresoQueries._dropTable(tx);
+    DestinosIngresoQueries._dropTable(tx);
+    EntidadesEmisorasQueries._dropTable(tx);
+    EstadosPrestamoQueries._dropTable(tx);
+    PeriodosQueries._dropTable(tx);
+    TiposInversionQueries._dropTable(tx);
+    TiposPrestamoQueries._dropTable(tx);
 
-  MediosPagoQueries._dropTable();
-  TiposIngresoQueries._dropTable();
-  TiposEgresoQueries._dropTable();
-  CategoriasEgresoQueries._dropTable();
-  CategoriasIngresoQueries._dropTable();
-  BancosQueries._dropTable();
-  DestinosEgresoQueries._dropTable();
-  DestinosIngresoQueries._dropTable();
-  EntidadesEmisorasQueries._dropTable();
-  EstadosPrestamoQueries._dropTable();
-  PeriodosQueries._dropTable();
-  TiposInversionQueries._dropTable();
-  TiposPrestamoQueries._dropTable();
-
-  UsuariosQueries._dropTable();
-  IngresosQueries._dropTable();
-  PresupuestosQueries._dropTable();
-  CuentasQueries._dropTable();
+    UsuariosQueries._dropTable(tx);
+    IngresosQueries._dropTable(tx);
+    PresupuestosQueries._dropTable(tx);
+    CuentasQueries._dropTable(tx);
+  });
 }
 
 export {

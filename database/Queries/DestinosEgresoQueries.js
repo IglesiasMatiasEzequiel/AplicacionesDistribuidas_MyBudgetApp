@@ -2,31 +2,31 @@ import * as db from "../DataBase";
 
 const tableName = "DestinosEgreso";
 
-export function _createTable() {
+export function _createTable(tx) {
   var query = "CREATE TABLE " + tableName + " (" +
   "id INTEGER PRIMARY KEY," +
   "destinoEgreso VARCHAR(255))";
 
-  db._createTable(tableName, query, () => {
-    _populateTable();
+  db._createTable(tx, tableName, query, () => {
+    _populateTable(tx);
   });
 }
 
-export function _dropTable() {
-  db._dropTable(tableName);
+export function _dropTable(tx) {
+  db._dropTable(tx, tableName);
 }
 
-export function _populateTable() {
-  _insert({ id: 1, desc: "Cuenta Bancaria" });
-  _insert({ id: 2, desc: "Efectivo" });
+export function _populateTable(tx) {
+  _insertTx(tx, { id: 1, desc: "Cuenta Bancaria" });
+  _insertTx(tx, { id: 2, desc: "Efectivo" });
 }
 
-export function _insert(obj, successCallback, errorCallback) {
+export function _insertTx(tx, obj) {
 
   var query = "INSERT INTO " + tableName + " (id, destinoEgreso)" + " VALUES (?, ?)";
   var params = [obj.id, obj.desc];
 
-  db._insert(query, params, successCallback, errorCallback);
+  db._insertTx(tx, query, params);
 }
 
 export function _selectAll(successCallback, errorCallback) {

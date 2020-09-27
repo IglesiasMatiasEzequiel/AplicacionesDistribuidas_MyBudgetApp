@@ -2,33 +2,33 @@ import * as db from "../DataBase";
 
 const tableName = "Bancos";
 
-export function _createTable() {
+export function _createTable(tx) {
   var query = "CREATE TABLE " + tableName + " (" +
   "id INTEGER PRIMARY KEY," +
   "banco VARCHAR(255))";
 
-  db._createTable(tableName, query, () => {
-    _populateTable();
+  db._createTable(tx, tableName, query, () => {
+    _populateTable(tx);
   });
 }
 
-export function _dropTable() {
-  db._dropTable(tableName);
+export function _dropTable(tx) {
+  db._dropTable(tx, tableName);
 }
 
-export function _populateTable() {
-  _insert({ id: 1, desc: "Banco Galicia" });
-  _insert({ id: 2, desc: "BBVA Francés" });
-  _insert({ id: 3, desc: "HSBC" });
-  _insert({ id: 4, desc: "Banco Santander" });
+export function _populateTable(tx) {
+  _insertTx(tx, { id: 1, desc: "Banco Galicia" });
+  _insertTx(tx, { id: 2, desc: "BBVA Francés" });
+  _insertTx(tx, { id: 3, desc: "HSBC" });
+  _insertTx(tx, { id: 4, desc: "Banco Santander" });
 }
 
-export function _insert(obj, successCallback, errorCallback) {
+export function _insertTx(tx, obj) {
 
   var query = "INSERT INTO " + tableName + " (id, banco)" + " VALUES (?, ?)";
   var params = [obj.id, obj.desc];
 
-  db._insert(query, params, successCallback, errorCallback);
+  db._insertTx(tx, query, params);
 }
 
 export function _selectAll(successCallback, errorCallback) {

@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import { useCallback } from 'react';
 const db = SQLite.openDatabase('db.MyBudgetApp');
 
 const debugMode = false;
@@ -19,31 +20,51 @@ function log(debugMode, status, method, params, query, id, data) {
 logSuccess = (debugMode, method, params, query, id, data) => log(debugMode, "OK", method, params, query, id, data);
 logError = (debugMode, method, params, query, id, data) => log(debugMode, "ERROR", method, params, query, id, data);
 
-export function _createTable(tableName, query, successCallback, errorCallback){
-  db.transaction(tx => {
+export function _createTransaction(callback){
+  db.transaction((tx) => {
+    callback(tx);
+  });
+}
+
+export function _createTable(tx, tableName, query, successCallback, errorCallback){
     tx.executeSql(query, null,
       () => {
         if (successCallback) {
           successCallback();
         }
-        console.log("Tabla " + tableName + " creada correctamente.")
+        console.log("OK - La tabla '" + tableName + "' se creó correctamente.")
       },
       (txObj, error) => {
         if (errorCallback) {
           errorCallback();
         }
-        console.log("ERROR - La tabla " + tableName + " no pudo ser creada. - " + error); 
+        console.log("ERROR - La tabla '" + tableName + "' no pudo ser creada. - " + error); 
       }
-  )})
+  );
 }
 
-export function _dropTable(tableName){
-  db.transaction((tx) => {
-    tx.executeSql("DROP TABLE " + tableName);
+export function _dropTable(tx, tableName){
+  tx.executeSql("DROP TABLE " + tableName, null, () => {
+    console.log("OK - La tabla '" + tableName + "' se eliminó correctamente.")
+  }, (txObj, error) => {
+    console.log("ERROR - La tabla '" + tableName + "' no pudo ser eliminada. - " + error)
   });
 }
 
 /* INSERT */
+
+export function _insertTx(tx, query, params) {
+  tx.executeSql(
+    query,
+    params,
+    (txObj, resultSet) => {
+      logSuccess(debugMode, "_insert", params, query, resultSet?.insertId);
+    },
+    (txObj, error) => {
+      logError(debugMode, "_insert", params, query);
+    }
+  );
+}
 
 export function _insert(query, params, successCallback, errorCallback) {
   db.transaction((tx) => {
