@@ -4,55 +4,134 @@ import { View, TextInput, TouchableOpacity, ScrollView, Platform} from "react-na
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Textbox,CustomSpinner, CustomModal } from "../../components";
-import { categoriasEgresoData } from "../../components/Data";
+import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
+
 import {
+  titleStyles,
   screenStyles,
-  buttonStyles,
-  textboxStyles,
-  dropdownStyles,
+  buttonStyles
 } from "../../components/Styles";
+import {
+  categoriasEgresoData,
+} from "../../components/Data";
+import { validateRequired } from "../../components/Validations";
 
 import { PresupuestosQueries } from "../../database";
 import { getUser} from '../../components/Session';
 
 export default function NuevoPresupuestoScreen({ navigation }) {
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
-  const [tipo, setTipo] = React.useState(null);
-  const [monto, setMonto] = React.useState("");
-  const [fechaInicio, setFechaInicio] = React.useState(new Date(1598051730000));
+  const [form, setForm] = React.useState({
+    fecha: "",
+    monto: "",
+    tipo: null,
+  });
 
-  const handleChangeTipo= (tipo) => setTipo(tipo);
-  const handleChangeMonto = (monto) => setMonto(monto);
-  const handleChangeFechaInicio = (fechaInicio) => setFechaInicio(fechaInicio);
+  const [validations, setValidations] = React.useState({
+    fecha: true,
+    monto: true,
+    tipo: true,
+  });
+
+  const [validationMessages, setValidationMessages] = React.useState({
+    fecha: "",
+    monto: "",
+    tipo: ""
+  });
+
+  const handleChange = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
+  };
+
+  const handleChangeTipo = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
+  };
 
   const limpiarState = () => {
-    setIsLoading(false);
-    setModalData({ ...modalData, isVisible: false });
-    setTipo(null);
-    setMonto("");
-    setFechaInicio("");
+    
+    setForm({
+      fecha: "",
+      monto: "",
+      tipo: null,
+    });
+
+    setValidations({
+      fecha: true,
+      monto: true,
+      tipo: true,
+    });
+
+    setValidationMessages({
+      fecha: "",
+      monto: "",
+      tipo: "",
+    });
+
   };
 
   const onConfirmar = async () => {
-    setIsLoading(true);
-    const idUsuario = getUser().id;
-    const Usuario = getUser();
-    console.log(Usuario);
-    PresupuestosQueries._insert(idUsuario, tipo, monto, fechaInicio, () => { 
-      setIsLoading(false);
-      setModalData({ 
-        message: "El presupuesto se guardó correctamente.",
-        isVisible: true,
-        isSuccess: true,
-        successBtnText: "Aceptar",
-      });
-    }, () => { 
-      setIsLoading(false);
-      console.log('Error creando presupuesto...')
-    });
+    
+    const isValidForm = await validateForm();
+
+    if (isValidForm) {
+      setIsLoading(true);
+    
+      var obj = {
+        idUsuario: "1",
+        fecha: form.fecha,
+        monto: form.monto,
+        tipo: form.tipo,
+      }
+
+      PresupuestosQueries._insert(obj,
+        (data) => {
+          setIsLoading(false);
+          setModalData({
+            message: "El presupuesto se guardó correctamente.",
+            isVisible: true,
+            isSuccess: true,
+            successBtnText: "Aceptar",
+          });
+        },
+        (error) => {
+          console.log("Ocurrió un error al insertar el presupuesto. - " + error);
+        }
+      );
+    }
+  };
+
+  const validateForm = async () => {
+    const isFechaValid = await validateRequired(form.fecha);
+    const isMontoValid = await validateRequired(form.monto);
+    const isTipoValid = await validateRequired(form.tipo); 
+    
+    // var isCuentaValid = true;
+    // var isCategoriaIngresoValid = true;
+        
+    // if(form.tipo === "1"){ //Periódico mensual
+    //   isCategoriaIngresoValid = await validateRequired(form.categoriaIngreso);
+    // }
+
+    setValidations((prevState) => ({
+      ...prevState,
+      fecha: isFechaValid,
+      monto: isMontoValid,
+      tipo: isTipoValid,
+    }));
+
+    setValidationMessages((prevState) => ({
+      ...prevState,
+      fecha: !isFechaValid ? "La fecha es requerida..." : "",
+      monto: !isMontoValid ? "El monto es requerido..." : "",
+      tipo: !isTipoValid ? "Debe seleccionar un tipo de presupuesto..." : "",
+    }));
+
+    return isFechaValid && isMontoValid && isTipoValid;
   };
 
   const onBack = () => {
@@ -62,38 +141,31 @@ export default function NuevoPresupuestoScreen({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <View>
-        <DropDownPicker
-          items={categoriasEgresoData}
-          defaultValue={tipo}
-          placeholder="Seleccione un tipo de presupuestos."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeTipo(item.value)}
-        />
-      </View>
-       <Textbox
-          placeholder="Dinero..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          handleChange={handleChangeMonto}
-          value={monto}
-        />
-       <Textbox
-          placeholder="Fecha de Inicio..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          handleChange={handleChangeFechaInicio}
-          value={fechaInicio}
-        />   
-
-<DateTimePicker
-          testID="dateTimePicker"
-          value={fechaInicio }
-
-          is24Hour={true}
-          display="default"
-          onChange={handleChangeFechaInicio}
-        />
+      <Dropdown
+        propName="tipo"
+        items={categoriasEgresoData}
+        defaultValue={form.tipoIngreso}
+        placeholder="Seleccione un tipo de presupuesto."
+        handleChange={handleChangeTipo}
+        isValid={validations.tipo}
+        validationMessage={validationMessages.tipo}
+      />
+      <Textbox
+        propName="fecha"
+        placeholder="Fecha..."
+        handleChange={handleChange}
+        value={form.fecha}
+        isValid={validations.fecha}
+        validationMessage={validationMessages.fecha}
+      />
+      <Textbox
+        propName="monto"
+        placeholder="Monto..."
+        handleChange={handleChange}
+        value={form.monto}
+        isValid={validations.monto}
+        validationMessage={validationMessages.monto}
+      />
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Confirmar</Text>

@@ -47,7 +47,7 @@ export function _insert(obj, successCallback, errorCallback) {
       " tipoIngreso," +
       " categoriaIngreso," +
       " destino," +
-      " cuenta) VALUES (?, STR_TO_DATE(?, '%d/%m/%Y'), ?, ?, ?, ?, ?)";
+      " cuenta) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     var params = [
       obj.idUsuario,
