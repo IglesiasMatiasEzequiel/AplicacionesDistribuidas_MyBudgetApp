@@ -11,13 +11,20 @@ import {
   periodosData
 } from "../../components/Data";
 
+import { IngresosQueries } from "../../database";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Table, Row } from "react-native-table-component";
 import { Text } from "galio-framework";
+import * as Session from "../../components/Session";
+import Alert from "../../components/Alert";
 
-export default function Ingresos({ navigation }) {
+export default function Ingresos({ route, navigation }) {
+
+  const recargarListado = route.params?.recargarListado ?? false;
 
   const [periodo, setPeriodo] = React.useState(null);
+  const [listado, setListado] = React.useState(null);
+  const [isLoadingListado, setIsLoadingListado] = React.useState(false);
 
   const handleChangePeriodo = (periodo) => setPeriodo(periodo);
 
@@ -34,27 +41,48 @@ export default function Ingresos({ navigation }) {
     navigation.navigate("BorrarIngreso"); 
   }
 
-  const tableHeaders = ["Tipo", "Categoría", "Destino", "Descripcion", "Monto"];
-  const columnWidth = [120, 120, 120, 120, 120];
+  const tableHeaders = ["Fecha", "Monto", "Descripcion", "Tipo", "Categoría", "Destino", "Cuenta"];
+  const columnWidth = [60, 80, 150, 100, 80, 120];
 
-  const tableData = [
-    ["Periódico", "Sueldo", "Cuenta Bancaria", "Sueldo", "$ 5000"],
-    ["Periódico", "Alquiler", "Cuenta Bancaria", "Depto1", "$ 3000"],
-    ["Periódico", "Alquiler", "Cuenta Bancaria", "Depto2", "$ 3200"],
-    ["Periódico", "Alquiler", "Cuenta Bancaria", "Depto3", "$ 3800"],
-    ["Extraordinario", "-", "Efectivo", "Tio", "$ 400"],
-    ["Extraordinario", "-", "Efectivo", "Tio", "$ 800"],
-    ["Extraordinario", "-", "Efectivo", "Hermano", "$ 500"],
-    ["Extraordinario", "-", "Efectivo", "Hermano", "$ 1000"],
-    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 2000"],
-    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 3000"],
-    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 4000"],
-    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 5000"],
-    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 6000"],
-    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 7000"],
-    ["Extraordinario", "-", "Efectivo", "Amigos", "$ 8000"],
-  ];
+  const getListado = () => {
 
+    setIsLoadingListado(true);
+
+    Session.getUser().then((usuario) => {
+      IngresosQueries._getListado(
+        usuario.id,
+        (data) => {
+
+          setIsLoadingListado(false);
+
+          if (data != null && data.length > 0) {
+            var tableData = data.map((item) => {
+              return [
+                item.fecha,
+                "$ " + item.monto,
+                item.descripcion ?? "-",
+                item.tipoIngreso,
+                item.categoriaIngreso ?? "-",
+                item.destinoIngreso,
+                item.cuenta,
+              ];
+            });            
+
+            setListado(tableData);
+          }
+        },
+        (error) => {
+          setIsLoadingListado(false);
+          console.log(error);
+        }
+      );
+    });
+  };
+
+  if(recargarListado){
+    getListado();
+  }
+  
   return (
     <ScrollView style={screenStyles.screen}>
       <TouchableOpacity onPress={onNuevoIngreso} style={buttonStyles.btn}>
@@ -90,9 +118,9 @@ export default function Ingresos({ navigation }) {
           </Text>
       </View>
 
-      <View style={tableStyles.tableContainer}>
+      {!isLoadingListado && <View style={tableStyles.tableContainer}>
         <ScrollView horizontal>
-          <View>
+          {listado != null && <View>
             <Table borderStyle={tableStyles.tableHeaderBorder}>
               <Row
                 data={tableHeaders}
@@ -105,7 +133,7 @@ export default function Ingresos({ navigation }) {
               style={[tableStyles.tableDataContainer, { height: 200 }]}
             >
               <Table borderStyle={tableStyles.tableDataBorder}>
-                {tableData.map((rowData, index) => (
+                {listado.map((rowData, index) => (
                   <Row
                     key={index}
                     data={rowData}
@@ -119,9 +147,17 @@ export default function Ingresos({ navigation }) {
                 ))}
               </Table>
             </ScrollView>
-          </View>
+          </View>}
+
+          {listado === null &&
+            <Alert 
+              type="danger"
+              message="Sin información"
+            />
+          }
+
         </ScrollView>
-      </View>
+      </View>}
     </ScrollView>
   );
 }

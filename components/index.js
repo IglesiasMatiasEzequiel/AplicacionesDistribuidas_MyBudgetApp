@@ -5,6 +5,7 @@ import Header from './Header';
 import CustomModal from './CustomModal';
 import CustomSpinner from './CustomSpinner';
 import Textbox from './Textbox';
+import TextboxDate from './TextboxDate';
 import Dropdown from './Dropdown';
 
 export {
@@ -15,5 +16,6 @@ export {
   CustomModal,
   CustomSpinner,
   Textbox,
+  TextboxDate,
   Dropdown
 };

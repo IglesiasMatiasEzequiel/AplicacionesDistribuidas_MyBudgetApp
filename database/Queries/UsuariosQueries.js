@@ -20,6 +20,10 @@ export function _dropTable() {
   db._dropTable(tableName);
 }
 
+export function _count(successCallback, errorCallback) {
+  db._count(tableName, successCallback, errorCallback);
+}
+
 export function _selectAll(successCallback, errorCallback) {
   db._selectAll(tableName, successCallback, errorCallback);
 }
