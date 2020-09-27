@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
+import { View, ScrollView, TouchableOpacity, Button } from "react-native";
 import { Text } from "galio-framework";
 import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
 
@@ -188,7 +188,7 @@ export default function NuevoIngresoScren({ navigation }) {
           Ingreso
         </Text>
       </View>
-
+      
       <Textbox
         propName="fecha"
         placeholder="Fecha..."
@@ -196,6 +196,7 @@ export default function NuevoIngresoScren({ navigation }) {
         value={form.fecha}
         isValid={validations.fecha}
         validationMessage={validationMessages.fecha}
+        isDate={true}
       />
       <Textbox
         propName="monto"
@@ -204,6 +205,7 @@ export default function NuevoIngresoScren({ navigation }) {
         value={form.monto}
         isValid={validations.monto}
         validationMessage={validationMessages.monto}
+        keyboardType="numeric"
       />
       <Textbox
         propName="descripcion"

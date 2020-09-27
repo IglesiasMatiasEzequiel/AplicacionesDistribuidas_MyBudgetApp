@@ -160,6 +160,7 @@ export default function LoginScreen({ navigation }) {
         value={form.email}
         isValid={validations.email}
         validationMessage={validationMessages.email}
+        keyboardType='email-address'
       />
       <Textbox
         propName="password"
