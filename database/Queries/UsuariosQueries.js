@@ -53,6 +53,18 @@ export function _login(obj, successCallback, errorCallback) {
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _insertTx(tx, obj) {
+
+  var query =
+    "INSERT INTO " +
+    tableName +
+    "(email, nombre, apellido, password) " +
+    "VALUES (?, ?, ?, ?)";
+    var params = [obj.email, obj.nombre, obj.apellido, obj.password];
+
+  db._insertTx(tx, query, params);
+}
+
 export function _insert(obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO " +

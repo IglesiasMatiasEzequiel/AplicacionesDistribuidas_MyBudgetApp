@@ -3,24 +3,26 @@ import * as db from "../DataBase";
 const tableName = "Egresos";
 
 export function _createTable(tx) {
-  var query = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
-  "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-  "idUsuario INTEGER," +
-  "idTipoEgreso INTEGER," +
-  "idCategoriaEgreso INTEGER," +
-  "idCuenta INTEGER," + 
-  "idTarjeta INTEGER," +
-  "idMedioPago INTEGER," +
-  "fecha DATE," +
-  "monto NUMERIC(10, 2)," +
-  "detalleEgreso VARCHAR(255)," +
-  "cuotas INTEGER," +
-  "FOREIGN KEY(idMedioPago) REFERENCES MediosPago(id), " + 
-  "FOREIGN KEY(idTarjeta) REFERENCES Tarjetas(id), " + 
-  "FOREIGN KEY(idCuenta) REFERENCES Cuentas(id), " + 
-  "FOREIGN KEY(idCategoriaEgreso) REFERENCES CategoriasEgreso(id), " +
-  "FOREIGN KEY(idTipoEgreso) REFERENCES TiposEgreso(id), " +
-  "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id))";
+  var query = 
+  "CREATE TABLE IF NOT EXISTS Egresos (" +
+    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+    "idUsuario INTEGER," +
+    "idTipoEgreso INTEGER," +
+    "idCategoriaEgreso INTEGER," +
+    "idCuenta INTEGER," +
+    "idTarjeta INTEGER," +
+    "idMedioPago INTEGER," +
+    "fecha DATE," +
+    "monto NUMERIC(10, 2)," +
+    "detalleEgreso VARCHAR(255)," +
+    "cuotas INTEGER," +
+    "FOREIGN KEY(idMedioPago) REFERENCES MediosPago(id)," +
+    "FOREIGN KEY(idTarjeta) REFERENCES Tarjetas(id)," +
+    "FOREIGN KEY(idCuenta) REFERENCES Cuentas(id)," +
+    "FOREIGN KEY(idCategoriaEgreso) REFERENCES CategoriasEgreso(id)," +
+    "FOREIGN KEY(idTipoEgreso) REFERENCES TiposEgreso(id)," +
+    "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id))";
+  
   db._createTable(tx, tableName, query);
 }
 

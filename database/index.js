@@ -31,6 +31,10 @@ export function createTables() {
      * Si NO pudo es porque las tablas ya fueron creadas */
     UsuariosQueries._createTable(tx, () => {
 
+      UsuariosQueries._insertTx(tx, { email: 'matiiglesias@uade.edu.ar', nombre: 'Matias', apellido: 'Iglesias', password: '123456' });
+      UsuariosQueries._insertTx(tx, { email: 'lucas@gmail.com', nombre: 'Lucas', apellido: 'Labanca', password: '123456' });
+      UsuariosQueries._insertTx(tx, { email: 'nacho@gmail.com', nombre: 'Ignacio', apellido: 'Pantoni', password: '123456' });
+
       /* Crear tablas secundarias */
       MediosPagoQueries._createTable(tx);
       TiposIngresoQueries._createTable(tx);
