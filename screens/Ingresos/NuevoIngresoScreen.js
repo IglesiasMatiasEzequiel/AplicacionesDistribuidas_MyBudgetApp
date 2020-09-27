@@ -1,7 +1,7 @@
 import React from "react";
-import { View, ScrollView, TouchableOpacity, Button } from "react-native";
+import { View, ScrollView, TouchableOpacity } from "react-native";
 import { Text } from "galio-framework";
-import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
+import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
 
 import {
   titleStyles,
@@ -14,13 +14,10 @@ import {
   categoriasIngresoData,
   cuentasData
 } from "../../components/Data";
-import { 
-  insertIngreso 
-} from "../../database/DataBase";
-import { validateRequired } from "../../components/Validations";
 
+import { validateRequired } from "../../components/Validations";
 import { IngresosQueries } from "../../database";
-import { getUser} from '../../components/Session';
+import * as Session from "../../components/Session";
 
 export default function NuevoIngresoScren({ navigation }) {
 
@@ -112,30 +109,33 @@ export default function NuevoIngresoScren({ navigation }) {
     if (isValidForm) {
       setIsLoading(true);
     
-      var obj = {
-        idUsuario: "1",
-        fecha: form.fecha,
-        monto: form.monto,
-        tipoIngreso: form.tipoIngreso,
-        categoriaIngreso: form.categoriaIngreso,
-        destino: form.destino,
-        cuenta: form.cuenta
-      }
-
-      IngresosQueries._insert(obj,
-        (data) => {
-          setIsLoading(false);
-          setModalData({
-            message: "El ingreso se guardó correctamente.",
-            isVisible: true,
-            isSuccess: true,
-            successBtnText: "Aceptar",
-          });
-        },
-        (error) => {
-          console.log("Ocurrió un error al insertar el ingreso. - " + error);
+      Session.getUser().then((usuario) => {
+        var obj = {
+          idUsuario: usuario.id,
+          idTipoIngreso: form.tipoIngreso,
+          idCategoriaIngreso: form.categoriaIngreso,
+          idDestinoIngreso: form.destino,
+          idCuenta: form.cuenta,
+          fecha: form.fecha,
+          monto: form.monto,
+          descripcion: form.descripcion
         }
-      );
+  
+        IngresosQueries._insert(obj,
+          (data) => {
+            setIsLoading(false);
+            setModalData({
+              message: "El ingreso se guardó correctamente.",
+              isVisible: true,
+              isSuccess: true,
+              successBtnText: "Aceptar",
+            });
+          },
+          (error) => {
+            console.log("Ocurrió un error al insertar el ingreso. - " + error);
+          }
+        );
+      });
     }
   };
 
@@ -182,7 +182,7 @@ export default function NuevoIngresoScren({ navigation }) {
 
   const onBack = () => {
     limpiarState();
-    navigation.navigate("Ingresos");
+    navigation.navigate("Ingresos", { recargarListado: true });
   };
 
   return (
@@ -193,14 +193,13 @@ export default function NuevoIngresoScren({ navigation }) {
         </Text>
       </View>
       
-      <Textbox
+      <TextboxDate
         propName="fecha"
         placeholder="Fecha..."
         handleChange={handleChange}
         value={form.fecha}
         isValid={validations.fecha}
         validationMessage={validationMessages.fecha}
-        isDate={true}
       />
       <Textbox
         propName="monto"

@@ -2,25 +2,30 @@ import * as db from "../DataBase";
 
 const tableName = "Egresos";
 
-export function _createTable() {
+export function _createTable(tx) {
   var query = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
   "id INTEGER PRIMARY KEY AUTOINCREMENT," +
   "idUsuario INTEGER," +
+  "idTipoEgreso INTEGER," +
+  "idCategoriaEgreso INTEGER," +
+  "idCuenta INTEGER," + 
+  "idTarjeta INTEGER," +
+  "idMedioPago INTEGER," +
   "fecha DATE," +
   "monto NUMERIC(10, 2)," +
-  "tipoEgreso INTEGER," +
-  "categoriaEgreso INTEGER," +
-  "detalleEgreso VARCHAR(100)," +
-  "medioPago INTEGER," +
+  "detalleEgreso VARCHAR(255)," +
   "cuotas INTEGER," +
-  "cuenta INTEGER," +
-  "tarjeta INTEGER," +
+  "FOREIGN KEY(idMedioPago) REFERENCES MediosPago(id), " + 
+  "FOREIGN KEY(idTarjeta) REFERENCES Tarjetas(id), " + 
+  "FOREIGN KEY(idCuenta) REFERENCES Cuentas(id), " + 
+  "FOREIGN KEY(idCategoriaEgreso) REFERENCES CategoriasEgreso(id), " +
+  "FOREIGN KEY(idTipoEgreso) REFERENCES TiposEgreso(id), " +
   "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id))";
-  db._createTable(tableName, query);
+  db._createTable(tx, tableName, query);
 }
 
-export function _dropTable() {
-  db._dropTable(tableName);
+export function _dropTable(tx) {
+  db._dropTable(tx, tableName);
 }
 
 export function _selectAll(successCallback, errorCallback) {
@@ -44,20 +49,20 @@ export function _insert(obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO " +
     tableName +
-    "(idUsuario, fecha, monto, ipoEgreso, categoriaEgreso, detalleEgreso, medioPago, cuotas, cuenta, tarjeta, ) " +
+    "(idUsuario, idTipoEgreso, idCategoriaEgreso, idCuenta, idTarjeta, idMedioPago, fecha, monto, detalleEgreso, cuotas ) " +
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+   
   var params = [
     obj.idUsuario,
+    obj.idTipoEgreso,
+    obj.idCategoriaEgreso,
+    obj.idCuenta,
+    obj.idTarjeta,
+    obj.idMedioPago,
     obj.fecha,
     obj.monto,
-    obj.tipoEgreso,
-    obj.categoriaEgreso,
     obj.detalleEgreso,
-    obj.medioPago,
     obj.cuotas,
-    obj.cuenta,
-    obj.tarjeta,
   ];
 
   db._insert(query, params, successCallback, errorCallback);

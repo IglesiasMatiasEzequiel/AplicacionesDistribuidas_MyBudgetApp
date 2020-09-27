@@ -220,6 +220,39 @@ const notificationStyles = StyleSheet.create({
   }
 });
 
+const alertStyles = StyleSheet.create({
+  alertContainer: {
+    width: width - 40,
+    borderRadius: 5,
+    justifyContent: "center",
+    padding: 15,
+  },
+  alertContainerSuccess: {
+    backgroundColor: "#4FCD4F"
+  },
+  alertContainerWarning: {
+    backgroundColor: "#FDFD56"
+  },
+  alertContainerDanger: {
+    backgroundColor: "#FF6363"
+  },
+  alertContainerInfo: {
+    backgroundColor: "#6698BF"
+  },
+  alertTextSuccess: {
+    color: "#058205"
+  },
+  alertTextWarning: {
+    color: "#9D9D00"
+  },
+  alertTextDanger: {
+    color: "#A20606"
+  },
+  alertTextInfo: {
+    color: "#073C65"
+  }
+});
+
 export {
   screenStyles,
   messageStyles,
@@ -229,5 +262,6 @@ export {
   tableStyles,
   titleStyles,
   radioButtonStyles,
-  notificationStyles
+  notificationStyles,
+  alertStyles
 };

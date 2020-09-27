@@ -2,9 +2,9 @@ import * as db from "../DataBase";
 
 const tableName = "Usuarios";
 
-export function _createTable() {
+export function _createTable(tx, successCallback, errorCallback) {
   var query =
-    "CREATE TABLE IF NOT EXISTS " +
+    "CREATE TABLE " +
     tableName +
     " (" +
     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -13,11 +13,15 @@ export function _createTable() {
     "apellido VARCHAR(100)," +
     "password VARCHAR(50))";
 
-  db._createTable(tableName, query);
+  db._createTable(tx, tableName, query, successCallback, errorCallback);
 }
 
-export function _dropTable() {
-  db._dropTable(tableName);
+export function _dropTable(tx) {
+  db._dropTable(tx, tableName);
+}
+
+export function _count(successCallback, errorCallback) {
+  db._count(tableName, successCallback, errorCallback);
 }
 
 export function _selectAll(successCallback, errorCallback) {

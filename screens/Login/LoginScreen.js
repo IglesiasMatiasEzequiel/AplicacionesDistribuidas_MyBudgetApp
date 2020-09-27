@@ -10,7 +10,7 @@ import { Textbox, CustomModal, CustomSpinner } from "../../components";
 import { screenStyles, buttonStyles } from "../../components/Styles";
 
 import { UsuariosQueries } from "../../database";
-import { setUser, cleanSession } from "../../components/Session";
+import * as Session from "../../components/Session";
 import { validateRequired } from "../../components/Validations";
 
 export default function LoginScreen({ navigation }) {
@@ -32,8 +32,8 @@ export default function LoginScreen({ navigation }) {
   const [modalData, setModalData] = React.useState(null);
 
   const [form, setForm] = React.useState({
-    email: "lucas@gmail.com",
-    password: "1234",
+    email: "matiiglesias@uade.edu.ar",
+    password: "123456",
   });
 
   const [validations, setValidations] = React.useState({
@@ -52,7 +52,8 @@ export default function LoginScreen({ navigation }) {
   };
 
   const onLogin = async () => {
-    cleanSession();
+    
+    Session.cleanSession();
 
     const isValidForm = await validateForm();
 
@@ -64,7 +65,7 @@ export default function LoginScreen({ navigation }) {
         password: form.password
       }
 
-      UsuariosQueries._login(loginObj, (data) => {
+      UsuariosQueries._login(loginObj, async (data) => {
 
           setIsLoading(false);
 
@@ -80,7 +81,7 @@ export default function LoginScreen({ navigation }) {
               password: data[0].password,
             };
 
-            setUser(usuario);
+            Session.setUser(usuario);
 
             navigation.navigate("App", { usuario: usuario });
           } else {
