@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from 'react'
 import { View, TouchableOpacity, ScrollView } from "react-native";
 import {
   screenStyles,
@@ -9,7 +9,11 @@ import {
 import { Text } from "galio-framework";
 import { Table, Row } from "react-native-table-component";
 
+import { PresupuestosQueries } from "../../database";
+import { AsyncStorage } from 'react-native';
+
 export default function PresupuestosScreen({ navigation }) {
+
   const onNuevoPresupuesto = () => navigation.navigate("NuevoPresupuesto");
   const onBorrarPresupuesto= () => navigation.navigate("BorrarPresupuesto");
 
@@ -19,6 +23,18 @@ export default function PresupuestosScreen({ navigation }) {
     "FechaInicio",
   ];
   const columnWidth = [ 100, 100, 100];
+
+  // PresupuestosQueries = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem('_selectAllByIdUsuario');
+  //     if (value !== null) {
+  //       // We have data!!
+  //       console.log(value);
+  //     }
+  //   } catch (error) {
+  //     // Error retrieving data
+  //   }
+  // };
 
   const tableData = [
     ["Alquiler", "$5000" , "10/10/2020"],

@@ -3,8 +3,13 @@ import * as db from "../DataBase";
 const tableName = "Presupuestos";
 
 export function _createTable() {
-  var query = "";
-
+    var query = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+      "idUsuario INTEGER," +
+      "fechaInicio DATE," +
+      "monto NUMERIC(10, 2)," +
+      "tipo VARCHAR(20)," +
+      "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id))";
   db._createTable(tableName, query);
 }
 
@@ -16,8 +21,19 @@ export function _selectAll(successCallback, errorCallback) {
   db._selectAll(tableName, successCallback, errorCallback);
 }
 
-export function _selectAllByIdUsuario(idUsuario, successCallback, errorCallback) {
-  db._selectAllByIdUsuario(tableName, idUsuario, successCallback, errorCallback);
+// export function _selectAllByIdUsuario(idUsuario, successCallback, errorCallback) {
+//   db._selectAllByIdUsuario(tableName, idUsuario, successCallback, errorCallback);
+// }
+export function _selectAllByIdUsuario(obj, successCallback, errorCallback) {
+  var query =
+  "SELECT * " +
+  " FROM " +
+  tableName +
+  " WHERE idUsuario = ? ";
+
+    var params = [obj.idUsuario];
+
+  db._selectAllByIdUsuario(query, params, successCallback, errorCallback);
 }
 
 export function _selectById(id, successCallback, errorCallback) {
@@ -26,6 +42,24 @@ export function _selectById(id, successCallback, errorCallback) {
 
 export function _deleteById(id, successCallback, errorCallback) {
   db._deleteById(id, successCallback, errorCallback);
+}
+
+export function _insert(obj, successCallback, errorCallback) {
+  
+  var query =
+    "INSERT INTO " +
+    tableName +
+    "(idUsuario, fechaInicio, monto, tipo) " +
+    "VALUES (?, ?, ?, ?)";
+
+  var params = [
+    obj.idUsuario,
+    obj.fecha,
+    obj.monto,
+    obj.tipo
+  ];
+
+  db._insert(query, params, successCallback, errorCallback);
 }
 
 // db.transaction((tx) => {

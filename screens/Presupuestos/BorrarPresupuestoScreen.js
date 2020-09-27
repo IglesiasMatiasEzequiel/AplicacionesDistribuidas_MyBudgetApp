@@ -33,45 +33,30 @@ export default function BorrarPresupuesto({ navigation }) {
     ["", "Luz/Gas/Agua", "$7000", "10/10/2020"],
   ];
   
-  PresupuestosQueries._selectAll(idUsuario, (data) => { 
-    var presupuesto = {
-      id: data[0].id,
-      email: data[0].tipo,
-      nombre: data[0].monto,
-      apellido: data[0].fechaInicio,
-    };
-
-  }, () => { 
-    setIsLoading(false);
-    console.log('Error buscando presupuestos...')
-    tableData
-  });
-
-
   const onBorrar = () => {
     setIsLoading(true);
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    //   setModalData({
-    //     title: "¡Borrado exitoso!",
-    //     message: "El presupuesto se eliminó correctamente.",
-    //     isVisible: true,
-    //   });
-    // }, 500);
-
-    PresupuestosQueries._deleteById( id, idUsuario, () => { 
+    setTimeout(() => {
       setIsLoading(false);
-      setModalData({ 
+      setModalData({
         title: "¡Borrado exitoso!",
         message: "El presupuesto se eliminó correctamente.",
         isVisible: true,
-        isSuccess: true,
-        successBtnText: "Aceptar",
       });
-    }, () => { 
-      setIsLoading(false);
-      console.log('Error creando presupuesto...')
-    });
+    }, 100);
+    
+    // PresupuestosQueries._deleteById( id, idUsuario, () => { 
+    //   setIsLoading(false);
+    //   setModalData({ 
+    //     title: "¡Borrado exitoso!",
+    //     message: "El presupuesto se eliminó correctamente.",
+    //     isVisible: true,
+    //     isSuccess: true,
+    //     successBtnText: "Aceptar",
+    //   });
+    // }, () => { 
+    //   setIsLoading(false);
+    //   console.log('Error creando presupuesto...')
+    // });
   };
 
   const onCloseModal = () => setModalData({ ...modalData, isVisible: false });
@@ -83,6 +68,11 @@ export default function BorrarPresupuesto({ navigation }) {
       </View>
     </TouchableOpacity>
   );
+
+  const onBack = () => {
+    navigation.navigate("Presupuestos");
+  };
+
 
   return (
     <ScrollView style={screenStyles.screen}>
@@ -141,7 +131,7 @@ export default function BorrarPresupuesto({ navigation }) {
         title={modalData?.title}
         message={modalData?.message}
         isVisible={modalData?.isVisible}
-        handleBtnOnSuccess={onCloseModal}
+        handleBtnOnSuccess={onBack}
       />
     </ScrollView>
   );

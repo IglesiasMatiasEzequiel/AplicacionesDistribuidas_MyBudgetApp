@@ -19,6 +19,9 @@ import {
 } from "../../database/DataBase";
 import { validateRequired } from "../../components/Validations";
 
+import { IngresosQueries } from "../../database";
+import { getUser} from '../../components/Session';
+
 export default function NuevoIngresoScren({ navigation }) {
 
   const [isLoading, setIsLoading] = React.useState(false);
@@ -119,7 +122,7 @@ export default function NuevoIngresoScren({ navigation }) {
         cuenta: form.cuenta
       }
 
-      insertIngreso(obj,
+      IngresosQueries._insert(obj,
         (data) => {
           setIsLoading(false);
           setModalData({
@@ -135,6 +138,7 @@ export default function NuevoIngresoScren({ navigation }) {
       );
     }
   };
+
 
   const validateForm = async () => {
     const isFechaValid = await validateRequired(form.fecha);
