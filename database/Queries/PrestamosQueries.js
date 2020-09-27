@@ -3,11 +3,18 @@ import * as db from "../DataBase";
 const tableName = "Prestamos";
 
 export function _createTable() {
-  var query = "";
-
+  var query = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
+  "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+  "idUsuario INTEGER," +
+  "tipo VARCHAR(20)," +
+  "emisorDestinatario VARCHAR(50)," +
+  "monto NUMERIC(10, 2)," +
+  "intereses NUMERIC(3, 2)," +
+  "vencimiento DATE," +
+  "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id))";
   db._createTable(tableName, query);
 }
-
+  
 export function _dropTable() {
   db._dropTable(tableName);
 }
@@ -26,6 +33,26 @@ export function _selectById(id, successCallback, errorCallback) {
 
 export function _deleteById(id, successCallback, errorCallback) {
   db._deleteById(id, successCallback, errorCallback);
+}
+
+export function _insert(obj, successCallback, errorCallback) {
+  
+  var query =
+    "INSERT INTO " +
+    tableName +
+    "(idUsuario, tipo, emisorDestinatario, monto, intereses, vencimiento) " +
+    "VALUES (?, ?, ?, ?, ?, ?)";
+
+  var params = [
+    obj.idUsuario,
+    obj.tipo,
+    obj.emisorDestinatario,
+    obj.monto,
+    obj.intereses,
+    obj.vencimiento
+  ];
+
+  db._insert(query, params, successCallback, errorCallback);
 }
 
 // db.transaction((tx) => {

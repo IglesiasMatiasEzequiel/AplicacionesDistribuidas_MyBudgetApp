@@ -3,14 +3,16 @@ import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
-import { CustomSpinner, CustomModal, Textbox } from "../../components";
-import { tipoPrestamoData } from "../../components/Data";
+import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
+
 import {
   screenStyles,
   buttonStyles,
   textboxStyles,
   dropdownStyles,
 } from "../../components/Styles";
+import { tipoPrestamoData } from "../../components/Data";
+import { validateRequired } from "../../components/Validations";
 
 import { PrestamosQueries } from "../../database";
 import { getUser} from '../../components/Session';
@@ -19,45 +21,133 @@ export default function NuevoPrestamoScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
-  const [tipo, setTipo] = React.useState(null);
-  const [emisorDestinatario, setEmisorDestinatario] = React.useState("");
-  const [monto, setMonto] = React.useState("");
-  const [intereses, setIntereses] = React.useState("");
-  const [vencimiento, setVencimiento] = React.useState("");
+  const [form, setForm] = React.useState({
+    tipo: null,
+    emisorDestinatario: "",
+    monto: "",
+    intereses: "",
+    vencimiento: "",
+  });
 
-  const handleChangeTipo= (tipo) => setTipo(tipo);
-  const handleChangeEmisorDestinatario = (emisorDestinatario) => setEmisorDestinatario(emisorDestinatario);
-  const handleChangeMonto = (monto) => setMonto(monto);
-  const handleChangeIntereses = (intereses) => setIntereses(intereses);
-  const handleChangeVencimiento = (vencimiento) => setIntereses(vencimiento);
+  const [validations, setValidations] = React.useState({
+    tipo: true,
+    emisorDestinatario: true,
+    monto: true,
+    intereses: true,
+    vencimiento: true,
+  });
+
+  const [validationMessages, setValidationMessages] = React.useState({
+    tipo: "",
+    emisorDestinatario: "",
+    monto: "",
+    intereses: "",
+    vencimiento: "",
+  });
+
+
+  const handleChange = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
+  };
+
+  const handleChangeTipo = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
+  };
 
   const limpiarState = () => {
-    setIsLoading(false);
-    setModalData({ ...modalData, isVisible: false });
-    setTipo(null);
-    setEmisorDestinatario("");
-    setMonto("");
-    setIntereses("");
-    setVencimiento("");
+    
+    setForm({
+      tipo: null,
+      emisorDestinatario: "",
+      monto: "",
+      intereses: "",
+      vencimiento: "",
+    });
+
+    setValidations({
+      tipo: true,
+      emisorDestinatario: true,
+      monto: true,
+      intereses: true,
+      vencimiento: true,
+    });
+
+    setValidationMessages({
+      tipo: "",
+      emisorDestinatario: "",
+      monto: "",
+      intereses: "",
+      vencimiento: "",
+    });
+
   };
 
   const onConfirmar = async () => {
-    setIsLoading(true);
-    const idUsuario = getUser().id;
-    const Usuario = getUser();
-    console.log(Usuario);
-    // PrestamosQueries._insert(idUsuario, tipo, tipoPersona, monto, intereses, () => {
-    //   setIsLoading(false);
-    //   setModalData({
-    //     message: "El prestamo se guardó correctamente.",
-    //     isVisible: true,
-    //     isSuccess: true,
-    //     successBtnText: "Aceptar",
-    //   });
-    // }, () => {
-    //   setIsLoading(false);
-    //   console.log('Error creando presupuesto...')
-    // });
+    
+    const isValidForm = await validateForm();
+
+    if (isValidForm) {
+      setIsLoading(true);
+    
+      var obj = {
+        idUsuario: "1",
+        tipo: form.tipo,
+        emisorDestinatario: form.emisorDestinatario,
+        monto: form.monto,
+        intereses: form.intereses,
+        vencimiento: form.vencimiento,
+      }
+
+      PrestamosQueries._insert(obj,
+        (data) => {
+          setIsLoading(false);
+          setModalData({
+            message: "El prestamo se guardó correctamente.",
+            isVisible: true,
+            isSuccess: true,
+            successBtnText: "Aceptar",
+          });
+        },
+        (error) => {
+          console.log("Ocurrió un error al insertar el prestamos. - " + error);
+        }
+      );
+    }
+  };
+
+  const validateForm = async () => {
+    const isTipoValid = await validateRequired(form.tipo); 
+    const isEmisorDestinatarioValid = await validateRequired(form.emisorDestinatario);
+    const isMontoValid = await validateRequired(form.monto);
+    const isInteresesValid = await validateRequired(form.intereses);
+    //const isVencimientoValid = await validateRequired(form.vencimiento);
+
+    var isVencimientoValid = true;
+    if(form.tipo === "2"){ //Tomado
+      isVencimientoValid = await validateRequired(form.vencimiento);
+    }
+
+     setValidations((prevState) => ({
+      ...prevState,
+      tipo: isTipoValid,
+      emisorDestinatario: isEmisorDestinatarioValid,
+      monto: isMontoValid,
+      intereses: isInteresesValid,
+      vencimiento: isVencimientoValid,
+    }));
+
+    setValidationMessages((prevState) => ({
+      ...prevState,
+      tipo: !isTipoValid ? "Debe seleccionar un tipo de prestamo..." : "",
+      emisorDestinatario: !isEmisorDestinatarioValid ? "El emisor/destinatario es requerido..." : "",
+      monto: !isMontoValid ? "El monto es requerido..." : "",
+      intereses: !isInteresesValid ? "El interes es requerido..." : "",
+      vencimiento: !isVencimientoValid ? "El vencimeinto es requerido..." : "",
+    }));
+
+    return isTipoValid && isEmisorDestinatarioValid && isMontoValid && isInteresesValid && isVencimientoValid;
   };
 
   const onBack = () => {
@@ -67,56 +157,52 @@ export default function NuevoPrestamoScreen({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <View>
-        <DropDownPicker
-          items={tipoPrestamoData}
-          defaultValue={tipo}
-          placeholder="Seleccione un tipo de prestamo."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeTipo(item.value)}
-        />
-      </View>
-      
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Emisor/Destinario..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(emisorDestinatario) => handleChangeEmisorDestinatario(emisorDestinatario)}
-          value={emisorDestinatario}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Monto..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(monto) => handleChangeMonto(monto)}
-          value={monto}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-      <TextInput
-        style={textboxStyles.textbox}
+      <Dropdown
+        propName="tipo"
+        items={tipoPrestamoData}
+        defaultValue={form.tipo}
+        placeholder="Seleccione un tipo de prestamo."
+        handleChange={handleChangeTipo}
+        isValid={validations.tipo}
+        validationMessage={validationMessages.tipo}
+      />
+      <Textbox
+        propName="emisorDestinatario"
+        placeholder="Emisor/Destinario..."
+        handleChange={handleChange}
+        value={form.emisorDestinatario}
+        isValid={validations.emisorDestinatario}
+        validationMessage={validationMessages.emisorDestinatario}
+      />
+      <Textbox
+        propName="monto"
+        placeholder="Monto..."
+        handleChange={handleChange}
+        value={form.monto}
+        isValid={validations.monto}
+        validationMessage={validationMessages.monto}
+        keyboardType="numeric"
+      />
+      <Textbox
+        propName="intereses"
         placeholder="Intereses..."
-        placeholderTextColor={theme.COLORS.PLACEHOLDER}
-        onChangeText={(Intereses) => handleChangeIntereses(Intereses)}
-        value={intereses}
-      />  
-      </View>
+        handleChange={handleChange}
+        value={form.intereses}
+        isValid={validations.intereses}
+        validationMessage={validationMessages.intereses}
+        keyboardType="numeric"
+      />
       
-      {tipo === "2" && (
-        <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
+      {form.tipo === "2" && (
+        <Textbox
+          propName="vencimiento"
           placeholder="Fecha de Vencimiento..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(v) => handleChangeDuracion(vencimiento)}
-          value={vencimiento}
+          handleChange={handleChange}
+          value={form.vencimiento}
+          isValid={validations.vencimiento}
+          validationMessage={validationMessages.vencimiento}
+          isDate={true}
         />
-        </View>
       )}
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>

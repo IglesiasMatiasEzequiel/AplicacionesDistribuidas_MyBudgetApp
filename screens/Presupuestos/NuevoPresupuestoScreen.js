@@ -39,7 +39,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
   const [validationMessages, setValidationMessages] = React.useState({
     fecha: "",
     monto: "",
-    tipo: ""
+    tipo: "",
   });
 
   const handleChange = (prop, value) => {
@@ -110,14 +110,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
     const isMontoValid = await validateRequired(form.monto);
     const isTipoValid = await validateRequired(form.tipo); 
     
-    // var isCuentaValid = true;
-    // var isCategoriaIngresoValid = true;
-        
-    // if(form.tipo === "1"){ //Periódico mensual
-    //   isCategoriaIngresoValid = await validateRequired(form.categoriaIngreso);
-    // }
-
-    setValidations((prevState) => ({
+     setValidations((prevState) => ({
       ...prevState,
       fecha: isFechaValid,
       monto: isMontoValid,
@@ -157,6 +150,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
         value={form.fecha}
         isValid={validations.fecha}
         validationMessage={validationMessages.fecha}
+        keyboardType="date"
       />
       <Textbox
         propName="monto"
@@ -165,6 +159,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
         value={form.monto}
         isValid={validations.monto}
         validationMessage={validationMessages.monto}
+        keyboardType="numeric"
       />
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
