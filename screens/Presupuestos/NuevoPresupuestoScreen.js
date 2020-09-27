@@ -150,7 +150,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
         value={form.fecha}
         isValid={validations.fecha}
         validationMessage={validationMessages.fecha}
-        keyboardType="date"
+        isDate={true}
       />
       <Textbox
         propName="monto"

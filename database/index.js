@@ -10,15 +10,19 @@ import * as TarjetasQueries from './Queries/TarjetasQueries';
 export function createTables() {
   UsuariosQueries._createTable();
   IngresosQueries._createTable();
+  EgresosQueries._createTable();
   PrestamosQueries._createTable();
   PresupuestosQueries._createTable();
+  TarjetasQueries._createTable();
 }
 
 export function dropTables() {
   //UsuariosQueries._dropTable();
   IngresosQueries._dropTable();
+  EgresosQueries._dropTable();
   PrestamosQueries._dropTable();
-  //PresupuestosQueries._dropTable();
+  PresupuestosQueries._dropTable();
+  TarjetasQueries._dropTable();
 }
 
 export {

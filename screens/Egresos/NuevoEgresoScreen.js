@@ -2,7 +2,7 @@ import React from "react";
 import { View, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
-import { CustomSpinner, CustomModal } from "../../components";
+import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
 import {
   screenStyles,
   buttonStyles,
@@ -18,64 +18,210 @@ import {
   tarjetasData,
 } from "../../components/Data";
 
+import { validateRequired } from "../../components/Validations";
+
+import { EgresosQueries } from "../../database";
+import { getUser} from '../../components/Session';
+
 export default function NuevoEgresoScren({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
-  const [fecha, setFecha] = React.useState("");
-  const [monto, setMonto] = React.useState("");
-  const [tipoEgreso, setTipoEgreso] = React.useState(null);
-  const [categoriaEgreso, setCategoriaEgreso] = React.useState(null);
-  const [detalleEgreso, setDetalleEgreso] = React.useState("");
-  const [medioPago, setMedioPago] = React.useState(null);
-  const [cuotas, setCuotas] = React.useState(null);
-  const [cuenta, setCuenta] = React.useState(null);
-  const [tarjeta, setTarjeta] = React.useState(null);
+  const [form, setForm] = React.useState({
+    fecha: "",
+    monto: "",
+    tipoEgreso: "",
+    categoriaEgreso: "",
+    detalleEgreso: "",
+    medioPago: "",
+    cuotas: "",
+    cuenta: "",
+    tarjeta: "",
+  });
 
-  const handleChangeFecha = (fecha) => setFecha(fecha);
-  const handleChangeMonto = (monto) => setMonto(monto);
-  const handleChangeDetalleEgreso = (detalleEgreso) => setDetalleEgreso(detalleEgreso);
-  const handleChangeTipoEgreso = (tipoEgreso) => {
-    setTipoEgreso(tipoEgreso);
-    setCategoriaEgreso(null);
+  const [validations, setValidations] = React.useState({
+    fecha: true,
+    monto: true,
+    tipoEgreso: true,
+    categoriaEgreso: true,
+    detalleEgreso: true,
+    medioPago: true,
+    cuotas: true,
+    cuenta: true,
+    tarjeta: true,
+  });
+
+  const [validationMessages, setValidationMessages] = React.useState({
+    fecha: "",
+    monto: "",
+    tipoEgreso: "",
+    categoriaEgreso: "",
+    detalleEgreso: "",
+    medioPago: "",
+    cuotas: "",
+    cuenta: "",
+    tarjeta: "",
+  });
+
+  const handleChange = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
   };
-  const handleChangeCategoriaEgreso = (categoriaEgreso) =>
-    setCategoriaEgreso(categoriaEgreso);
-  const handleChangeMedioPago = (medioPago) => {
-    setMedioPago(medioPago);
-    setCuotas(null);
-    setCuenta(null);
+  const handleChangeTipoEgreso = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value, categoriaEgreso: null}));
   };
-  const handleChangeCuotas = (cuotas) => setCuotas(cuotas);
-  const handleChangeCuenta = (cuenta) => setCuenta(cuenta);
-  const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
+  // const handleChangeCategoriaEgreso = (prop, value) => {
+  //   setValidations((prevState) => ({ ...prevState, [prop]: true }));
+  //   setForm((prevState) => ({ ...prevState, [prop]: value}));
+  // };
+  const handleChangeMedioPago = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value}));
+  };
+  // const handleChangeTarjeta = (prop, value) => {
+  //   setValidations((prevState) => ({ ...prevState, [prop]: true }));
+  //   setForm((prevState) => ({ ...prevState, [prop]: value}));
+  // };
+  // const handleChangeCuenta = (prop, value) => {
+  //   setValidations((prevState) => ({ ...prevState, [prop]: true }));
+  //   setForm((prevState) => ({ ...prevState, [prop]: value}));
+  //};
 
   const limpiarState = () => {
-    setIsLoading(false);
-    setModalData({ ...modalData, isVisible: false });
-    setFecha("");
-    setMonto("");
-    setTipoEgreso(null);
-    setCategoriaEgreso(null);
-    setMedioPago(null);
-    setCuotas(null);
-    setCuenta(null);
-    setTarjeta(null);
+    
+    setForm({
+      fecha: "",
+      monto: "",
+      tipoEgreso: "",
+      categoriaEgreso: "",
+      detalleEgreso: "",
+      medioPago: "",
+      cuotas: "",
+      cuenta: "",
+      tarjeta: "",
+    });
+
+    setValidations({
+      fecha: true,
+      monto: true,
+      tipoEgreso: true,
+      categoriaEgreso: true,
+      detalleEgreso: true,
+      medioPago: true,
+      cuotas: true,
+      cuenta: true,
+      tarjeta: true,
+    });
+
+    setValidationMessages({
+      fecha: "",
+      monto: "",
+      tipoEgreso: "",
+      categoriaEgreso: "",
+      detalleEgreso: "",
+      medioPago: "",
+      cuotas: "",
+      cuenta: "",
+      tarjeta: "",
+    });
+
   };
 
-  const onConfirmar = () => {
-    setIsLoading(true);
+  const onConfirmar = async () => {
+    
+    const isValidForm = await validateForm();
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setModalData({
-        message: "El egreso se guardó correctamente.",
-        isVisible: true,
-        isSuccess: true,
-        successBtnText: "Aceptar",
-      });
-    }, 500);
+    if (isValidForm) {
+      setIsLoading(true);
+    
+      var obj = {
+        idUsuario: "1",
+        fecha: form.fecha,
+        monto: form.monto,
+        tipoEgreso: form.tipoEgreso,
+        categoriaEgreso: form.categoriaEgreso,
+        detalleEgreso: form.detalleEgreso,
+        medioPago: form.medioPago,
+        cuotas: form.cuotas,
+        cuenta: form.cuenta,
+        tarjeta: form.tarjeta,
+      }
+
+
+      EgresosQueries._insert(obj,
+        (data) => {
+          setIsLoading(false);
+          setModalData({
+            message: "El egreso se guardó correctamente.",
+            isVisible: true,
+            isSuccess: true,
+            successBtnText: "Aceptar",
+          });
+        },
+        (error) => {
+          console.log("Ocurrió un error al insertar el egreso. - " + error);
+        }
+      );
+    }
   };
+
+  const validateForm = async () => {
+    const isFechaValid = await validateRequired(form.fecha);
+    const isMontoValid = await validateRequired(form.monto);
+    const isTipoEgresoValid = await validateRequired(form.tipoEgreso);
+    const isMedioPagoValid = await validateRequired(form.medioPago);
+
+    var isDetalleEgresoValid = true;
+    if(form.tipoEgreso === "2"){ //Extraordinario
+      isDetalleEgresoValid = await validateRequired(form.detalleEgreso);
+    }
+    var isCategoriaEgresoValid = true;
+    if(form.tipoEgreso === "1"){ //Periódico mensual
+      isCategoriaEgresoValid = await validateRequired(form.categoriaEgreso);
+    }
+
+    var isCuotasValid = true;
+    var isCuentaValid = true;
+    var isTarjetaValid= true;
+    if(form.medioPago === "2"){ //Tarjeta de credito
+      isCuotasValid = await validateRequired(form.cuotas);
+      isTarjetaValid = await validateRequired(form.tarjeta);
+    }
+    if(form.medioPago === "3" || form.medioPago === "4" || form.medioPago === "5"){ //Tarjeta de credito
+      isCuentaValid = await validateRequired(form.cuenta);
+    }
+
+     setValidations((prevState) => ({
+      ...prevState,
+      fecha: isFechaValid,
+      monto: isMontoValid,
+      tipoEgreso: isTipoEgresoValid,
+      categoriaEgreso: isCategoriaEgresoValid,
+      detalleEgreso: isDetalleEgresoValid,
+      medioPago: isMedioPagoValid,
+      cuotas: isCuotasValid,
+      cuenta: isCuentaValid,
+      tarjeta: isTarjetaValid,
+    }));
+
+    setValidationMessages((prevState) => ({
+      ...prevState,
+      fecha: !isFechaValid ? " La fecha es requerida..." : "",
+      monto: !isMontoValid ? " El Monto es requerido..." : "",
+      tipoEgreso: !isTipoEgresoValid ? " El tipo es requerido..." : "",
+      categoriaEgreso: !isCategoriaEgresoValid ? " La categoria Egreso es requerida..." : "",
+      detalleEgreso: !isDetalleEgresoValid ? "El detalle Egreso es requerido..." : "",
+      medioPago: !isMedioPagoValid ? " El medio de pago es requerido..." : "",
+      cuotas: !isCuotasValid ? " La cuota es requerida..." : "",
+      cuenta: !isCuentaValid ? " La cuenta es requerida..." : "",
+      tarjeta: !isTarjetaValid ? " La tarjeta es requerida..." : "",
+    }));
+
+    return isFechaValid && isMontoValid && isTipoEgresoValid && isCategoriaEgresoValid && isDetalleEgresoValid &&
+           isMedioPagoValid && isCuotasValid && isCuentaValid && isTarjetaValid
+ };
+
 
   const onBack = () => {
     limpiarState();
@@ -90,59 +236,55 @@ export default function NuevoEgresoScren({ navigation }) {
           Egreso
         </Text>
       </View>
+      <Textbox
+        propName="fecha"
+        placeholder="Fecha..."
+        handleChange={handleChange}
+        value={form.fecha}
+        isValid={validations.fecha}
+        validationMessage={validationMessages.fecha}
+        isDate={true}
+      />
+      <Textbox
+        propName="monto"
+        placeholder="Monto..."
+        handleChange={handleChange}
+        value={form.monto}
+        isValid={validations.monto}
+        validationMessage={validationMessages.monto}
+        keyboardType="numeric"
+      />
 
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Fecha..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(fecha) => handleChangeFecha(fecha)}
-          value={fecha}
+      <Dropdown
+        propName="tipoEgreso"
+        items={tiposEgresoData}
+        defaultValue={form.tipoEgreso}
+        placeholder="Seleccione un Tipo Egreso."
+        handleChange={handleChangeTipoEgreso}
+        isValid={validations.tipoEgreso}
+        validationMessage={validationMessages.tipoEgreso}
+      />
+
+      {form.tipoEgreso === "1" && (
+        <Dropdown
+          propName="categoriaEgreso"
+          items={categoriasEgresoData}
+          defaultValue={form.categoriaEgreso}
+          placeholder="Seleccione una categoria de Egreso."
+          handleChange={handleChange}
+          isValid={validations.categoriaEgreso}
+          validationMessage={validationMessages.categoriaEgreso}
         />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Monto..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(monto) => handleChangeMonto(monto)}
-          value={monto}
-        />
-      </View>
-      <View>
-        <DropDownPicker
-          items={tiposEgresoData}
-          defaultValue={tipoEgreso}
-          placeholder="Seleccione un tipo de egreso."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeTipoEgreso(item.value)}
-        />
-      </View>
-      {tipoEgreso === "1" && (
-        <View>
-          <DropDownPicker
-            items={categoriasEgresoData}
-            defaultValue={categoriaEgreso}
-            placeholder="Seleccione una categoria."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangeCategoriaEgreso(item.value)}
-          />
-        </View>
       )}
-      {tipoEgreso === "2" && (
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Detalle del egreso..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(detalleEgreso) => handleChangeDetalleEgreso(detalleEgreso)}
-          value={detalleEgreso}
+      {form.tipoEgreso === "2" && (
+        <Textbox
+          propName="detalleEgreso"
+          placeholder="Detalle Egreso..."
+          handleChange={handleChange}
+          value={form.detalleEgreso}
+          isValid={validations.detalleEgreso}
+          validationMessage={validationMessages.detalleEgreso}
         />
-      </View>
       )}
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
@@ -150,54 +292,50 @@ export default function NuevoEgresoScren({ navigation }) {
           Medio de Pago
         </Text>
       </View>
+      
+      <Dropdown
+        propName="medioPago"
+        items={mediosPagoData}
+        defaultValue={form.medioPago}
+        placeholder="Seleccione medio de pago."
+        handleChange={handleChangeMedioPago}
+        isValid={validations.medioPago}
+        validationMessage={validationMessages.medioPago}
+      />
 
-      <View>
-        <DropDownPicker
-          items={mediosPagoData}
-          defaultValue={medioPago}
-          placeholder="Seleccione un medio de pago."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeMedioPago(item.value)}
-        />
-      </View>
-      {medioPago === "2" && (
+      {form.medioPago === "2" && (
         <View>
-          <DropDownPicker
+          <Textbox
+            propName="cuotas"
+            placeholder="Cuotas..."
+            handleChange={handleChange}
+            value={form.cuotas}
+            isValid={validations.cuotas}
+            validationMessage={validationMessages.cuotas}
+            keyboardType="numeric"
+          />
+          <Dropdown
+            propName="tarjeta"
             items={tarjetasData}
-            defaultValue={tarjeta}
-            placeholder="Seleccione una tarjeta de crédito."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangeTarjeta(item.value)}
+            defaultValue={form.tarjeta}
+            placeholder="Seleccione una tarjeta."
+            handleChange={handleChange}
+            isValid={validations.tarjeta}
+            validationMessage={validationMessages.tarjeta}
           />
         </View>
       )}
-      {medioPago === "2" && (
-        <View style={textboxStyles.textboxContainer}>
-          <TextInput
-            style={textboxStyles.textbox}
-            placeholder="Cuotas ..."
-            placeholderTextColor={theme.COLORS.PLACEHOLDER}
-            onChangeText={(item) => handleChangeCuotas(item.value)}
-            value={cuotas}
-          />
-        </View>
-      )}
-      {medioPago === "3" || medioPago === "4" || medioPago === "5" && (
-        <View>
-          <DropDownPicker
-            items={cuentasData}
-            defaultValue={cuenta}
-            placeholder="Seleccione una cuenta."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangeCuenta(item.value)}
-          />
-        </View>
+
+      {(form.medioPago === "3" || form.medioPago === "4" || form.medioPago === "5") && (
+        <Dropdown
+          propName="cuenta"
+          items={cuentasData}
+          defaultValue={form.cuenta}
+          placeholder="Seleccione una cuenta."
+          handleChange={handleChange}
+          isValid={validations.cuenta}
+          validationMessage={validationMessages.cuenta}
+        />
       )}
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
