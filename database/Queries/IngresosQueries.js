@@ -56,8 +56,8 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   " INNER JOIN TiposIngreso tipoIngreso ON ingreso.idTipoIngreso = tipoIngreso.id " +
   " INNER JOIN DestinosIngreso destinoIngreso ON ingreso.idDestinoIngreso = destinoIngreso.id " +
   " LEFT JOIN CategoriasIngreso categoriaIngreso ON ingreso.idCategoriaIngreso = categoriaIngreso.id " +
-  " LEFT JOIN Cuentas cuenta ON ingreso.idCuenta = cuentas.id " +
-  " LEFT JOIN Bancos banco ON cuenta.idBanco = bancos.id " +
+  " LEFT JOIN Cuentas cuenta ON ingreso.idCuenta = cuenta.id " +
+  " LEFT JOIN Bancos banco ON cuenta.idBanco = banco.id " +
   " WHERE ingreso.idUsuario = ? ";
 
   var params = [idUsuario];
