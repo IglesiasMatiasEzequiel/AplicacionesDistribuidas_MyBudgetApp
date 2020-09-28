@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
-import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
+import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
 import { bancosData, entidadesEmisorasData } from "../../components/Data";
 import {
   screenStyles,
@@ -13,9 +13,8 @@ import {
 } from "../../components/Styles";
 
 import { validateRequired } from "../../components/Validations";
-
 import { TarjetasQueries } from "../../database";
-import { getUser} from '../../components/Session';
+import * as Session from "../../components/Session";
 
 export default function NuevaTarjetaScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -54,11 +53,11 @@ export default function NuevaTarjetaScreen({ navigation }) {
   };
   const handleChangeBanco = (prop, value) => {
     setValidations((prevState) => ({ ...prevState, [prop]: true }));
-    setForm((prevState) => ({ ...prevState, [prop]: value, banco: null  }));
+    setForm((prevState) => ({ ...prevState, [prop]: value}));
   };
   const handleChangeEntidadEmisora = (prop, value) => {
     setValidations((prevState) => ({ ...prevState, [prop]: true }));
-    setForm((prevState) => ({ ...prevState, [prop]: value , entidadEmisora: null}));
+    setForm((prevState) => ({ ...prevState, [prop]: value}));
   };
 
   const limpiarState = () => {
@@ -95,34 +94,35 @@ export default function NuevaTarjetaScreen({ navigation }) {
   const onConfirmar = async () => {
     
     const isValidForm = await validateForm();
-
+    console.log(isValidForm);
     if (isValidForm) {
       setIsLoading(true);
-    
-      var obj = {
-        idUsuario: "1",
-        banco: form.banco,
-        entidadEmisora: form.entidadEmisora,
-        tarjeta: form.tarjeta,
-        vencimiento: form.vencimiento,
-        cierreResumem: form.cierreResumen,
-        vencimientoResumem: form.vencimientoResumen,
-      }
-
-      TarjetasQueries._insert(obj,
-        (data) => {
-          setIsLoading(false);
-          setModalData({
-            message: "La tarjeta se guardó correctamente.",
-            isVisible: true,
-            isSuccess: true,
-            successBtnText: "Aceptar",
-          });
-        },
-        (error) => {
-          console.log("Ocurrió un error al insertar la tarjeta. - " + error);
+      Session.getUser().then((usuario) => {
+        var obj = {
+          idUsuario: usuario.id,
+          idBanco: form.banco,
+          idEntidadEmisora: form.entidadEmisora,
+          tarjeta: form.tarjeta,
+          vencimiento: form.vencimiento,
+          cierreResumem: form.cierreResumen,
+          vencimientoResumem: form.vencimientoResumen,
         }
-      );
+  
+        TarjetasQueries._insert(obj,
+          (data) => {
+            setIsLoading(false);
+            setModalData({
+              message: "La tarjeta se guardó correctamente.",
+              isVisible: true,
+              isSuccess: true,
+              successBtnText: "Aceptar",
+            });
+          },
+          (error) => {
+            console.log("Ocurrió un error al insertar la tarjeta. - " + error);
+          }
+        );
+      });
     }
   };
 
@@ -191,41 +191,40 @@ export default function NuevaTarjetaScreen({ navigation }) {
         validationMessage={validationMessages.tarjeta}
         keyboardType="numeric"
       />
-      <Textbox
+      <TextboxDate
         propName="vencimiento"
         placeholder="Fecha de Vencimiento..."
         handleChange={handleChange}
         value={form.vencimiento}
         isValid={validations.vencimiento}
         validationMessage={validationMessages.vencimiento}
-        isDate={true}
       />
-      <Textbox
+      <TextboxDate
         propName="cierreResumen"
         placeholder="Fecha de Cierre Resumen..."
         handleChange={handleChange}
         value={form.cierreResumen}
         isValid={validations.cierreResumen}
         validationMessage={validationMessages.cierreResumen}
-        isDate={true}
       />
-      <Textbox
+      <TextboxDate
         propName="vencimientoResumen"
         placeholder="Fecha de Vencimiento Resumen..."
         handleChange={handleChange}
         value={form.vencimientoResumen}
         isValid={validations.vencimientoResumen}
         validationMessage={validationMessages.vencimientoResumen}
-        isDate={true}
       />
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Confirmar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
-        <Text style={buttonStyles.btnBackText}>Volver</Text>
-      </TouchableOpacity>
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
+          <Text style={buttonStyles.btnBackText}>Volver</Text>
+        </TouchableOpacity>
+      </View>
 
       <CustomSpinner isLoading={isLoading} text={"Guardando Tarjeta..."} />
 

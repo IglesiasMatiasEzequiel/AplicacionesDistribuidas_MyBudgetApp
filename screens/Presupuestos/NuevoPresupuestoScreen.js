@@ -4,7 +4,7 @@ import { View, TextInput, TouchableOpacity, ScrollView, Platform} from "react-na
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
+import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
 
 import {
   titleStyles,
@@ -14,10 +14,10 @@ import {
 import {
   categoriasEgresoData,
 } from "../../components/Data";
-import { validateRequired } from "../../components/Validations";
 
+import { validateRequired } from "../../components/Validations";
 import { PresupuestosQueries } from "../../database";
-import { getUser} from '../../components/Session';
+import * as Session from "../../components/Session";
 
 export default function NuevoPresupuestoScreen({ navigation }) {
 
@@ -80,28 +80,31 @@ export default function NuevoPresupuestoScreen({ navigation }) {
 
     if (isValidForm) {
       setIsLoading(true);
-    
-      var obj = {
-        idUsuario: "1",
-        fecha: form.fecha,
-        monto: form.monto,
-        tipo: form.tipo,
-      }
-
-      PresupuestosQueries._insert(obj,
-        (data) => {
-          setIsLoading(false);
-          setModalData({
-            message: "El presupuesto se guardó correctamente.",
-            isVisible: true,
-            isSuccess: true,
-            successBtnText: "Aceptar",
-          });
-        },
-        (error) => {
-          console.log("Ocurrió un error al insertar el presupuesto. - " + error);
+      
+      Session.getUser().then((usuario) => {
+        var obj = {
+          idUsuario: usuario.id,
+          fecha: form.fecha,
+          monto: form.monto,
+          idCategoriaEgreso: form.tipo,
         }
-      );
+  
+        PresupuestosQueries._insert(obj,
+          (data) => {
+            setIsLoading(false);
+            setModalData({
+              message: "El presupuesto se guardó correctamente.",
+              isVisible: true,
+              isSuccess: true,
+              successBtnText: "Aceptar",
+            });
+          },
+          (error) => {
+            console.log("Ocurrió un error al insertar el presupuesto. - " + error);
+          }
+        );
+
+      });
     }
   };
 
@@ -143,14 +146,13 @@ export default function NuevoPresupuestoScreen({ navigation }) {
         isValid={validations.tipo}
         validationMessage={validationMessages.tipo}
       />
-      <Textbox
+      <TextboxDate
         propName="fecha"
         placeholder="Fecha..."
         handleChange={handleChange}
         value={form.fecha}
         isValid={validations.fecha}
         validationMessage={validationMessages.fecha}
-        isDate={true}
       />
       <Textbox
         propName="monto"
