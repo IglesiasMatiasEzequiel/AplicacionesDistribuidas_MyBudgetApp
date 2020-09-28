@@ -18,6 +18,7 @@ import {
 import { validateRequired } from "../../components/Validations";
 import { IngresosQueries } from "../../database";
 import * as Session from "../../components/Session";
+import { formatStringDateToDB } from "../../components/Formatters";
 
 export default function NuevoIngresoScren({ navigation }) {
 
@@ -116,7 +117,7 @@ export default function NuevoIngresoScren({ navigation }) {
           idCategoriaIngreso: form.categoriaIngreso,
           idDestinoIngreso: form.destino,
           idCuenta: form.cuenta,
-          fecha: form.fecha,
+          fecha: formatStringDateToDB(form.fecha),
           monto: form.monto,
           descripcion: form.descripcion
         }

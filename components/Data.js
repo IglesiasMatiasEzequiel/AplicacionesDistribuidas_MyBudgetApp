@@ -90,6 +90,13 @@ const periodosData = [
   { label: "Anual", value: "3" }
 ]
 
+const periodosBorrarData = [
+  { label: "Última semana", value: "1" },
+  { label: "Último mes", value: "2" },
+  { label: "Último año", value: "3" },
+  { label: "Ver últimos movimientos", value: "4" }
+]
+
 const estadosPrestamoData = [
   { label: "Activo", value: "1" },
   { label: "Vencido", value: "2" }
@@ -123,6 +130,7 @@ export {
   entidadesEmisorasData,
   tipoInversionData,
   periodosData,
+  periodosBorrarData,
   estadosPrestamoData,
   tipoPrestamoData,
   cuentasData,

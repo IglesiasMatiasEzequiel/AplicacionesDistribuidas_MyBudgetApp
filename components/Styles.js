@@ -195,12 +195,13 @@ const tableStyles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: 'row',
-    height: 25,
+    height: 30,
     backgroundColor: "#E7E6E1",
   },
   tableRowtext: {
     textAlign: "center",
     fontWeight: "100",
+    fontSize: 18
   },
 });
 

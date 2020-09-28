@@ -1,5 +1,21 @@
 import React from "react";
-import { ScrollView, View, TouchableOpacity } from "react-native";
+
+import { 
+  ScrollView, 
+  View,
+  Text, 
+  TouchableOpacity 
+} from "react-native";
+
+import DropDownPicker from "react-native-dropdown-picker";
+
+import { 
+  Table, 
+  Row, 
+  TableWrapper, 
+  Cell 
+} from "react-native-table-component";
+
 import {
   screenStyles,
   buttonStyles,
@@ -7,26 +23,53 @@ import {
   titleStyles,
   dropdownStyles
 } from "../../components/Styles";
+
 import {
   periodosData
 } from "../../components/Data";
 
-import { IngresosQueries } from "../../database";
-import DropDownPicker from "react-native-dropdown-picker";
-import { Table, Row } from "react-native-table-component";
-import { Text } from "galio-framework";
+import { 
+  CustomSpinner, 
+  CustomModal, 
+  CustomIcon, 
+  Alert 
+} from "../../components";
+
+import { 
+  IngresosQueries 
+} from "../../database";
+
+import { 
+  formatDateToString, 
+  formatStringDateToDB, 
+  formatStringDateFromDB 
+} from "../../components/Formatters";
+
 import * as Session from "../../components/Session";
-import Alert from "../../components/Alert";
 
 export default function Ingresos({ route, navigation }) {
 
+  /* State del CustomSpinner */
+  const [isLoading, setIsLoading] = React.useState(false);
+  
+  /* State del CustomModal */
+  const [modalData, setModalData] = React.useState(null);
+
+  /* State del Listado */
   const [listado, setListado] = React.useState({
     data: null,
     isLoading: false,
     periodo: null
   });
 
-  const handleChangePeriodo = (periodo) => setListado((prevState) => ({ ...prevState, periodo: periodo }));
+  const handleChangePeriodo = (periodo) => {
+    setListado((prevState) => ({ 
+      ...prevState, 
+      data: null, 
+      isLoading: false,
+      periodo: periodo
+     }));
+  };
 
   const limpiarState = () => {
     setListado({
@@ -36,30 +79,102 @@ export default function Ingresos({ route, navigation }) {
     });
   };
 
-  const onNuevoIngreso = () => {
+  /* Botón Nuevo*/
+
+  const onNuevo = () => {
     limpiarState();
     navigation.navigate("NuevoIngreso");
   }
-  const onBorrarIngreso = () => { 
-    limpiarState();
-    navigation.navigate("BorrarIngreso"); 
+
+  /* Botón Nuevo*/
+
+  /* Botón borrar */
+
+  const onCancelar = () => setModalData({ ...modalData, isVisible: false });
+
+  const onBorrar = (id) => { 
+    setModalData({ 
+      title: "Eliminar ingreso",
+      message: "¿Está seguro de que desea eliminar el ingreso?",
+      handleBtnOnSuccess: () => onConfirmarBorrar(id),
+      handleBtnOnError: () => onCancelar(),
+      showErrorBtn: true,
+      isVisible: true
+    });
   }
 
-  const tableHeaders = ["Fecha", "Monto", "Descripcion", "Tipo", "Categoría", "Destino", "Cuenta"];
-  const columnWidth = [100, 150, 220, 150, 150, 120, 300];
+  const onConfirmarBorrar = (id) => { 
+    
+    setIsLoading(true);
+
+      IngresosQueries._deleteById(id, 
+        () => {
+          setIsLoading(false);
+          setModalData({ 
+            title: "¡Borrado exitoso!",
+            message: "El ingreso se eliminó correctamente.",
+            isVisible: true,
+            isSuccess: true,
+            handleBtnOnSuccess: () => { 
+              limpiarState();
+              onCancelar();
+            },
+            successBtnText: "Volver",
+            showErrorBtn: false
+          });
+        },
+        (error) => {
+          
+          setListado((prevState) => ({ 
+            ...prevState, 
+            data: [],
+            isLoading: false, 
+          }));
+
+          console.log(error);
+        }
+      );
+  }
+
+  const deleteButton = (data, index) => (
+    <TouchableOpacity onPress={() => onBorrar(data)}>
+      <View style={buttonStyles.btnTable}>
+        <CustomIcon name="md-trash" size={22}/>
+      </View>
+    </TouchableOpacity>
+  );
+
+  /* Botón borrar */
+
+  /* Listado */
+
+  const tableHeaders = ["", "Fecha", "Monto", "Descripcion", "Tipo", "Categoría", "Destino", "Cuenta"];
+  const columnWidth = [30, 120, 150, 300, 300, 150, 120, 300];
 
   const getListado = () => {
 
     setListado((prevState) => ({ ...prevState, isLoading: true }));
     
+    var substractDays = listado.periodo === "1" ? 7
+    : listado.periodo === "2" ? 30 
+    : listado.periodo === "3" ? 365 : 7;
+
+    var to = new Date();
+    var from = new Date();
+
+    from.setDate(from.getDate() - substractDays);
+
+    var toFormatted = formatStringDateToDB(formatDateToString(to));
+    var fromFormatted = formatStringDateToDB(formatDateToString(from));
+
     Session.getUser().then((usuario) => {
       IngresosQueries._getListado(
-        usuario.id,
+        usuario.id, fromFormatted, toFormatted,
         (data) => {
 
           var tableData = data?.map((item) => {
-              return [
-                item.fecha,
+              return [item.id,
+                formatStringDateFromDB(item.fecha),
                 "$ " + item.monto,
                 item.descripcion ?? "-",
                 item.tipoIngreso,
@@ -93,24 +208,18 @@ export default function Ingresos({ route, navigation }) {
     || (route?.params?.isReload ?? false))
     && !listado.isLoading){ 
 
-    console.log(route?.params?.isReload);
-
     /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
     navigation.setParams({ isReload: false });
 
-    console.log(route?.params?.isReload);
-
     getListado();
   }
+
+  /* Listado */
   
   return (
     <ScrollView style={screenStyles.screen}>
-      <TouchableOpacity onPress={onNuevoIngreso} style={buttonStyles.btn}>
+      <TouchableOpacity onPress={onNuevo} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Nuevo Ingreso</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={onBorrarIngreso} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Borrar Ingreso</Text>
       </TouchableOpacity>
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
@@ -162,18 +271,30 @@ export default function Ingresos({ route, navigation }) {
                     style={[tableStyles.tableDataContainer, { height: 200 }]}
                   >
                     <Table borderStyle={tableStyles.tableDataBorder}>
-                      {listado.data.map((rowData, index) => (
-                        <Row
-                          key={index}
-                          data={rowData}
-                          widthArr={columnWidth}
-                          style={[
-                            tableStyles.tableRow,
-                            index % 2 && { backgroundColor: "transparent" },
-                          ]}
-                          textStyle={tableStyles.tableRowtext}
-                        />
-                      ))}
+
+                    {listado.data.map((rowData, index) => (
+                      <TableWrapper
+                        key={index}
+                        style={[
+                          tableStyles.tableRow,
+                          index % 2 && { backgroundColor: "transparent" },
+                        ]}
+                      >
+                        {rowData.map((cellData, cellIndex) => (
+                          <Cell
+                            key={cellIndex.toString()}
+                            width={columnWidth[cellIndex]}
+                            data={
+                              cellIndex === 0
+                                ? deleteButton(cellData, index)
+                                : cellData
+                            }
+                            textStyle={tableStyles.tableRowtext}
+                          />
+                        ))}
+                      </TableWrapper>
+                    ))}
+
                     </Table>
                   </ScrollView>
                 </View>
@@ -186,6 +307,21 @@ export default function Ingresos({ route, navigation }) {
           </View>
         </View>
       )}
+
+      <CustomSpinner isLoading={isLoading} text={"Eliminando..."} />
+
+      <CustomModal
+        title={modalData?.title}
+        message={modalData?.message}
+        isSuccess={modalData?.isSuccess}
+        isVisible={modalData?.isVisible}
+        handleBtnOnSuccess={modalData?.handleBtnOnSuccess}
+        handleBtnOnError={modalData?.handleBtnOnError}
+        successBtnText={modalData?.successBtnText}
+        errorBtnText={modalData?.errorBtnText}
+        showErrorBtn={modalData?.showErrorBtn}
+      />
+
     </ScrollView>
   );
 }

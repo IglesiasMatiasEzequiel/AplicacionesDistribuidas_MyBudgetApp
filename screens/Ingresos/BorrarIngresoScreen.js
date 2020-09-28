@@ -5,40 +5,105 @@ import {
   buttonStyles,
   tableStyles,
   titleStyles,
-  radioButtonStyles
-} from "../../components/Styles";
+  dropdownStyles
+  } from "../../components/Styles";
 import { CustomSpinner, CustomModal } from "../../components";
 
+import {
+  periodosBorrarData
+} from "../../components/Data";
+
 import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
+import DropDownPicker from "react-native-dropdown-picker";
 import { Text } from "galio-framework";
-import RadioButtonRN from 'radio-buttons-react-native';
 
 export default function BorrarIngresos({ navigation }) {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
-  const [tipoBorrar, setTipoBorrar] = React.useState(null);
+
+  const [listado, setListado] = React.useState({
+    data: null,
+    isLoading: false,
+    periodo: "4"
+  });
+
+  const handleChangePeriodo = (periodo) => {
+    setListado((prevState) => ({ 
+      ...prevState, 
+      data: null, 
+      isLoading: false,
+      periodo: periodo
+     }));
+  };
 
   const tableHeaders = ["", "Tipo", "Destino", "Descripcion", "Monto"];
   const columnWidth = [50, 120, 120, 120, 120];
 
-  const tableData = [
-    ["X", "P-Sueldo", "Cuenta", "Sueldo", "5000"],
-    ["X", "P-Alquiler", "Cuenta", "Depto1", "3000"],
-    ["X", "P-Alquiler", "Cuenta", "Depto2", "3200"],
-    ["X", "P-Alquiler", "Cuenta", "Depto3", "3800"],
-    ["X", "Extraordinario", "Efectivo", "Tio", "400"],
-    ["X", "Extraordinario", "Efectivo", "Tio", "800"],
-    ["X", "Extraordinario", "Efectivo", "Hermano", "500"],
-    ["X", "Extraordinario", "Efectivo", "Hermano", "1000"],
-    ["X", "Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["X", "Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["X", "Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["X", "Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["X", "Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["X", "Extraordinario", "Efectivo", "Amigos", "2000"],
-    ["X", "Extraordinario", "Efectivo", "Amigos", "2000"],
-  ];
+  const getListado = () => {
+
+    setListado((prevState) => ({ ...prevState, isLoading: true }));
+    
+    var substractDays = listado.periodo === "1" ? 7
+    : listado.periodo === "2" ? 30 
+    : listado.periodo === "3" ? 365 : 7;
+
+    var to = new Date();
+    var from = new Date();
+
+    from.setDate(from.getDate() - substractDays);
+
+    var toFormatted = formatStringDateToDB(formatDateToString(to));
+    var fromFormatted = formatStringDateToDB(formatDateToString(from));
+
+    Session.getUser().then((usuario) => {
+      IngresosQueries._getListado(
+        usuario.id, fromFormatted, toFormatted,
+        (data) => {
+
+          console.log(data);
+
+          var tableData = data?.map((item) => {
+              return [
+                formatStringDateFromDB(item.fecha),
+                "$ " + item.monto,
+                item.descripcion ?? "-",
+                item.tipoIngreso,
+                item.categoriaIngreso ?? "-",
+                item.destinoIngreso,
+                item.cuenta ?? '-',
+              ];
+            }) ?? [];            
+
+          setListado((prevState) => ({ 
+            ...prevState, 
+            data: tableData,
+            isLoading: false, 
+          }));
+        },
+        (error) => {
+          
+          setListado((prevState) => ({ 
+            ...prevState, 
+            data: [],
+            isLoading: false, 
+          }));
+
+          console.log(error);
+        }
+      );
+    });
+  };
+
+  if((listado.data === null
+    || (route?.params?.isReload ?? false))
+    && !listado.isLoading){ 
+
+    /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
+    navigation.setParams({ isReload: false });
+
+    getListado();
+  }
 
   const onBorrar = () => { 
 
@@ -75,34 +140,34 @@ export default function BorrarIngresos({ navigation }) {
     </TouchableOpacity>
   );
 
-  const options = [
-    { label: 'Último mes', value: 1 },
-    { label: 'Última semana', value: 2 },
-    { label: 'Último año', value: 3 },
-    { label: 'Últimos movimientos', value: 4 },
-  ];
-
   return (
     <ScrollView style={screenStyles.screen}>
       
-      <RadioButtonRN
-        data={options}
-        selectedBtn={(e) => setTipoBorrar(e)}
-        circleSize={16}
-        boxStyle={radioButtonStyles.rbContainer}
-        textStyle={radioButtonStyles.rbText}
-        activeColor="#69037B"
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Filtros
+        </Text>
+      </View>
+
+      <DropDownPicker
+        items={periodosBorrarData}
+        defaultValue={listado.periodo}
+        placeholder="Seleccione un periodo."
+        containerStyle={dropdownStyles.dropdownContainer}
+        style={dropdownStyles.dropdown}
+        itemStyle={dropdownStyles.dropdownItem}
+        onChangeItem={(item) => handleChangePeriodo(item.value)}
       />
 
-      {tipoBorrar !== null && tipoBorrar?.value !== 4 && (
+      {listado?.periodo !== "4" && (
         <View>
-          <TouchableOpacity onPress={onBorrar} style={buttonStyles.btn}>
+          <TouchableOpacity onPress={onBorrar} style={[buttonStyles.btn, { marginTop: 30 }]}>
             <Text style={buttonStyles.btnText}>Borrar</Text>
           </TouchableOpacity>
         </View>
       )}
 
-      {(tipoBorrar?.value === 4) && (
+      {listado?.periodo === "4" && (
         <View>
           <View
             style={[screenStyles.containerDivider, titleStyles.titleContainer]}
@@ -157,7 +222,7 @@ export default function BorrarIngresos({ navigation }) {
         </View>
       )}
 
-      <TouchableOpacity onPress={onBack} style={[buttonStyles.btnBack, { marginTop: 10 }]}>
+      <TouchableOpacity onPress={onBack} style={[buttonStyles.btnBack, { marginTop: 30 }]}>
         <Text style={buttonStyles.btnBackText}>Volver</Text>
       </TouchableOpacity>
 

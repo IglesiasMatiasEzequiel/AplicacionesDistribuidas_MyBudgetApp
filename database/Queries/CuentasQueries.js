@@ -38,5 +38,5 @@ export function _selectById(id, successCallback, errorCallback) {
 }
 
 export function _deleteById(id, successCallback, errorCallback) {
-  db._deleteById(id, successCallback, errorCallback);
+  db._deleteById(tableName, id, successCallback, errorCallback);
 }

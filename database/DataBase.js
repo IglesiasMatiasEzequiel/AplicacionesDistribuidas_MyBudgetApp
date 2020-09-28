@@ -1,8 +1,7 @@
 import * as SQLite from 'expo-sqlite';
-import { useCallback } from 'react';
 const db = SQLite.openDatabase('db.MyBudgetApp');
 
-const debugMode = false;
+const debugMode = true;
 
 function log(debugMode, status, method, params, query, id, data) {
   if (debugMode) {    
@@ -121,14 +120,31 @@ export function _selectAll(tableName, successCallback, errorCallback) {
 
 /* DELETE */
 
-export function _delete(query, params, successCallback, errorCallback){
-  dt.transaction(tx => {
-    tx.executeSql(query, params,
-      (txObj, { rows: { _array } }) => { successCallback(_array)},
-      (txObj, error) => errorCallback())
-  })
+export function _delete(query, params, successCallback, errorCallback) {
+  
+  console.log(query);
+  console.log(params);
+
+  db.transaction((tx) => {
+    tx.executeSql(
+      query,
+      params,
+      (txObj, resultSet) => {
+        logSuccess(debugMode, "_delete", params, query, resultSet?.insertId);
+        if (successCallback) {
+          successCallback(resultSet.insertId);
+        }
+      },
+      (txObj, error) => {
+        logError(debugMode, "_delete", params, query);
+        if (errorCallback) {
+          errorCallback(error);
+        }
+      }
+    );
+  });
 }
 
 export function _deleteById(tableName, id, successCallback, errorCallback) {
-  deleteQuery("DELETE " + tableName + " WHERE id = ?", [id], successCallback, errorCallback);
+  _delete("DELETE FROM " + tableName + " WHERE id = ?", [id], successCallback, errorCallback);
 }

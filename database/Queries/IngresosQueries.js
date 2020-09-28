@@ -39,10 +39,10 @@ export function _selectById(id, successCallback, errorCallback) {
 }
 
 export function _deleteById(id, successCallback, errorCallback) {
-  db._deleteById(id, successCallback, errorCallback);
+  db._deleteById(tableName, id, successCallback, errorCallback);
 }
 
-export function _getListado(idUsuario, successCallback, errorCallback){
+export function _getListado(idUsuario, from, to, successCallback, errorCallback){
 
   var query = "SELECT ingreso.id, " +
   " ingreso.fecha, " +
@@ -58,9 +58,10 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   " LEFT JOIN CategoriasIngreso categoriaIngreso ON ingreso.idCategoriaIngreso = categoriaIngreso.id " +
   " LEFT JOIN Cuentas cuenta ON ingreso.idCuenta = cuenta.id " +
   " LEFT JOIN Bancos banco ON cuenta.idBanco = banco.id " +
-  " WHERE ingreso.idUsuario = ? ";
+  " WHERE ingreso.idUsuario = ? " +
+  " AND ingreso.fecha BETWEEN ? AND ? ";
 
-  var params = [idUsuario];
+  var params = [idUsuario, from, to];
 
   db._select(query, params, successCallback, errorCallback);
 }

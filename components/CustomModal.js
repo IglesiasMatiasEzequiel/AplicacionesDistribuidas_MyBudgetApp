@@ -8,6 +8,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  cancelBtn: {
+    alignItems: "center",
+    justifyContent: "center"
+  },
   cancelBtnText: {
     color: "black",
     fontSize: 11,
@@ -82,7 +86,9 @@ export default function CustomModal({
             </TouchableOpacity>
 
             {showErrorBtn && (
-              <TouchableOpacity onPress={handleBtnOnError}>
+              <TouchableOpacity 
+                onPress={handleBtnOnError}
+                style={styles.cancelBtn}>
                 <Text style={styles.cancelBtnText}>{errorBtnText}</Text>
               </TouchableOpacity>
             )}
