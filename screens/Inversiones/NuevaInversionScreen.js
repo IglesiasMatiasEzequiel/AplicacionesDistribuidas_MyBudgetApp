@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
-import { CustomSpinner, CustomModal } from "../../components";
+import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
 import { tipoInversionData } from "../../components/Data";
 import {
   screenStyles,
@@ -12,152 +12,248 @@ import {
   dropdownStyles,
 } from "../../components/Styles";
 
+import { validateRequired } from "../../components/Validations";
+import { InversionesQueries } from "../../database";
+import * as Session from "../../components/Session";
+
 export default function NuevaInversionScreen({ navigation }) {
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
-  const [tipo, setTipo] = React.useState(null);
-  const [monto, setMonto] = React.useState("");
-  const [origen, setOrigen] = React.useState("");
-  const [fechaInicio, setFechaInicio] = React.useState("");
-  const [nombre, setNombre] = React.useState("");
-  const [duracion, setDuracion] = React.useState("");
+  const [form, setForm] = React.useState({
+    tipo: null,
+    monto: "",
+    origen: "",
+    fechaInicio: "",
+    nombre: "",
+    duracion: ""
+  });
 
-  const handleChangeTipo= (tipo) => setTipo(tipo);
-  const handleChangeMonto = (monto) => setDinero(monto);
-  const handleChangeOrigen = (origen) => setDinero(origen);
-  const handleChangeFechaInicio = (fechaInicio) => setFechaInicio(fechaInicio);
-  const handleChangeNombre = (nombre) => setNombre(nombre);
-  const handleChangeDuracion = (duracion) => setDuracion(duracion);
+  const [validations, setValidations] = React.useState({
+    tipo: true,
+    monto: true,
+    origen: true,
+    fechaInicio: true,
+    nombre: true,
+    duracion: true
+  });
+
+  const [validationMessages, setValidationMessages] = React.useState({
+    tipo: "",
+    monto: "",
+    origen: "",
+    fechaInicio: "",
+    nombre: "",
+    duracion: ""
+  });
+
+  const handleChange = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
+  };
+
+  const handleChangeTipo = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value}));
+  };
+
 
   const limpiarState = () => {
-    setIsLoading(false);
-    setModalData({ ...modalData, isVisible: false });
-    setTipo(null);
-    setMonto("");
-    setOrigen("");
-    setFechaInicio("");
-    setNombre("");
-    setDuracion("");
+
+    setForm({
+      tipo: null,
+      monto: "",
+      origen: "",
+      fechaInicio: "",
+      nombre: "",
+      duracion: ""
+    });
+
+    setValidations({
+      tipo: true,
+      monto: true,
+      origen: true,
+      fechaInicio: true,
+      nombre: true,
+      duracion: true
+    });
+
+    setValidationMessages({
+      tipo: "",
+      monto: "",
+      origen: "",
+      fechaInicio: "",
+      nombre: "",
+      duracion: ""
+    });
   };
 
-  const onConfirmar = () => {
-    setIsLoading(true);
+  const onConfirmar = async () => {
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setModalData({
-        message: "La inversion se guardó correctamente.",
-        isVisible: true,
-        isSuccess: true,
-        successBtnText: "Aceptar",
+    const isValidForm = await validateForm();
+
+    if(isValidForm){
+      setIsLoading(true);
+
+      Session.getUser().then((usuario) => {
+        var obj = {
+          idUsuario: usuario.id,
+          idTipo: form.tipo,
+          monto: form.monto,
+          origen: form.origen,
+          fechaInicio: form.fechaInicio,
+          nombre: form.nombre,
+          duracion: form.duracion
+        }
+
+        InversionesQueries._insert(obj,
+          (data) => {
+            setIsLoading(false);
+            setModalData({
+              message: "La inversion se guardó correctamente.",
+              isVisible: true,
+              isSuccess: true,
+              successBtnText: "Aceptar",
+            });
+          },
+          (error) => {
+            console.log("Ocurrió un error al insertar el ingreso. - " + error);
+          }
+        );
       });
-    }, 500);
+    }
   };
+
+  const validateForm = async () => {
+    const isTipoValid = await validateRequired(form.tipo);
+    const isMontoValid = await validateRequired(form.monto);
+    const isOrigenValid = await validateRequired(form.origen);
+    const isFechaInicioValid = await validateRequired(form.fechaInicio);
+    const isNombreValid = await validateNombre(form.nombre);
+    const isDuracionValid = await validateDuracion(form.duracion);
+
+    setValidations((prevState) => ({
+      ...prevState,
+      tipo: isTipoValid,
+      monto: isMontoValid,
+      origen: isOrigenValid,
+      fechaInicio: isFechaInicioValid,
+      nombre: isNombreValid,
+      duracion: isDuracionValid
+    }));
+
+    setValidationMessages((prevState) => ({
+      ...prevState,
+      tipo: !isTipoValid ? "Debe seleccionar un tipo..." : "",
+      monto: !isMontoValid ? "El monto es requerido..." : "",
+      origen: !isOrigenValid ? "Debe seleccionar el origen de la inversión..." : "",
+      fechaInicio: !isFechaInicioValid ? "La fecha es requerida..." : "",
+      nombre: !isNombreValid ? "Debe ingresar un nombre a la inversión..." : "",
+      duracion: !isDuracionValid ? "Debe ingresar la duración..." : ""
+    }));
+
+    return isTipoValid && isMontoValid && isOrigenValid && isFechaInicioValid && isNombreValid && isDuracionValid;
+  };
+
 
   const onBack = () => {
     limpiarState();
-    navigation.navigate("Inversiones");
+    navigation.navigate("Inversiones", { recargarListado: true });
   };
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <View>
-        <DropDownPicker
-          items={tipoInversionData}
-          defaultValue={tipo}
-          placeholder="Seleccione un tipo de inversion."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeTipo(item.value)}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Monto..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(monto) => handleChangeMonto(monto)}
-          value={monto}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Origen..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(origen) => handleChangeOrigen(origen)}
-          value={origen}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Fecha de Inicio..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(fechaInicio) => handleChangeFechaInicio(fechaInicio)}
-          value={fechaInicio}
-        />
-      </View>
 
-      {tipo === "1" && (
-        <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Nombre de la accion..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(nombre) => handleChangeNombre(nombre)}
-          value={nombre}
-        />  
-        </View>
-      )}
-      {tipo === "2" && (
-        <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Nombre del Plazo fijo..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(nombre) => handleChangeNombre(nombre)}
-          value={nombre}
-        />  
-        </View>
-      )}
-      {tipo === "3" && (
-        <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Nombre del Fondo Comun..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(nombre) => handleChangeNombre(nombre)}
-          value={nombre}
-        />  
-        </View>
-      )}
-      {tipo === "4" && (
-        <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Nombre del Bono..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(nombre) => handleChangeNombre(nombre)}
-          value={nombre}
-        />  
-        </View>
+      <Dropdown
+        propName="tipo"
+        items={tipoInversionData}
+        defaultValue={form.tipo}
+        placeholder="Seleccione un tipo de inversión."
+        handleChange={handleChangeTipo}
+        isValid={validations.form.tipo}
+        validationMessage={validationMessages.form.tipo}
+      />
+      <Textbox
+        propName="monto"
+        placeholder="Monto..."
+        handleChange={handleChange}
+        value={form.monto}
+        isValid={validations.monto}
+        validationMessage={validationMessages.monto}
+        keyboardType="numeric"
+      />
+      <Textbox
+        propName="origen"
+        placeholder="Origen..."
+        handleChange={handleChange}
+        value={form.origen}
+        isValid={validations.origen}
+        validationMessage={validationMessages.origen}
+      />
+      <TextboxDate
+        propName="fechaInicio"
+        placeholder="Fecha..."
+        handleChange={handleChange}
+        value={form.fechaInicio}
+        isValid={validations.fechaInicio}
+        validationMessage={validationMessages.fechaInicio}
+      />
+
+      {form.tipo === "1" && (
+        <Textbox
+          propName="nombre"
+          placeholder="Nombre de la acción..."
+          handleChange={handleChange}
+          value={form.nombre}
+          isValid={validations.nombre}
+          validationMessage={validationMessages.nombre}
+        />
       )}
 
-      {tipo === "2" && (
-        <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Duracion (30 a 365 dias)..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(duracion) => handleChangeDuracion(duracion)}
-          value={duracion}
-        />
-        </View>
+      {form.tipo === "2" && (
+       <Textbox
+        propName="nombre"
+        placeholder="Nombre del plazo fijo..."
+        handleChange={handleChange}
+        value={form.nombre}
+        isValid={validations.nombre}
+        validationMessage={validationMessages.nombre}
+      />
       )}
-      
+
+      {form.tipo === "2" && (
+       <Textbox
+        propName="duración"
+        placeholder="Duración (30 a 365 días)..."
+        handleChange={handleChange}
+        value={form.duracion}
+        isValid={validations.duracion}
+        validationMessage={validationMessages.duracion}
+      />
+      )}
+
+      {form.tipo === "3" && (
+        <Textbox
+          propName="nombre"
+          placeholder="Nombre del fondo común..."
+          handleChange={handleChange}
+          value={form.nombre}
+          isValid={validations.nombre}
+          validationMessage={validationMessages.nombre}
+       />
+      )}
+
+      {form.tipo === "4" && (
+          <Textbox
+            propName="nombre"
+            placeholder="Nombre del bono..."
+            handleChange={handleChange}
+            value={form.nombre}
+            isValid={validations.nombre}
+            validationMessage={validationMessages.nombre}
+       />
+      )}
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Confirmar</Text>
