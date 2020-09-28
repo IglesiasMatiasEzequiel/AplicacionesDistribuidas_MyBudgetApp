@@ -130,9 +130,17 @@ export default function NuevaInversionScreen({ navigation }) {
     const isMontoValid = await validateRequired(form.monto);
     const isOrigenValid = await validateRequired(form.origen);
     const isFechaInicioValid = await validateRequired(form.fechaInicio);
-    const isNombreValid = await validateNombre(form.nombre);
-    const isDuracionValid = await validateDuracion(form.duracion);
+    
+    var isNombreValid = true;
+    if(form.tipo !== null){
+      isNombreValid = await validateRequired(form.nombre);
+    }
 
+    var isDuracionValid = true;
+    if(form.tipo === "2"){
+      isDuracionValid = await validateRequired(form.duracion);
+    }
+    
     setValidations((prevState) => ({
       ...prevState,
       tipo: isTipoValid,
@@ -153,7 +161,12 @@ export default function NuevaInversionScreen({ navigation }) {
       duracion: !isDuracionValid ? "Debe ingresar la duración..." : ""
     }));
 
-    return isTipoValid && isMontoValid && isOrigenValid && isFechaInicioValid && isNombreValid && isDuracionValid;
+    return isTipoValid 
+    && isMontoValid 
+    && isOrigenValid 
+    && isFechaInicioValid 
+    && isNombreValid 
+    && isDuracionValid;
   };
 
 
@@ -171,8 +184,8 @@ export default function NuevaInversionScreen({ navigation }) {
         defaultValue={form.tipo}
         placeholder="Seleccione un tipo de inversión."
         handleChange={handleChangeTipo}
-        isValid={validations.form.tipo}
-        validationMessage={validationMessages.form.tipo}
+        isValid={validations.tipo}
+        validationMessage={validationMessages.tipo}
       />
       <Textbox
         propName="monto"
@@ -199,28 +212,19 @@ export default function NuevaInversionScreen({ navigation }) {
         isValid={validations.fechaInicio}
         validationMessage={validationMessages.fechaInicio}
       />
-
-      {form.tipo === "1" && (
-        <Textbox
-          propName="nombre"
-          placeholder="Nombre de la acción..."
-          handleChange={handleChange}
-          value={form.nombre}
-          isValid={validations.nombre}
-          validationMessage={validationMessages.nombre}
-        />
-      )}
-
-      {form.tipo === "2" && (
-       <Textbox
+      
+      {form.tipo !== null && (<Textbox
         propName="nombre"
-        placeholder="Nombre del plazo fijo..."
+        placeholder={
+          form.tipo === "1" ? "Nombre de la acción..." 
+          : form.tipo === "2" ? "Nombre del plazo fijo..."
+          : form.tipo === "3" ? "Nombre del fondo común..."
+          : form.tipo === "4" ? "Nombre del bono..." : "" }
         handleChange={handleChange}
         value={form.nombre}
         isValid={validations.nombre}
         validationMessage={validationMessages.nombre}
-      />
-      )}
+      />)}
 
       {form.tipo === "2" && (
        <Textbox
@@ -231,28 +235,6 @@ export default function NuevaInversionScreen({ navigation }) {
         isValid={validations.duracion}
         validationMessage={validationMessages.duracion}
       />
-      )}
-
-      {form.tipo === "3" && (
-        <Textbox
-          propName="nombre"
-          placeholder="Nombre del fondo común..."
-          handleChange={handleChange}
-          value={form.nombre}
-          isValid={validations.nombre}
-          validationMessage={validationMessages.nombre}
-       />
-      )}
-
-      {form.tipo === "4" && (
-          <Textbox
-            propName="nombre"
-            placeholder="Nombre del bono..."
-            handleChange={handleChange}
-            value={form.nombre}
-            isValid={validations.nombre}
-            validationMessage={validationMessages.nombre}
-       />
       )}
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
