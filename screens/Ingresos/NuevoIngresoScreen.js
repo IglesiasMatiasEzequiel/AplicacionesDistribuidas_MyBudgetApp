@@ -182,7 +182,7 @@ export default function NuevoIngresoScren({ navigation }) {
 
   const onBack = () => {
     limpiarState();
-    navigation.navigate("Ingresos", { recargarListado: true });
+    navigation.navigate("Ingresos", { isReload: true });
   };
 
   return (

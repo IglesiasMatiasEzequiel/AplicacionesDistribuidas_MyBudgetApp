@@ -20,16 +20,20 @@ import Alert from "../../components/Alert";
 
 export default function Ingresos({ route, navigation }) {
 
-  const recargarListado = route.params?.recargarListado ?? false;
+  const [listado, setListado] = React.useState({
+    data: null,
+    isLoading: false,
+    periodo: null
+  });
 
-  const [periodo, setPeriodo] = React.useState(null);
-  const [listado, setListado] = React.useState(null);
-  const [isLoadingListado, setIsLoadingListado] = React.useState(false);
-
-  const handleChangePeriodo = (periodo) => setPeriodo(periodo);
+  const handleChangePeriodo = (periodo) => setListado((prevState) => ({ ...prevState, periodo: periodo }));
 
   const limpiarState = () => {
-    setPeriodo(null);
+    setListado({
+      data: null, 
+      isLoading: false, 
+      periodo: null
+    });
   };
 
   const onNuevoIngreso = () => {
@@ -42,21 +46,18 @@ export default function Ingresos({ route, navigation }) {
   }
 
   const tableHeaders = ["Fecha", "Monto", "Descripcion", "Tipo", "Categoría", "Destino", "Cuenta"];
-  const columnWidth = [60, 80, 150, 100, 80, 120];
+  const columnWidth = [100, 150, 220, 150, 150, 120, 300];
 
   const getListado = () => {
 
-    setIsLoadingListado(true);
-
+    setListado((prevState) => ({ ...prevState, isLoading: true }));
+    
     Session.getUser().then((usuario) => {
       IngresosQueries._getListado(
         usuario.id,
         (data) => {
 
-          setIsLoadingListado(false);
-
-          if (data != null && data.length > 0) {
-            var tableData = data.map((item) => {
+          var tableData = data?.map((item) => {
               return [
                 item.fecha,
                 "$ " + item.monto,
@@ -64,22 +65,41 @@ export default function Ingresos({ route, navigation }) {
                 item.tipoIngreso,
                 item.categoriaIngreso ?? "-",
                 item.destinoIngreso,
-                item.cuenta,
+                item.cuenta ?? '-',
               ];
-            });            
+            }) ?? [];            
 
-            setListado(tableData);
-          }
+          setListado((prevState) => ({ 
+            ...prevState, 
+            data: tableData,
+            isLoading: false, 
+          }));
         },
         (error) => {
-          setIsLoadingListado(false);
+          
+          setListado((prevState) => ({ 
+            ...prevState, 
+            data: [],
+            isLoading: false, 
+          }));
+
           console.log(error);
         }
       );
     });
   };
 
-  if(recargarListado){
+  if((listado.data === null
+    || (route?.params?.isReload ?? false))
+    && !listado.isLoading){ 
+
+    console.log(route?.params?.isReload);
+
+    /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
+    navigation.setParams({ isReload: false });
+
+    console.log(route?.params?.isReload);
+
     getListado();
   }
   
@@ -93,71 +113,79 @@ export default function Ingresos({ route, navigation }) {
         <Text style={buttonStyles.btnText}>Borrar Ingreso</Text>
       </TouchableOpacity>
 
-      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
-          <Text h5 style={titleStyles.titleText}>
-            Filtros
-          </Text>
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Filtros
+        </Text>
       </View>
 
       <DropDownPicker
-            items={periodosData}
-            defaultValue={periodo}
-            placeholder="Seleccione un periodo."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangePeriodo(item.value)}
-          />
+        items={periodosData}
+        defaultValue={listado.periodo}
+        placeholder="Seleccione un periodo."
+        containerStyle={dropdownStyles.dropdownContainer}
+        style={dropdownStyles.dropdown}
+        itemStyle={dropdownStyles.dropdownItem}
+        onChangeItem={(item) => handleChangePeriodo(item.value)}
+      />
 
-      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
-          <Text h5 style={titleStyles.titleText}>
-            Ingresos
-            {periodo === "1" ? " de la semana"
-            : periodo === "2" ? " del mes"
-            : periodo === "3" ? " del año" : ""}
-          </Text>
-      </View>
+      {!listado.isLoading && (
+        <View>
+          <View
+            style={[screenStyles.containerDivider, titleStyles.titleContainer]}
+          >
+            <Text h5 style={titleStyles.titleText}>
+              Ingresos
+              {listado.periodo === "1"
+                ? " de la semana"
+                : listado.periodo === "2"
+                ? " del mes"
+                : listado.periodo === "3"
+                ? " del año"
+                : ""}
+            </Text>
+          </View>
 
-      {!isLoadingListado && <View style={tableStyles.tableContainer}>
-        <ScrollView horizontal>
-          {listado != null && <View>
-            <Table borderStyle={tableStyles.tableHeaderBorder}>
-              <Row
-                data={tableHeaders}
-                widthArr={columnWidth}
-                style={tableStyles.tableHeader}
-                textStyle={tableStyles.tableHeadertext}
-              />
-            </Table>
-            <ScrollView
-              style={[tableStyles.tableDataContainer, { height: 200 }]}
-            >
-              <Table borderStyle={tableStyles.tableDataBorder}>
-                {listado.map((rowData, index) => (
-                  <Row
-                    key={index}
-                    data={rowData}
-                    widthArr={columnWidth}
-                    style={[
-                      tableStyles.tableRow,
-                      index % 2 && { backgroundColor: "transparent" },
-                    ]}
-                    textStyle={tableStyles.tableRowtext}
-                  />
-                ))}
-              </Table>
+          <View style={tableStyles.tableContainer}>
+            <ScrollView horizontal>
+              {(listado.data !== null && listado.data.length > 0) && (
+                <View>
+                  <Table borderStyle={tableStyles.tableHeaderBorder}>
+                    <Row
+                      data={tableHeaders}
+                      widthArr={columnWidth}
+                      style={tableStyles.tableHeader}
+                      textStyle={tableStyles.tableHeadertext}
+                    />
+                  </Table>
+                  <ScrollView
+                    style={[tableStyles.tableDataContainer, { height: 200 }]}
+                  >
+                    <Table borderStyle={tableStyles.tableDataBorder}>
+                      {listado.data.map((rowData, index) => (
+                        <Row
+                          key={index}
+                          data={rowData}
+                          widthArr={columnWidth}
+                          style={[
+                            tableStyles.tableRow,
+                            index % 2 && { backgroundColor: "transparent" },
+                          ]}
+                          textStyle={tableStyles.tableRowtext}
+                        />
+                      ))}
+                    </Table>
+                  </ScrollView>
+                </View>
+              )}
+
+              {(listado.data === null || listado.data.length === 0) && (
+                <Alert type="danger" message="Sin información" />
+              )}
             </ScrollView>
-          </View>}
-
-          {listado === null &&
-            <Alert 
-              type="danger"
-              message="Sin información"
-            />
-          }
-
-        </ScrollView>
-      </View>}
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 }
