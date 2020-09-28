@@ -2,7 +2,7 @@ import React from "react";
 import { View, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
-import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
+import { Textbox, TextboxDate,Dropdown, CustomSpinner, CustomModal } from "../../components";
 import {
   screenStyles,
   buttonStyles,
@@ -19,9 +19,8 @@ import {
 } from "../../components/Data";
 
 import { validateRequired } from "../../components/Validations";
-
 import { EgresosQueries } from "../../database";
-import { getUser} from '../../components/Session';
+import * as Session from "../../components/Session";
 
 export default function NuevoEgresoScren({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -30,13 +29,13 @@ export default function NuevoEgresoScren({ navigation }) {
   const [form, setForm] = React.useState({
     fecha: "",
     monto: "",
-    tipoEgreso: "",
-    categoriaEgreso: "",
+    tipoEgreso: null,
+    categoriaEgreso: null,
     detalleEgreso: "",
-    medioPago: "",
+    medioPago: null,
     cuotas: "",
-    cuenta: "",
-    tarjeta: "",
+    cuenta: null,
+    tarjeta: null,
   });
 
   const [validations, setValidations] = React.useState({
@@ -71,35 +70,24 @@ export default function NuevoEgresoScren({ navigation }) {
     setValidations((prevState) => ({ ...prevState, [prop]: true }));
     setForm((prevState) => ({ ...prevState, [prop]: value, categoriaEgreso: null}));
   };
-  // const handleChangeCategoriaEgreso = (prop, value) => {
-  //   setValidations((prevState) => ({ ...prevState, [prop]: true }));
-  //   setForm((prevState) => ({ ...prevState, [prop]: value}));
-  // };
+
   const handleChangeMedioPago = (prop, value) => {
     setValidations((prevState) => ({ ...prevState, [prop]: true }));
     setForm((prevState) => ({ ...prevState, [prop]: value}));
   };
-  // const handleChangeTarjeta = (prop, value) => {
-  //   setValidations((prevState) => ({ ...prevState, [prop]: true }));
-  //   setForm((prevState) => ({ ...prevState, [prop]: value}));
-  // };
-  // const handleChangeCuenta = (prop, value) => {
-  //   setValidations((prevState) => ({ ...prevState, [prop]: true }));
-  //   setForm((prevState) => ({ ...prevState, [prop]: value}));
-  //};
 
   const limpiarState = () => {
     
     setForm({
       fecha: "",
       monto: "",
-      tipoEgreso: "",
-      categoriaEgreso: "",
+      tipoEgreso: null,
+      categoriaEgreso: null,
       detalleEgreso: "",
-      medioPago: "",
+      medioPago: null,
       cuotas: "",
-      cuenta: "",
-      tarjeta: "",
+      cuenta: null,
+      tarjeta: null,
     });
 
     setValidations({
@@ -134,35 +122,37 @@ export default function NuevoEgresoScren({ navigation }) {
 
     if (isValidForm) {
       setIsLoading(true);
-    
-      var obj = {
-        idUsuario: "1",
-        fecha: form.fecha,
-        monto: form.monto,
-        tipoEgreso: form.tipoEgreso,
-        categoriaEgreso: form.categoriaEgreso,
-        detalleEgreso: form.detalleEgreso,
-        medioPago: form.medioPago,
-        cuotas: form.cuotas,
-        cuenta: form.cuenta,
-        tarjeta: form.tarjeta,
-      }
 
-
-      EgresosQueries._insert(obj,
-        (data) => {
-          setIsLoading(false);
-          setModalData({
-            message: "El egreso se guardó correctamente.",
-            isVisible: true,
-            isSuccess: true,
-            successBtnText: "Aceptar",
-          });
-        },
-        (error) => {
-          console.log("Ocurrió un error al insertar el egreso. - " + error);
+      Session.getUser().then((usuario) => {
+        var obj = {
+          idUsuario: usuario.id,
+          fecha: form.fecha,
+          monto: form.monto,
+          idTipoEgreso: form.tipoEgreso,
+          idCategoriaEgreso: form.categoriaEgreso,
+          detalleEgreso: form.detalleEgreso,
+          idMedioPago: form.medioPago,
+          cuotas: form.cuotas,
+          idCuenta: form.cuenta,
+          idTarjeta: form.tarjeta,
         }
-      );
+  
+        EgresosQueries._insert(obj,
+          (data) => {
+            setIsLoading(false);
+            setModalData({
+              message: "El egreso se guardó correctamente.",
+              isVisible: true,
+              isSuccess: true,
+              successBtnText: "Aceptar",
+            });
+          },
+          (error) => {
+            console.log("Ocurrió un error al insertar el egreso. - " + error);
+          }
+        );
+      });
+      
     }
   };
 
@@ -222,7 +212,6 @@ export default function NuevoEgresoScren({ navigation }) {
            isMedioPagoValid && isCuotasValid && isCuentaValid && isTarjetaValid
  };
 
-
   const onBack = () => {
     limpiarState();
     navigation.navigate("Egresos");
@@ -236,14 +225,13 @@ export default function NuevoEgresoScren({ navigation }) {
           Egreso
         </Text>
       </View>
-      <Textbox
+      <TextboxDate
         propName="fecha"
         placeholder="Fecha..."
         handleChange={handleChange}
         value={form.fecha}
         isValid={validations.fecha}
         validationMessage={validationMessages.fecha}
-        isDate={true}
       />
       <Textbox
         propName="monto"
@@ -342,9 +330,11 @@ export default function NuevoEgresoScren({ navigation }) {
         <Text style={buttonStyles.btnText}>Confirmar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
-        <Text style={buttonStyles.btnBackText}>Volver</Text>
-      </TouchableOpacity>
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
+          <Text style={buttonStyles.btnBackText}>Volver</Text>
+        </TouchableOpacity>
+      </View>
 
       <CustomSpinner isLoading={isLoading} text={"Guardando egreso..."} />
 

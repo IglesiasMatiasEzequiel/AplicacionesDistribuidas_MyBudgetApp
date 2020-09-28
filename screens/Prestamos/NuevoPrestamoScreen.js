@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
 import { Text, theme } from "galio-framework";
 import DropDownPicker from "react-native-dropdown-picker";
-import { Textbox, Dropdown, CustomSpinner, CustomModal } from "../../components";
+import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
 
 import {
   screenStyles,
@@ -12,10 +12,10 @@ import {
   dropdownStyles,
 } from "../../components/Styles";
 import { tipoPrestamoData } from "../../components/Data";
-import { validateRequired } from "../../components/Validations";
 
+import { validateRequired } from "../../components/Validations";
 import { PrestamosQueries } from "../../database";
-import { getUser} from '../../components/Session';
+import * as Session from "../../components/Session";
 
 export default function NuevoPrestamoScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -90,30 +90,32 @@ export default function NuevoPrestamoScreen({ navigation }) {
 
     if (isValidForm) {
       setIsLoading(true);
-    
-      var obj = {
-        idUsuario: "1",
-        tipo: form.tipo,
-        emisorDestinatario: form.emisorDestinatario,
-        monto: form.monto,
-        intereses: form.intereses,
-        vencimiento: form.vencimiento,
-      }
-
-      PrestamosQueries._insert(obj,
-        (data) => {
-          setIsLoading(false);
-          setModalData({
-            message: "El prestamo se guardó correctamente.",
-            isVisible: true,
-            isSuccess: true,
-            successBtnText: "Aceptar",
-          });
-        },
-        (error) => {
-          console.log("Ocurrió un error al insertar el prestamos. - " + error);
+      Session.getUser().then((usuario) => {
+        
+        var obj = {
+          idUsuario: usuario.id,
+          idTipo: form.tipo,
+          emisorDestinatario: form.emisorDestinatario,
+          monto: form.monto,
+          intereses: form.intereses,
+          vencimiento: form.vencimiento,
         }
-      );
+  
+        PrestamosQueries._insert(obj,
+          (data) => {
+            setIsLoading(false);
+            setModalData({
+              message: "El prestamo se guardó correctamente.",
+              isVisible: true,
+              isSuccess: true,
+              successBtnText: "Aceptar",
+            });
+          },
+          (error) => {
+            console.log("Ocurrió un error al insertar el prestamos. - " + error);
+          }
+        );
+      });
     }
   };
 
@@ -194,14 +196,13 @@ export default function NuevoPrestamoScreen({ navigation }) {
       />
       
       {form.tipo === "2" && (
-        <Textbox
+        <TextboxDate
           propName="vencimiento"
           placeholder="Fecha de Vencimiento..."
           handleChange={handleChange}
           value={form.vencimiento}
           isValid={validations.vencimiento}
           validationMessage={validationMessages.vencimiento}
-          isDate={true}
         />
       )}
 

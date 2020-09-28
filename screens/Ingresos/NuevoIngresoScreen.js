@@ -271,10 +271,11 @@ export default function NuevoIngresoScren({ navigation }) {
         <Text style={buttonStyles.btnText}>Confirmar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
-        <Text style={buttonStyles.btnBackText}>Volver</Text>
-      </TouchableOpacity>
-
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
+          <Text style={buttonStyles.btnBackText}>Volver</Text>
+        </TouchableOpacity>
+      </View>
       <CustomSpinner isLoading={isLoading} text={"Guardando ingreso..."} />
 
       <CustomModal
