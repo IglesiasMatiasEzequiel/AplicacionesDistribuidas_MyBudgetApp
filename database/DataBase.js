@@ -52,37 +52,28 @@ export function _dropTable(tx, tableName){
 
 /* INSERT */
 
-export function _insertTx(tx, query, params) {
+export function _insertTx(tx, query, params, successCallback, errorCallback) {
   tx.executeSql(
     query,
     params,
     (txObj, resultSet) => {
       logSuccess(debugMode, "_insert", params, query, resultSet?.insertId);
+      if (successCallback) {
+        successCallback(resultSet.insertId);
+      }
     },
     (txObj, error) => {
       logError(debugMode, "_insert", params, query);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     }
   );
 }
 
 export function _insert(query, params, successCallback, errorCallback) {
-  db.transaction((tx) => {
-    tx.executeSql(
-      query,
-      params,
-      (txObj, resultSet) => {
-        logSuccess(debugMode, "_insert", params, query, resultSet?.insertId);
-        if (successCallback) {
-          successCallback(resultSet.insertId);
-        }
-      },
-      (txObj, error) => {
-        logError(debugMode, "_insert", params, query);
-        if (errorCallback) {
-          errorCallback(error);
-        }
-      }
-    );
+  _createTransaction((tx) => {
+    _insertTx(tx, query, params, successCallback, errorCallback);
   });
 }
 
@@ -120,31 +111,37 @@ export function _selectAll(tableName, successCallback, errorCallback) {
 
 /* DELETE */
 
-export function _delete(query, params, successCallback, errorCallback) {
-  
-  console.log(query);
-  console.log(params);
-
-  db.transaction((tx) => {
-    tx.executeSql(
-      query,
-      params,
-      (txObj, resultSet) => {
-        logSuccess(debugMode, "_delete", params, query, resultSet?.insertId);
-        if (successCallback) {
-          successCallback(resultSet.insertId);
-        }
-      },
-      (txObj, error) => {
-        logError(debugMode, "_delete", params, query);
-        if (errorCallback) {
-          errorCallback(error);
-        }
+export function _deleteTx(tx, query, params, successCallback, errorCallback) {
+  tx.executeSql(
+    query,
+    params,
+    (txObj, resultSet) => {
+      logSuccess(debugMode, "_delete", params, query, resultSet?.insertId);
+      if (successCallback) {
+        successCallback(resultSet.insertId);
       }
-    );
+    },
+    (txObj, error) => {
+      logError(debugMode, "_delete", params, query);
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    }
+  );
+}
+
+export function _delete(query, params, successCallback, errorCallback) {
+  _createTransaction((tx) => {
+    _deleteTx(tx, query, params, successCallback, errorCallback);
   });
 }
 
+export function _deleteByIdTx(tx, tableName, id, successCallback, errorCallback) {
+  _deleteTx(tx, "DELETE FROM " + tableName + " WHERE id = ?", [id], successCallback, errorCallback);
+}
+
 export function _deleteById(tableName, id, successCallback, errorCallback) {
-  _delete("DELETE FROM " + tableName + " WHERE id = ?", [id], successCallback, errorCallback);
+  _createTransaction((tx) => {
+    _deleteByIdTx(tx, tableName, id, successCallback, errorCallback);
+  });
 }

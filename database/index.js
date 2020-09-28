@@ -31,9 +31,7 @@ export function createTables() {
      * Si NO pudo es porque las tablas ya fueron creadas */
     UsuariosQueries._createTable(tx, () => {
 
-      UsuariosQueries._insertTx(tx, { email: 'matiiglesias@uade.edu.ar', nombre: 'Matias', apellido: 'Iglesias', password: '123456' });
-      UsuariosQueries._insertTx(tx, { email: 'lucas@gmail.com', nombre: 'Lucas', apellido: 'Labanca', password: '123456' });
-      UsuariosQueries._insertTx(tx, { email: 'nacho@gmail.com', nombre: 'Ignacio', apellido: 'Pantoni', password: '123456' });
+      UsuariosQueries._insertTx(tx, { email: 'usuario.test@uade.edu.ar', nombre: 'Test', apellido: 'Usuario', password: '123456' });
 
       /* Crear tablas secundarias */
       MediosPagoQueries._createTable(tx);
@@ -51,11 +49,40 @@ export function createTables() {
       TiposPrestamoQueries._createTable(tx);
     
       /* Crear tablas principales */
+
+      CuentasQueries._createTable(tx, () => {
+
+        "(idUsuario, idBanco, idEntidadEmisora, cbu, alias, descripcion, monto, tarjeta, vencimiento) " +
+
+        CuentasQueries._insertTx(tx, { 
+          idUsuario: 1, 
+          idBanco: 1, 
+          idEntidadEmisora: 1, 
+          cbu: '456858963236996650125', 
+          alias: 'TORTUGA.LENTES.FUEGO', 
+          descripcion: 'Cuenta principal', 
+          monto: 80550.99,
+          tarjeta: 4568,
+          vencimiento: '2021-05-01'
+        });
+
+        CuentasQueries._insertTx(tx, { 
+          idUsuario: 1, 
+          idBanco: 2, 
+          idEntidadEmisora: 2, 
+          cbu: '679858989236996650167', 
+          alias: 'LEON.AZUL.TRIGO', 
+          descripcion: 'Cuenta secundaria', 
+          monto: 300,
+          tarjeta: 8544,
+          vencimiento: '2022-04-01'
+        });
+      });
+
       EgresosQueries._createTable(tx);
       IngresosQueries._createTable(tx);
       PrestamosQueries._createTable(tx);
       PresupuestosQueries._createTable(tx);
-      CuentasQueries._createTable(tx);
       TarjetasQueries._createTable(tx);
     });
   });

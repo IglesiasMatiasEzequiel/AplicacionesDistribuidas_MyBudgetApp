@@ -8,6 +8,7 @@ import CustomIcon from './CustomIcon';
 import Textbox from './Textbox';
 import TextboxDate from './TextboxDate';
 import Dropdown from './Dropdown';
+import Alert from './Alert';
 
 export {
   Button,
@@ -19,5 +20,6 @@ export {
   CustomIcon,
   Textbox,
   TextboxDate,
-  Dropdown
+  Dropdown,
+  Alert
 };

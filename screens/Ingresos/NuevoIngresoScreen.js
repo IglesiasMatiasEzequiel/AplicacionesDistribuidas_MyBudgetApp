@@ -16,7 +16,7 @@ import {
 } from "../../components/Data";
 
 import { validateRequired } from "../../components/Validations";
-import { IngresosQueries } from "../../database";
+import { CuentasQueries, IngresosQueries } from "../../database";
 import * as Session from "../../components/Session";
 import { formatStringDateToDB } from "../../components/Formatters";
 
@@ -24,6 +24,8 @@ export default function NuevoIngresoScren({ navigation }) {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
+
+  const [dropdownData, setDropdownData] = React.useState(null);
 
   const [form, setForm] = React.useState({
     fecha: "",
@@ -140,7 +142,6 @@ export default function NuevoIngresoScren({ navigation }) {
     }
   };
 
-
   const validateForm = async () => {
     const isFechaValid = await validateRequired(form.fecha);
     const isMontoValid = await validateRequired(form.monto);
@@ -186,97 +187,135 @@ export default function NuevoIngresoScren({ navigation }) {
     navigation.navigate("Ingresos", { isReload: true });
   };
 
+  const fillDropdownData = () => {
+
+    setIsLoading(true);
+
+    Session.getUser().then((usuario) => {
+      CuentasQueries._selectAllByIdUsuario(usuario.id, (data) => {
+
+        var cuentas = data?.map((item) => {
+          return {
+            label: "CBU: " + item.cbu + " - " + item.descripcion,
+            value: item.id.toString()
+          }   
+        }) ?? [];           
+
+        setDropdownData({
+          cuentas: cuentas,
+        });
+
+        setIsLoading(false);
+      });
+    });
+  }
+
+  if(dropdownData === null && !isLoading){
+    fillDropdownData();
+  }
+
   return (
     <ScrollView style={screenStyles.screen}>
-      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-        <Text h5 style={titleStyles.titleText}>
-          Ingreso
-        </Text>
-      </View>
-      
-      <TextboxDate
-        propName="fecha"
-        placeholder="Fecha..."
-        handleChange={handleChange}
-        value={form.fecha}
-        isValid={validations.fecha}
-        validationMessage={validationMessages.fecha}
-      />
-      <Textbox
-        propName="monto"
-        placeholder="Monto..."
-        handleChange={handleChange}
-        value={form.monto}
-        isValid={validations.monto}
-        validationMessage={validationMessages.monto}
-        keyboardType="numeric"
-      />
-      <Textbox
-        propName="descripcion"
-        placeholder="Descripción..."
-        handleChange={handleChange}
-        value={form.descripcion}
-        isValid={validations.descripcion}
-        validationMessage={validationMessages.descripcion}
-      />
-      <Dropdown
-        propName="tipoIngreso"
-        items={tiposIngresoData}
-        defaultValue={form.tipoIngreso}
-        placeholder="Seleccione un tipo de ingreso."
-        handleChange={handleChangeTipoIngreso}
-        isValid={validations.tipoIngreso}
-        validationMessage={validationMessages.tipoIngreso}
-      />
-      {form.tipoIngreso === "1" && (
-        <Dropdown
-          propName="categoriaIngreso"
-          items={categoriasIngresoData}
-          defaultValue={form.categoriaIngreso}
-          placeholder="Seleccione una categoria."
-          handleChange={handleChange}
-          isValid={validations.categoriaIngreso}
-          validationMessage={validationMessages.categoriaIngreso}
-        />
+      {dropdownData !== null && (
+        <View>
+          <View
+            style={[screenStyles.containerDivider, titleStyles.titleContainer]}
+          >
+            <Text h5 style={titleStyles.titleText}>
+              Ingreso
+            </Text>
+          </View>
+
+          <TextboxDate
+            propName="fecha"
+            placeholder="Fecha..."
+            handleChange={handleChange}
+            value={form.fecha}
+            isValid={validations.fecha}
+            validationMessage={validationMessages.fecha}
+          />
+          <Textbox
+            propName="monto"
+            placeholder="Monto..."
+            handleChange={handleChange}
+            value={form.monto}
+            isValid={validations.monto}
+            validationMessage={validationMessages.monto}
+            keyboardType="numeric"
+          />
+          <Textbox
+            propName="descripcion"
+            placeholder="Descripción..."
+            handleChange={handleChange}
+            value={form.descripcion}
+            isValid={validations.descripcion}
+            validationMessage={validationMessages.descripcion}
+          />
+          <Dropdown
+            propName="tipoIngreso"
+            items={tiposIngresoData}
+            defaultValue={form.tipoIngreso}
+            placeholder="Seleccione un tipo de ingreso."
+            handleChange={handleChangeTipoIngreso}
+            isValid={validations.tipoIngreso}
+            validationMessage={validationMessages.tipoIngreso}
+          />
+          {form.tipoIngreso === "1" && (
+            <Dropdown
+              propName="categoriaIngreso"
+              items={categoriasIngresoData}
+              defaultValue={form.categoriaIngreso}
+              placeholder="Seleccione una categoria."
+              handleChange={handleChange}
+              isValid={validations.categoriaIngreso}
+              validationMessage={validationMessages.categoriaIngreso}
+            />
+          )}
+
+          <View
+            style={[screenStyles.containerDivider, titleStyles.titleContainer]}
+          >
+            <Text h5 style={titleStyles.titleText}>
+              Destino
+            </Text>
+          </View>
+
+          <Dropdown
+            propName="destino"
+            items={destinosData}
+            defaultValue={form.destino}
+            placeholder="Seleccione un destino."
+            handleChange={handleChangeDestino}
+            isValid={validations.destino}
+            validationMessage={validationMessages.destino}
+          />
+
+          {form.destino === "1" && (
+            <Dropdown
+              propName="cuenta"
+              items={dropdownData.cuentas}
+              defaultValue={form.cuenta}
+              placeholder="Seleccione un cuenta."
+              handleChange={handleChange}
+              isValid={validations.cuenta}
+              validationMessage={validationMessages.cuenta}
+            />
+          )}
+
+          <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
+            <Text style={buttonStyles.btnText}>Confirmar</Text>
+          </TouchableOpacity>
+
+          <View
+            style={[screenStyles.containerDivider, titleStyles.titleContainer]}
+          >
+            <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
+              <Text style={buttonStyles.btnBackText}>Volver</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
 
-      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-        <Text h5 style={titleStyles.titleText}>
-          Destino
-        </Text>
-      </View>
-
-      <Dropdown
-          propName="destino"
-          items={destinosData}
-          defaultValue={form.destino}
-          placeholder="Seleccione un destino."
-          handleChange={handleChangeDestino}
-          isValid={validations.destino}
-          validationMessage={validationMessages.destino}
-        />
-
-      {form.destino === "1" && (
-        <Dropdown
-          propName="cuenta"
-          items={cuentasData}
-          defaultValue={form.cuenta}
-          placeholder="Seleccione un cuenta."
-          handleChange={handleChange}
-          isValid={validations.cuenta}
-          validationMessage={validationMessages.cuenta}
-        />
-      )}
-
-      <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Confirmar</Text>
-      </TouchableOpacity>
-
-      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-        <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
-          <Text style={buttonStyles.btnBackText}>Volver</Text>
-        </TouchableOpacity>
-      </View>
       <CustomSpinner isLoading={isLoading} text={"Guardando ingreso..."} />
 
       <CustomModal

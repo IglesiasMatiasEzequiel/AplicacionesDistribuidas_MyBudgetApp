@@ -1,8 +1,10 @@
 import * as db from "../DataBase";
+import * as IngresosQueries from './IngresosQueries';
+import * as EgresosQueries from './EgresosQueries';
 
 const tableName = "Cuentas";
 
-export function _createTable(tx) {
+export function _createTable(tx, successCallback, errorCallback) {
   var query = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
   "id INTEGER PRIMARY KEY AUTOINCREMENT," +
   "idUsuario INTEGER, " +
@@ -18,7 +20,7 @@ export function _createTable(tx) {
   "FOREIGN KEY(idBanco) REFERENCES Bancos(id), " +
   "FOREIGN KEY(idEntidadEmisora) REFERENCES EntidadesEmisoras(id))";
 
-  db._createTable(tx, tableName, query);
+  db._createTable(tx, tableName, query, successCallback, errorCallback);
 }
 
 export function _dropTable(tx) {
@@ -38,19 +40,47 @@ export function _selectById(id, successCallback, errorCallback) {
 }
 
 export function _deleteById(id, successCallback, errorCallback) {
-  db._deleteById(tableName, id, successCallback, errorCallback);
+  db._createTransaction((tx) => {
+    IngresosQueries._deleteByIdCuentaTx(tx, id, () => {
+      EgresosQueries._deleteByIdCuentaTx(tx, id, () => {
+        db._deleteByIdTx(tx, tableName, id, successCallback, errorCallback);
+      });
+    });
+  });
 }
+
+export function _getListado(idUsuario, successCallback, errorCallback){
+
+  var query = "SELECT cuenta.id, " +
+  " banco.banco, " +
+  " entidadEmisora.entidadEmisora, " +
+  " cuenta.cbu, " +
+  " cuenta.alias, " +
+  " cuenta.descripcion, " +
+  " cuenta.monto, " +
+  " cuenta.tarjeta, " +
+  " cuenta.vencimiento " +
+  " FROM " + tableName + " as cuenta " +
+  " INNER JOIN Bancos banco ON cuenta.idBanco = banco.id " +
+  " INNER JOIN EntidadesEmisoras entidadEmisora ON cuenta.idEntidadEmisora = entidadEmisora.id " +
+  " WHERE cuenta.idUsuario = ? ";
+
+  var params = [idUsuario];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _insert(obj, successCallback, errorCallback) {
   
   var query =
     "INSERT INTO " +
     tableName +
-    "(idUsuario, idBanco, IdEntidadEmisora, cbu, alias, descripcion, monto, tarjeta, vencimiento) " +
+    "(idUsuario, idBanco, idEntidadEmisora, cbu, alias, descripcion, monto, tarjeta, vencimiento) " +
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
   var params = [
     obj.idUsuario,
-    obj.IdBanco,
+    obj.idBanco,
     obj.idEntidadEmisora,
     obj.cbu,
     obj.alias,
@@ -61,4 +91,27 @@ export function _insert(obj, successCallback, errorCallback) {
   ];
 
   db._insert(query, params, successCallback, errorCallback);
+}
+
+export function _insertTx(tx, obj) {
+
+  var query =
+    "INSERT INTO " +
+    tableName +
+    "(idUsuario, idBanco, idEntidadEmisora, cbu, alias, descripcion, monto, tarjeta, vencimiento) " +
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    var params = [
+      obj.idUsuario,
+      obj.idBanco,
+      obj.idEntidadEmisora,
+      obj.cbu,
+      obj.alias,
+      obj.descripcion,
+      obj.monto,
+      obj.tarjeta,
+      obj.vencimiento,
+    ];
+
+  db._insertTx(tx, query, params);
 }

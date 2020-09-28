@@ -1,35 +1,203 @@
 import React from "react";
-import { View, TouchableOpacity, ScrollView } from "react-native";
+
+import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+
+import { Table, Row, TableWrapper, Cell } from "react-native-table-component";
+
 import {
   screenStyles,
   buttonStyles,
   tableStyles,
   titleStyles,
 } from "../../components/Styles";
-import { Text } from "galio-framework";
-import { Table, Row } from "react-native-table-component";
 
-export default function CuentasBancariasScreen({ navigation }) {
-  const onNuevaCuenta = () => navigation.navigate("NuevaCuenta");
-  const onAdministrarCuenta = () => navigation.navigate("AdministrarCuenta");
-  const onMovimientosCuenta = () => navigation.navigate("MovimientosCuenta");
+import {
+  CustomSpinner,
+  CustomModal,
+  CustomIcon,
+  Alert,
+} from "../../components";
+
+import { CuentasQueries } from "../../database";
+
+import { formatStringDateFromDB } from "../../components/Formatters";
+
+import * as Session from "../../components/Session";
+
+export default function CuentasBancariasScreen({ route, navigation }) {
+  /* State del CustomSpinner */
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  /* State del CustomModal */
+  const [modalData, setModalData] = React.useState(null);
+
+  /* State del Listado */
+  const [listado, setListado] = React.useState({
+    data: null,
+    isLoading: false,
+  });
+
+  const limpiarState = () => {
+    setListado({
+      data: null,
+      isLoading: false,
+    });
+  };
+
+  /* Botón Nuevo*/
+
+  const onNuevo = () => {
+    limpiarState();
+    navigation.navigate("NuevaCuenta");
+  };
+
+  /* Botón Nuevo*/
+
+  /* Botón Administrar*/
+
+  const onAdministrarCuenta = () => {
+    limpiarState();
+    navigation.navigate("AdministrarCuenta");
+  };
+
+  /* Botón Administrar*/
+
+  /* Botón Movimientos*/
+
+  const onMovimientosCuenta = () => {
+    limpiarState();
+    navigation.navigate("MovimientosCuenta");
+  };
+
+  /* Botón Movimientos*/
+
+  /* Botón borrar */
+
+  const onCancelar = () => setModalData({ ...modalData, isVisible: false });
+
+  const onBorrar = (id) => {
+    setModalData({
+      title: "Eliminar cuenta",
+      message:
+        "¿Está seguro de que desea eliminar la cuenta?. Se borrarán todos los ingresos y egresos asociados a ella.",
+      handleBtnOnSuccess: () => onConfirmarBorrar(id),
+      handleBtnOnError: () => onCancelar(),
+      showErrorBtn: true,
+      isVisible: true,
+    });
+  };
+
+  const onConfirmarBorrar = (id) => {
+    setIsLoading(true);
+
+    CuentasQueries._deleteById(
+      id,
+      () => {
+        setIsLoading(false);
+        setModalData({
+          title: "¡Borrado exitoso!",
+          message: "La cuenta se eliminó correctamente.",
+          isVisible: true,
+          isSuccess: true,
+          handleBtnOnSuccess: () => {
+            limpiarState();
+            onCancelar();
+          },
+          successBtnText: "Volver",
+          showErrorBtn: false,
+        });
+      },
+      (error) => {
+        setListado((prevState) => ({
+          ...prevState,
+          data: [],
+          isLoading: false,
+        }));
+
+        console.log(error);
+      }
+    );
+  };
+
+  const deleteButton = (data, index) => (
+    <TouchableOpacity onPress={() => onBorrar(data)}>
+      <View style={buttonStyles.btnTable}>
+        <CustomIcon name="md-trash" size={22} />
+      </View>
+    </TouchableOpacity>
+  );
+
+  /* Botón borrar */
+
+  /* Listado */
 
   const tableHeaders = [
+    "",
     "CBU",
+    "Alias",
     "Descripción",
-    "Banco",
     "Monto",
+    "Banco",
+    "Emisora",
+    "Tarjeta",
+    "Vencimiento",
   ];
-  const columnWidth = [150, 200, 150, 150, 80];
+  const columnWidth = [30, 250, 250, 250, 150, 250, 200, 200, 150];
 
-  const tableData = [
-    ["40090418135201", "Caja de ahorro", "Galicia", "$5000"],
-    ["40090417835202", "Caja de ahorro", "BBVA Francés", "$8500"],
-  ];
+  const getListado = () => {
+    setListado((prevState) => ({ ...prevState, isLoading: true }));
+
+    Session.getUser().then((usuario) => {
+      CuentasQueries._getListado(
+        usuario.id,
+        (data) => {
+          var tableData =
+            data?.map((item) => {
+              return [
+                item.id,
+                item.cbu,
+                item.alias,
+                item.descripcion ?? "-",
+                "$" + item.monto,
+                item.banco,
+                item.entidadEmisora,
+                "**** **** **** " + item.tarjeta,
+                formatStringDateFromDB(item.vencimiento),
+              ];
+            }) ?? [];
+
+          setListado((prevState) => ({
+            ...prevState,
+            data: tableData,
+            isLoading: false,
+          }));
+        },
+        (error) => {
+          setListado((prevState) => ({
+            ...prevState,
+            data: [],
+            isLoading: false,
+          }));
+
+          console.log(error);
+        }
+      );
+    });
+  };
+
+  if (
+    (listado.data === null || (route?.params?.isReload ?? false)) &&
+    !listado.isLoading
+  ) {
+    /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
+    navigation.setParams({ isReload: false });
+
+    getListado();
+  }
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <TouchableOpacity onPress={onNuevaCuenta} style={buttonStyles.btn}>
+      <TouchableOpacity onPress={onNuevo} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Nueva Cuenta</Text>
       </TouchableOpacity>
 
@@ -41,44 +209,80 @@ export default function CuentasBancariasScreen({ navigation }) {
         <Text style={buttonStyles.btnText}>Ver Movimiento Cuentas</Text>
       </TouchableOpacity>
 
-      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-        <Text h5 style={titleStyles.titleText}>
-          Mis Cuentas
-        </Text>
-      </View>
+      {!listado.isLoading && (
+        <View>
+          <View
+            style={[screenStyles.containerDivider, titleStyles.titleContainer]}
+          >
+            <Text h5 style={titleStyles.titleText}>
+              Mis Cuentas
+            </Text>
+          </View>
 
-      <View style={tableStyles.tableContainer}>
-        <ScrollView horizontal>
-          <View>
-            <Table borderStyle={tableStyles.tableHeaderBorder}>
-              <Row
-                data={tableHeaders}
-                widthArr={columnWidth}
-                style={tableStyles.tableHeader}
-                textStyle={tableStyles.tableHeadertext}
-              />
-            </Table>
-            <ScrollView
-              style={[tableStyles.tableDataContainer, { height: 200 }]}
-            >
-              <Table borderStyle={tableStyles.tableDataBorder}>
-                {tableData.map((rowData, index) => (
-                  <Row
-                    key={index}
-                    data={rowData}
-                    widthArr={columnWidth}
-                    style={[
-                      tableStyles.tableRow,
-                      index % 2 && { backgroundColor: "transparent" },
-                    ]}
-                    textStyle={tableStyles.tableRowtext}
-                  />
-                ))}
-              </Table>
+          <View style={tableStyles.tableContainer}>
+            <ScrollView horizontal>
+              {listado.data !== null && listado.data.length > 0 && (
+                <View>
+                  <Table borderStyle={tableStyles.tableHeaderBorder}>
+                    <Row
+                      data={tableHeaders}
+                      widthArr={columnWidth}
+                      style={tableStyles.tableHeader}
+                      textStyle={tableStyles.tableHeadertext}
+                    />
+                  </Table>
+                  <ScrollView
+                    style={[tableStyles.tableDataContainer, { height: 200 }]}
+                  >
+                    <Table borderStyle={tableStyles.tableDataBorder}>
+                      {listado.data.map((rowData, index) => (
+                        <TableWrapper
+                          key={index}
+                          style={[
+                            tableStyles.tableRow,
+                            index % 2 && { backgroundColor: "transparent" },
+                          ]}
+                        >
+                          {rowData.map((cellData, cellIndex) => (
+                            <Cell
+                              key={cellIndex.toString()}
+                              width={columnWidth[cellIndex]}
+                              data={
+                                cellIndex === 0
+                                  ? deleteButton(cellData, index)
+                                  : cellData
+                              }
+                              textStyle={tableStyles.tableRowtext}
+                            />
+                          ))}
+                        </TableWrapper>
+                      ))}
+                    </Table>
+                  </ScrollView>
+                </View>
+              )}
+
+              {(listado.data === null || listado.data.length === 0) && (
+                <Alert type="danger" message="Sin información" />
+              )}
             </ScrollView>
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      )}
+
+      <CustomSpinner isLoading={isLoading} text={"Eliminando..."} />
+
+      <CustomModal
+        title={modalData?.title}
+        message={modalData?.message}
+        isSuccess={modalData?.isSuccess}
+        isVisible={modalData?.isVisible}
+        handleBtnOnSuccess={modalData?.handleBtnOnSuccess}
+        handleBtnOnError={modalData?.handleBtnOnError}
+        successBtnText={modalData?.successBtnText}
+        errorBtnText={modalData?.errorBtnText}
+        showErrorBtn={modalData?.showErrorBtn}
+      />
     </ScrollView>
   );
 }

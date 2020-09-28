@@ -1,21 +1,18 @@
 import React from "react";
-import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, TouchableOpacity, ScrollView, Text } from "react-native";
 
-import { Text, theme } from "galio-framework";
-import DropDownPicker from "react-native-dropdown-picker";
 import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
 import { bancosData, entidadesEmisorasData } from "../../components/Data";
 import {
   screenStyles,
   buttonStyles,
-  textboxStyles,
-  dropdownStyles,
   titleStyles,
 } from "../../components/Styles";
 
 import { validateRequired } from "../../components/Validations";
 import { CuentasQueries } from "../../database";
 import * as Session from "../../components/Session";
+import { formatStringDateToDB } from "../../components/Formatters";
 
 export default function NuevaCuentaScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -57,14 +54,6 @@ export default function NuevaCuentaScreen({ navigation }) {
   const handleChange = (prop, value) => {
     setValidations((prevState) => ({ ...prevState, [prop]: true }));
     setForm((prevState) => ({ ...prevState, [prop]: value }));
-  };
-  const handleChangeBanco = (prop, value) => {
-    setValidations((prevState) => ({ ...prevState, [prop]: true }));
-    setForm((prevState) => ({ ...prevState, [prop]: value}));
-  };
-  const handleChangeEntidadEmisora = (prop, value) => {
-    setValidations((prevState) => ({ ...prevState, [prop]: true }));
-    setForm((prevState) => ({ ...prevState, [prop]: value}));
   };
 
   const limpiarState = () => {
@@ -113,17 +102,17 @@ export default function NuevaCuentaScreen({ navigation }) {
         var obj = {
           idUsuario: usuario.id,
           idBanco: form.banco,
-          idEntidadEmisora: form.entidaddEmisora,
+          idEntidadEmisora: form.entidadEmisora,
           cbu: form.cbu,
           alias: form.alias,
           descripcion: form.descripcion,
           monto: form.monto,
           tarjeta: form.tarjeta,
-          vencimiento: form.vencimiento,
+          vencimiento: formatStringDateToDB(form.vencimiento),
         }
   
         CuentasQueries._insert(obj,
-          (data) => {
+          () => {
             setIsLoading(false);
             setModalData({
               message: "La cuenta se guardó correctamente.",
@@ -141,15 +130,34 @@ export default function NuevaCuentaScreen({ navigation }) {
   };
 
   const validateForm = async () => {
-    const isCbuValid = await validateRequired(form.cbu);
-    const isAliasValid = await validateRequired(form.alias);
-    const isDescripcionValid = await validateRequired(form.descripcion);
-    const isMontoValid = await validateRequired(form.monto);
-    const isBancoValid = await validateRequired(form.banco);
-    const isEntidadEmisoraValid = await validateRequired(form.entidadEmisora);
-    const isTarjetaValid = await validateRequired(form.tarjeta);
-    const isVencimientoValid = await validateRequired(form.vencimiento);
 
+    var isCbuValid = await validateRequired(form.cbu);
+    var isAliasValid = await validateRequired(form.alias);
+    var isDescripcionValid = await validateRequired(form.descripcion);
+    var isMontoValid = await validateRequired(form.monto);
+    var isBancoValid = await validateRequired(form.banco);
+    var isEntidadEmisoraValid = await validateRequired(form.entidadEmisora);
+    var isTarjetaValid = await validateRequired(form.tarjeta);
+    var isVencimientoValid = await validateRequired(form.vencimiento);
+
+    var cbuValidationMessage = "El Cbu es requerido...";
+    var aliasValidationMessage = "El Alias es requerido...";
+    var descripcionValidationMessage = "La descripcion es requerida...";
+    var montoValidationMessage = "El monto es requerido...";
+    var bancoValidationMessage = "El banco es requerido...";
+    var entidadEmisoraValidationMessage = "La entidad emisora es requerida...";
+    var tarjetaValidationMessage = "La tarjeta es requerida...";
+    var vencimientoValidationMessage = "El vencimiento es requerido...";
+
+    if(isCbuValid && form.cbu.length != 22) {
+      isCbuValid = false;
+      cbuValidationMessage = "El CBU debe tener 22 dígitos..."
+    }
+
+    if(isTarjetaValid && form.tarjeta.toString().length != 4) {
+      isTarjetaValid  = false;
+      tarjetaValidationMessage = "Debe ingresar los 4 dígitos de la tarjeta..."
+    }
 
     setValidations((prevState) => ({
       ...prevState,
@@ -165,14 +173,14 @@ export default function NuevaCuentaScreen({ navigation }) {
 
     setValidationMessages((prevState) => ({
       ...prevState,
-      cbu: !isCbuValid ? " El Cbu es requerido..." : "",
-      alias: !isAliasValid ? " El Alias es requerido..." : "",
-      descripcion: !isDescripcionValid ? " La descripcion es requerida..." : "",
-      monto: !isMontoValid ? " El monto es requerido..." : "",
-      banco: !isBancoValid ? " El banco es requerido..." : "",
-      entidadEmisora: !isEntidadEmisoraValid ? " La entidad emisora es requerida..." : "",
-      tarjeta: !isTarjetaValid ? " la tarjeta es requerida..." : "",
-      vencimiento: !isVencimientoValid ? " El vencimiento es requerido..." : "",
+      cbu: cbuValidationMessage,
+      alias: aliasValidationMessage,
+      descripcion: descripcionValidationMessage,
+      monto: montoValidationMessage,
+      banco: bancoValidationMessage,
+      entidadEmisora: entidadEmisoraValidationMessage,
+      tarjeta: tarjetaValidationMessage,
+      vencimiento: vencimientoValidationMessage,
     }));
 
     return isCbuValid && isAliasValid && isDescripcionValid && isMontoValid && isBancoValid && isEntidadEmisoraValid && isTarjetaValid && isVencimientoValid;
@@ -180,7 +188,7 @@ export default function NuevaCuentaScreen({ navigation }) {
 
   const onBack = () => {
     limpiarState();
-    navigation.navigate("CuentasBancarias");
+    navigation.navigate("CuentasBancarias", { isReload: true });
   };
 
   return (
@@ -236,7 +244,7 @@ export default function NuevaCuentaScreen({ navigation }) {
         items={bancosData}
         defaultValue={form.banco}
         placeholder="Seleccione un banco."
-        handleChange={handleChangeBanco}
+        handleChange={handleChange}
         isValid={validations.banco}
         validationMessage={validationMessages.banco}
       />
@@ -244,14 +252,14 @@ export default function NuevaCuentaScreen({ navigation }) {
         propName="entidadEmisora"
         items={entidadesEmisorasData}
         defaultValue={form.entidadEmisora}
-        placeholder="Seleccione una entidadEmisora."
-        handleChange={handleChangeEntidadEmisora}
+        placeholder="Seleccione una entidad emisora."
+        handleChange={handleChange}
         isValid={validations.entidadEmisora}
         validationMessage={validationMessages.entidadEmisora}
       />
       <Textbox
         propName="tarjeta"
-        placeholder="Tarjeta..."
+        placeholder="Úlitmos 4 dígitos de su tarjeta..."
         handleChange={handleChange}
         value={form.tarjeta}
         isValid={validations.tarjeta}

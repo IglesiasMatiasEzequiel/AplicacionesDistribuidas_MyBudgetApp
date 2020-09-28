@@ -32,7 +32,7 @@ export default function LoginScreen({ navigation }) {
   const [modalData, setModalData] = React.useState(null);
 
   const [form, setForm] = React.useState({
-    email: "matiiglesias@uade.edu.ar",
+    email: "usuario.test@uade.edu.ar",
     password: "123456",
   });
 

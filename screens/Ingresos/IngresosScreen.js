@@ -149,7 +149,7 @@ export default function Ingresos({ route, navigation }) {
   /* Listado */
 
   const tableHeaders = ["", "Fecha", "Monto", "Descripcion", "Tipo", "Categoría", "Destino", "Cuenta"];
-  const columnWidth = [30, 120, 150, 300, 300, 150, 120, 300];
+  const columnWidth = [30, 120, 150, 300, 300, 150, 180, 350];
 
   const getListado = () => {
 

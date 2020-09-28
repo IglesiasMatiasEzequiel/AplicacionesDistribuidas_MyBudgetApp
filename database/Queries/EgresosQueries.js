@@ -46,6 +46,14 @@ export function _deleteById(id, successCallback, errorCallback) {
   db._deleteById(tableName, id, successCallback, errorCallback);
 }
 
+export function _deleteByIdCuentaTx(tx, idCuenta, successCallback, errorCallback) {
+  
+  var query = "DELETE FROM " + tableName + " WHERE idCuenta = ? ";
+  var params = [idCuenta];
+
+  db._deleteTx(tx, query, params, successCallback, errorCallback)
+}
+
 export function _insert(obj, successCallback, errorCallback) {
   
   var query =
