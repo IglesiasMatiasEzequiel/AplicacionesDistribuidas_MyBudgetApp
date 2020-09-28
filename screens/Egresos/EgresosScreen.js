@@ -15,6 +15,8 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { Table, Row } from "react-native-table-component";
 import { Text } from "galio-framework";
 
+import { Textbox, TextboxDate,Dropdown, CustomSpinner, CustomModal } from "../../components";
+
 export default function Egresos({ navigation }) {
 
   const [periodo, setPeriodo] = React.useState(null);
@@ -56,14 +58,14 @@ export default function Egresos({ navigation }) {
       </View>
 
       <DropDownPicker
-            items={periodosData}
-            defaultValue={periodo}
-            placeholder="Seleccione un periodo."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangePeriodo(item.value)}
-          />
+        items={periodosData}
+        defaultValue={periodo}
+        placeholder="Seleccione un periodo."
+        containerStyle={dropdownStyles.dropdownContainer}
+        style={dropdownStyles.dropdown}
+        itemStyle={dropdownStyles.dropdownItem}
+        onChangeItem={(item) => handleChangePeriodo(item.value)}
+      />
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>

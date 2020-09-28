@@ -2,9 +2,8 @@ import React from "react";
 import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
 import { Text, theme } from "galio-framework";
-
 import DropDownPicker from "react-native-dropdown-picker";
-import { CustomSpinner, CustomModal } from "../../components";
+import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
 import { bancosData, entidadesEmisorasData } from "../../components/Data";
 import {
   screenStyles,
@@ -14,53 +13,169 @@ import {
   titleStyles,
 } from "../../components/Styles";
 
+import { validateRequired } from "../../components/Validations";
+import { CuentasQueries } from "../../database";
+import * as Session from "../../components/Session";
+
 export default function NuevaCuentaScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
-  const [cbu, setCbu] = React.useState("");
-  const [alias, setAlias] = React.useState("");
-  const [descripcion, setDescripcion] = React.useState("");
-  const [monto, setMonto] = React.useState("");
-  const [banco, setBanco] = React.useState(null);
-  const [entidadEmisora, setEntidadEmisora] = React.useState(null);
-  const [tarjeta, setTarjeta] = React.useState("");
-  const [vencimiento, setVencimiento] = React.useState("");
+  const [form, setForm] = React.useState({
+    cbu: "",
+    alias: "",
+    descripcion: "",
+    monto: "",
+    banco: null,
+    entidadEmisora: null,
+    tarjeta: "",
+    vencimiento: "",
+  });
 
-  const handleChangeCbu = (cbu) => setCbu(cbu);
-  const handleChangeAlias = (alias) => setAlias(alias);
-  const handleChangeDescripcion = (descripcion) => setDescripcion(descripcion);
-  const handleChangeMonto = (monto) => setMonto(monto);
-  const handleChangeBanco = (banco) => setBanco(banco);
-  const handleChangeEntidadEmisora = (entidadEmisora) => setEntidadEmisora(entidadEmisora);
-  const handleChangeTarjeta = (tarjeta) => setTarjeta(tarjeta);
-  const handleChangeVencimiento = (vencimiento) => setVencimiento(vencimiento);
+  const [validations, setValidations] = React.useState({
+    cbu: true,
+    alias: true,
+    descripcion: true,
+    monto: true,
+    banco: true,
+    entidadEmisora: true,
+    tarjeta: true,
+    vencimiento: true,
+  });
 
-  const limpiarState = () => {
-    setIsLoading(false);
-    setModalData({ ...modalData, isVisible: false });
-    setCbu("");
-    setAlias("");
-    setDescripcion("");
-    setMonto("");
-    setBanco(null);
-    setEntidadEmisora(null);
-    setTarjeta("");
-    setVencimiento("");
+  const [validationMessages, setValidationMessages] = React.useState({
+    cbu: "",
+    alias: "",
+    descripcion: "",
+    monto: "",
+    banco: "",
+    entidadEmisora: "",
+    tarjeta: "",
+    vencimiento: "",
+  });
+
+  const handleChange = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value }));
+  };
+  const handleChangeBanco = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value}));
+  };
+  const handleChangeEntidadEmisora = (prop, value) => {
+    setValidations((prevState) => ({ ...prevState, [prop]: true }));
+    setForm((prevState) => ({ ...prevState, [prop]: value}));
   };
 
-  const onConfirmar = () => {
-    setIsLoading(true);
+  const limpiarState = () => {
+    
+    setForm({
+      cbu: "",
+      alias: "",
+      descripcion: "",
+      monto: "",
+      banco: null,
+      entidadEmisora: null,
+      tarjeta: "",
+      vencimiento: "",
+    });
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setModalData({
-        message: "La cuenta se guardó correctamente.",
-        isVisible: true,
-        isSuccess: true,
-        successBtnText: "Aceptar",
+    setValidations({
+      cbu: true,
+      alias: true,
+      descripcion: true,
+      monto: true,
+      banco: true,
+      entidadEmisora: true,
+      tarjeta: true,
+      vencimiento: true,
+    });
+
+    setValidationMessages({
+      cbu: "",
+      alias: "",
+      descripcion: "",
+      monto: "",
+      banco: "",
+      entidadEmisora: "",
+      tarjeta: "",
+      vencimiento: "",
+    });
+  };
+
+  const onConfirmar = async () => {
+    
+    const isValidForm = await validateForm();
+    
+    if (isValidForm) {
+      setIsLoading(true);
+      Session.getUser().then((usuario) => {
+        var obj = {
+          idUsuario: usuario.id,
+          idBanco: form.banco,
+          idEntidadEmisora: form.entidaddEmisora,
+          cbu: form.cbu,
+          alias: form.alias,
+          descripcion: form.descripcion,
+          monto: form.monto,
+          tarjeta: form.tarjeta,
+          vencimiento: form.vencimiento,
+        }
+  
+        CuentasQueries._insert(obj,
+          (data) => {
+            setIsLoading(false);
+            setModalData({
+              message: "La cuenta se guardó correctamente.",
+              isVisible: true,
+              isSuccess: true,
+              successBtnText: "Aceptar",
+            });
+          },
+          (error) => {
+            console.log("Ocurrió un error al insertar la cuenta. - " + error);
+          }
+        );
       });
-    }, 500);
+    }
+  };
+
+  const validateForm = async () => {
+    const isCbuValid = await validateRequired(form.cbu);
+    const isAliasValid = await validateRequired(form.alias);
+    const isDescripcionValid = await validateRequired(form.descripcion);
+    const isMontoValid = await validateRequired(form.monto);
+    const isBancoValid = await validateRequired(form.banco);
+    const isEntidadEmisoraValid = await validateRequired(form.entidadEmisora);
+    const isTarjetaValid = await validateRequired(form.tarjeta);
+    const isVencimientoValid = await validateRequired(form.vencimiento);
+
+
+    setValidations((prevState) => ({
+      ...prevState,
+      cbu: isCbuValid,
+      alias: isAliasValid,
+      descripcion: isDescripcionValid,
+      monto: isMontoValid,
+      banco: isBancoValid,
+      entidadEmisora: isEntidadEmisoraValid,
+      tarjeta: isTarjetaValid,
+      vencimiento: isVencimientoValid
+    }));
+
+    setValidationMessages((prevState) => ({
+      ...prevState,
+      cbu: !isCbuValid ? " El Cbu es requerido..." : "",
+      alias: !isAliasValid ? " El Alias es requerido..." : "",
+      descripcion: !isDescripcionValid ? " La descripcion es requerida..." : "",
+      monto: !isMontoValid ? " El monto es requerido..." : "",
+      banco: !isBancoValid ? " El banco es requerido..." : "",
+      entidadEmisora: !isEntidadEmisoraValid ? " La entidad emisora es requerida..." : "",
+      tarjeta: !isTarjetaValid ? " la tarjeta es requerida..." : "",
+      vencimiento: !isVencimientoValid ? " El vencimiento es requerido..." : "",
+    }));
+
+    return isCbuValid && isAliasValid && isDescripcionValid && isMontoValid && isBancoValid && isEntidadEmisoraValid && isTarjetaValid && isVencimientoValid;
   };
 
   const onBack = () => {
@@ -70,103 +185,97 @@ export default function NuevaCuentaScreen({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
+
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
           Cuenta
         </Text>
       </View>
-
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="CBU..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(cbu) => handleChangeCbu(cbu)}
-          value={cbu}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Alias..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(alias) => handleChangeAlias(alias)}
-          value={alias}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Descripción..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(descripcion) => handleChangeDescripcion(descripcion)}
-          value={descripcion}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Monto..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(monto) => handleChangeMonto(monto)}
-          value={monto}
-        />
-      </View>
+      <Textbox
+        propName="cbu"
+        placeholder="CBU..."
+        handleChange={handleChange}
+        value={form.cbu}
+        isValid={validations.cbu}
+        validationMessage={validationMessages.cbu}
+        keyboardType="numeric"
+      />
+      <Textbox
+        propName="alias"
+        placeholder="alias..."
+        handleChange={handleChange}
+        value={form.alias}
+        isValid={validations.alias}
+        validationMessage={validationMessages.alias}
+      />      
+      <Textbox
+        propName="descripcion"
+        placeholder="Descripcion..."
+        handleChange={handleChange}
+        value={form.descripcion}
+        isValid={validations.descripcion}
+        validationMessage={validationMessages.descripcion}
+      /> 
+      <Textbox
+        propName="monto"
+        placeholder="Monto..."
+        handleChange={handleChange}
+        value={form.monto}
+        isValid={validations.monto}
+        validationMessage={validationMessages.monto}
+        keyboardType="numeric"
+      /> 
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
         <Text h5 style={titleStyles.titleText}>
           Tarjeta de débito
         </Text>
       </View>
-
-      <View>
-        <DropDownPicker
-          items={bancosData}
-          defaultValue={banco}
-          placeholder="Seleccione un banco."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeBanco(item.value)}
-        />
-      </View>
-      <View>
-        <DropDownPicker
-          items={entidadesEmisorasData}
-          defaultValue={entidadEmisora}
-          placeholder="Seleccione una entidad emisora."
-          containerStyle={dropdownStyles.dropdownContainer}
-          style={dropdownStyles.dropdown}
-          itemStyle={dropdownStyles.dropdownItem}
-          onChangeItem={(item) => handleChangeEntidadEmisora(item.value)}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}> 
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Número tarjeta..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(tarjeta) => handleChangeTarjeta(tarjeta)}
-          value={tarjeta}
-        />
-      </View>
-      <View style={textboxStyles.textboxContainer}>
-        <TextInput
-          style={textboxStyles.textbox}
-          placeholder="Fecha de Vencimiento..."
-          placeholderTextColor={theme.COLORS.PLACEHOLDER}
-          onChangeText={(vencimiento) => handleChangeVencimiento(vencimiento)}
-          value={vencimiento}
-        />
-      </View>
+      <Dropdown
+        propName="banco"
+        items={bancosData}
+        defaultValue={form.banco}
+        placeholder="Seleccione un banco."
+        handleChange={handleChangeBanco}
+        isValid={validations.banco}
+        validationMessage={validationMessages.banco}
+      />
+      <Dropdown
+        propName="entidadEmisora"
+        items={entidadesEmisorasData}
+        defaultValue={form.entidadEmisora}
+        placeholder="Seleccione una entidadEmisora."
+        handleChange={handleChangeEntidadEmisora}
+        isValid={validations.entidadEmisora}
+        validationMessage={validationMessages.entidadEmisora}
+      />
+      <Textbox
+        propName="tarjeta"
+        placeholder="Tarjeta..."
+        handleChange={handleChange}
+        value={form.tarjeta}
+        isValid={validations.tarjeta}
+        validationMessage={validationMessages.tarjeta}
+        keyboardType="numeric"
+      />
+      <TextboxDate
+        propName="vencimiento"
+        placeholder="Fecha de Vencimiento..."
+        handleChange={handleChange}
+        value={form.vencimiento}
+        isValid={validations.vencimiento}
+        validationMessage={validationMessages.vencimiento}
+      />
 
       <TouchableOpacity onPress={onConfirmar} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Confirmar</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
-        <Text style={buttonStyles.btnBackText}>Volver</Text>
-      </TouchableOpacity>
+      
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
+          <Text style={buttonStyles.btnBackText}>Volver</Text>
+        </TouchableOpacity>
+      </View>
 
       <CustomSpinner isLoading={isLoading} text={"Guardando Cuenta..."} />
 

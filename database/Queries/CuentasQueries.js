@@ -40,3 +40,25 @@ export function _selectById(id, successCallback, errorCallback) {
 export function _deleteById(id, successCallback, errorCallback) {
   db._deleteById(tableName, id, successCallback, errorCallback);
 }
+export function _insert(obj, successCallback, errorCallback) {
+  
+  var query =
+    "INSERT INTO " +
+    tableName +
+    "(idUsuario, idBanco, IdEntidadEmisora, cbu, alias, descripcion, monto, tarjeta, vencimiento) " +
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+  var params = [
+    obj.idUsuario,
+    obj.IdBanco,
+    obj.idEntidadEmisora,
+    obj.cbu,
+    obj.alias,
+    obj.descripcion,
+    obj.monto,
+    obj.tarjeta,
+    obj.vencimiento,
+  ];
+
+  db._insert(query, params, successCallback, errorCallback);
+}

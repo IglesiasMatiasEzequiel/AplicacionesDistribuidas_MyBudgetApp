@@ -6,12 +6,14 @@ export function _createTable(tx) {
   var query = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
   "id INTEGER PRIMARY KEY AUTOINCREMENT," +
   "idUsuario INTEGER," +
-  "banco NUMERIC(3)," +
-  "entidadEmisora NUMERIC(3)," +
+  "idBanco NUMERIC(3)," +
+  "IdEntidadEmisora NUMERIC(3)," +
   "tarjeta NUMERIC(4)," +
   "vencimiento DATE," +
   "cierreResumen DATE," +
   "vencimientoResumen DATE," +
+  "FOREIGN KEY(idBanco) REFERENCES Bancos(id)," +
+  "FOREIGN KEY(idEntidadEmisora) REFERENCES EntidadesEmisoras(id)," +
   "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id))";
 db._createTable(tx, tableName, query);
 }
@@ -41,13 +43,13 @@ export function _insert(obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO " +
     tableName +
-    "(idUsuario, banco, entidadEmisora, tarjeta, vencimiento, cierreResumen, vencimientoResumen) " +
+    "(idUsuario, idBanco, IdEntidadEmisora, tarjeta, vencimiento, cierreResumen, vencimientoResumen) " +
     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
   var params = [
     obj.idUsuario,
-    obj.banco,
-    obj.entidadEmisaora,
+    obj.idBanco,
+    obj.idEntidadEmisaora,
     obj.tarjeta,
     obj.vencimiento,
     obj.cierreResumen,
