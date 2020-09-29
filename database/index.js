@@ -83,6 +83,7 @@ export function createTables() {
       IngresosQueries._createTable(tx);
       PrestamosQueries._createTable(tx);
       PresupuestosQueries._createTable(tx);
+      InversionesQueries._createTable(tx);
       TarjetasQueries._createTable(tx);
     });
   });
@@ -110,6 +111,7 @@ export function dropTables() {
     IngresosQueries._dropTable(tx);
     PrestamosQueries._dropTable(tx);
     PresupuestosQueries._dropTable(tx);
+    InversionesQueries._dropTable(tx);
     CuentasQueries._dropTable(tx);
     TarjetasQueries._dropTable(tx);
   });
