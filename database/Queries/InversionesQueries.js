@@ -7,14 +7,11 @@ export function _createTable(tx) {
   "id INTEGER PRIMARY KEY AUTOINCREMENT," +
   "idUsuario INTEGER," +
   "idTipo INTEGER," +
-  "idMonto INTEGER," +
-  "idOrigen INTEGER," +
-  "idFechaInicio INTEGER," +
-  "idNombre INTEGER," +
-  "idDuracion INTEGER," +
   "monto NUMERIC(10, 2)," +
-  "origen VARCHAR(255)," +
+  "origen INTEGER," +
   "fechaInicio DATE," +
+  "nombre VARCHAR(255)," +
+  "duracion INTEGER," +
   "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id), " +
   "FOREIGN KEY(idTipo) REFERENCES Tipos(id))" ;
 
@@ -41,29 +38,30 @@ export function _deleteById(id, successCallback, errorCallback) {
   db._deleteById(tableName, id, successCallback, errorCallback);
 }
 
-export function _getListado(idUsuario, successCallback, errorCallback){
+export function _getListado(idUsuario, from, to, successCallback, errorCallback){
 
-  var query = "SELECT ingreso.id, " +
-  " tipo.tipo, " +
+  var query = "SELECT inversion.id, " +
+  " tipo.tipoInversion, " +
   " inversion.monto, " +
   " inversion.origen, " +
   " inversion.fechaInicio, " +
   " inversion.nombre, " +
-  " inversion.duracion, " +
-  " banco.banco || ' - ' || cuenta.cbu as cuenta " +
+  " inversion.duracion " +
   " FROM " + tableName + " as inversion " +
-  " INNER JOIN Tipos tipo ON inversion.idTipo = tipo.id ";
- 
+  " INNER JOIN TiposInversion tipo ON inversion.idTipo = tipo.id " +
+  " WHERE inversion.idUsuario = ? " +
+  " AND inversion.fechaInicio BETWEEN ? AND ? ";
 
-  var params = [idUsuario];
+  var params = [idUsuario, from, to];
 
   db._select(query, params, successCallback, errorCallback);
 }
 
 export function _insert(obj, successCallback, errorCallback) {
   var query =
-    "INSERT INTO Ingresos(" +
-    " idUsuario," +
+  "INSERT INTO " +
+  tableName + 
+    "(idUsuario," +
     " idTipo," +
     " monto," +
     " origen," +
@@ -83,59 +81,4 @@ export function _insert(obj, successCallback, errorCallback) {
 
   db._insert(query, params, successCallback, errorCallback);
 }
-
-/*Inversiones*/
-
-// db.transaction((tx) => {
-//   tx.executeSql(
-//     "CREATE TABLE IF NOT EXISTS Inversiones (" +
-//       "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-//       "idUsuario INTEGER FOREIGN KEY REFERENCES Usuario(id)," +
-//       "tipo VARCHAR(150)," +
-//       "monto VARCHAR(100)," +
-//       "origen VARCHAR(100)," +
-//       "fechaInicio VARCHAR(10))",
-//     null,
-//     () => {
-//       console.log("Tabla Inversiones creada correctamente.");
-//     },
-//     () => {
-//       console.log("ERROR - La Tabla Inversiones no pudo ser creada.");
-//     }
-//   );
-// });
-
-// export function selectInversionById (id, idUsuario, successCallback, errorCallback) {
-//   db.transaction(tx => {
-//     tx.executeSql("Select * FROM Inversiones WHERE id = ? idUsuario = ?",[id, idUsuario],
-//       (txObj, { rows: { _array } }) => { successCallback(_array)},
-//       (txObj, error) => errorCallback())
-//     })
-//   }
-
-// export function selectInversion (successCallback, errorCallback) {
-//   db.transaction(tx => {
-//     tx.executeSql("SELECT * FROM Inversiones idUsuario =", [idUsuario],
-//       (txObj, resultSet) => { successCallback(resultSet.insertId) } ,
-//       (txObj, error) => { errorCallback() })
-//   })
-// }
-
-// export function insertInversion (idUsuario, monto, origen, fechaInicio){
-//   db.transaction(tx => {
-//     tx.executeSql("INSERT INTO Inversiones(idUsuario, monto, origen, fechaInicio) VALUES (?, ?, ?, ?)",[idUsuario, monto, origen, fechaInicio],
-//       (txObj, resultSet) => { successCallback(resultSet.insertId) } ,
-//       (txObj, error) => { errorCallback() })
-//   })
-// }
-
-// export function deleteInversionById (id, idUsuario, successCallback, errorCallback){
-//   dt.transaction(tx => {
-//     tx.executeSql("DELETE FROM Inversiones WHERE WHERE id = ? idUsuario =?", [id, idUsuario],
-//       (txObj, { rows: { _array } }) => { successCallback(_array)},
-//       (txObj, error) => errorCallback())
-//     })
-// }
-
-/*Inversiones*/
 
