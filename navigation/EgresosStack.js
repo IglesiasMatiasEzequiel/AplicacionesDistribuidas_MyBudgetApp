@@ -18,15 +18,6 @@ export default function EgresosStack(props) {
           }}
         />
         <Stack.Screen
-          name="BorrarEgreso"
-          component={BorrarEgresoScreen}
-          options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Borrar Egreso" scene={scene} navigation={navigation} />
-            )
-          }}
-        />
-        <Stack.Screen
           name="NuevoEgreso"
           component={NuevoEgresoScreen}
           options={{

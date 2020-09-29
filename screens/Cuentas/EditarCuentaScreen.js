@@ -11,18 +11,21 @@ import {
 
 import { validateRequired } from "../../components/Validations";
 import { CuentasQueries } from "../../database";
-import * as Session from "../../components/Session";
-import { formatStringDateToDB } from "../../components/Formatters";
 
-export default function NuevaCuentaScreen({ navigation }) {
+import { formatStringDateFromDB, formatStringDateToDB } from "../../components/Formatters";
+
+export default function NuevaCuentaScreen({ route, navigation }) {
+
+  const id = route?.params?.id ?? 0;
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
   const [form, setForm] = React.useState({
+    id: "",
     cbu: "",
     alias: "",
     descripcion: "",
-    monto: "",
     banco: null,
     entidadEmisora: null,
     tarjeta: "",
@@ -33,7 +36,6 @@ export default function NuevaCuentaScreen({ navigation }) {
     cbu: true,
     alias: true,
     descripcion: true,
-    monto: true,
     banco: true,
     entidadEmisora: true,
     tarjeta: true,
@@ -44,7 +46,6 @@ export default function NuevaCuentaScreen({ navigation }) {
     cbu: "",
     alias: "",
     descripcion: "",
-    monto: "",
     banco: "",
     entidadEmisora: "",
     tarjeta: "",
@@ -62,7 +63,6 @@ export default function NuevaCuentaScreen({ navigation }) {
       cbu: "",
       alias: "",
       descripcion: "",
-      monto: "",
       banco: null,
       entidadEmisora: null,
       tarjeta: "",
@@ -73,7 +73,6 @@ export default function NuevaCuentaScreen({ navigation }) {
       cbu: true,
       alias: true,
       descripcion: true,
-      monto: true,
       banco: true,
       entidadEmisora: true,
       tarjeta: true,
@@ -84,7 +83,6 @@ export default function NuevaCuentaScreen({ navigation }) {
       cbu: "",
       alias: "",
       descripcion: "",
-      monto: "",
       banco: "",
       entidadEmisora: "",
       tarjeta: "",
@@ -98,34 +96,32 @@ export default function NuevaCuentaScreen({ navigation }) {
     
     if (isValidForm) {
       setIsLoading(true);
-      Session.getUser().then((usuario) => {
-        var obj = {
-          idUsuario: usuario.id,
-          idBanco: form.banco,
-          idEntidadEmisora: form.entidadEmisora,
-          cbu: form.cbu,
-          alias: form.alias,
-          descripcion: form.descripcion,
-          monto: form.monto,
-          tarjeta: form.tarjeta,
-          vencimiento: formatStringDateToDB(form.vencimiento),
+      
+      var obj = {
+        id: form.id,
+        idBanco: form.banco,
+        idEntidadEmisora: form.entidadEmisora,
+        cbu: form.cbu,
+        alias: form.alias,
+        descripcion: form.descripcion,
+        tarjeta: form.tarjeta,
+        vencimiento: formatStringDateToDB(form.vencimiento),
+      }
+
+      CuentasQueries._update(obj,
+        () => {
+          setIsLoading(false);
+          setModalData({
+            message: "La cuenta se guardó correctamente.",
+            isVisible: true,
+            isSuccess: true,
+            successBtnText: "Aceptar",
+          });
+        },
+        (error) => {
+          console.log("Ocurrió un error al editar la cuenta. - " + error);
         }
-  
-        CuentasQueries._insert(obj,
-          () => {
-            setIsLoading(false);
-            setModalData({
-              message: "La cuenta se guardó correctamente.",
-              isVisible: true,
-              isSuccess: true,
-              successBtnText: "Aceptar",
-            });
-          },
-          (error) => {
-            console.log("Ocurrió un error al insertar la cuenta. - " + error);
-          }
-        );
-      });
+      );
     }
   };
 
@@ -134,7 +130,6 @@ export default function NuevaCuentaScreen({ navigation }) {
     var isCbuValid = await validateRequired(form.cbu);
     var isAliasValid = await validateRequired(form.alias);
     var isDescripcionValid = await validateRequired(form.descripcion);
-    var isMontoValid = await validateRequired(form.monto);
     var isBancoValid = await validateRequired(form.banco);
     var isEntidadEmisoraValid = await validateRequired(form.entidadEmisora);
     var isTarjetaValid = await validateRequired(form.tarjeta);
@@ -143,7 +138,6 @@ export default function NuevaCuentaScreen({ navigation }) {
     var cbuValidationMessage = "El Cbu es requerido...";
     var aliasValidationMessage = "El Alias es requerido...";
     var descripcionValidationMessage = "La descripcion es requerida...";
-    var montoValidationMessage = "El monto es requerido...";
     var bancoValidationMessage = "El banco es requerido...";
     var entidadEmisoraValidationMessage = "La entidad emisora es requerida...";
     var tarjetaValidationMessage = "La tarjeta es requerida...";
@@ -164,7 +158,6 @@ export default function NuevaCuentaScreen({ navigation }) {
       cbu: isCbuValid,
       alias: isAliasValid,
       descripcion: isDescripcionValid,
-      monto: isMontoValid,
       banco: isBancoValid,
       entidadEmisora: isEntidadEmisoraValid,
       tarjeta: isTarjetaValid,
@@ -176,20 +169,41 @@ export default function NuevaCuentaScreen({ navigation }) {
       cbu: cbuValidationMessage,
       alias: aliasValidationMessage,
       descripcion: descripcionValidationMessage,
-      monto: montoValidationMessage,
       banco: bancoValidationMessage,
       entidadEmisora: entidadEmisoraValidationMessage,
       tarjeta: tarjetaValidationMessage,
       vencimiento: vencimientoValidationMessage,
     }));
 
-    return isCbuValid && isAliasValid && isDescripcionValid && isMontoValid && isBancoValid && isEntidadEmisoraValid && isTarjetaValid && isVencimientoValid;
+    return isCbuValid && isAliasValid && isDescripcionValid && isBancoValid && isEntidadEmisoraValid && isTarjetaValid && isVencimientoValid;
   };
 
   const onBack = () => {
     limpiarState();
     navigation.navigate("CuentasBancarias", { isReload: true });
   };
+
+  const getCuenta = (id) => {
+    CuentasQueries._selectById(id, (data) => {
+      if(data != null && data.length === 1){
+        setForm({
+          id: id,
+          cbu: data[0].cbu,
+          alias: data[0].alias,
+          descripcion: data[0].descripcion,
+          banco: data[0].idBanco.toString(),
+          entidadEmisora: data[0].idEntidadEmisora.toString(),
+          tarjeta: data[0].tarjeta.toString(),
+          vencimiento: formatStringDateFromDB(data[0].vencimiento),
+        });
+      }
+    })
+  }
+
+  if(id > 0){
+    navigation.setParams({ id: 0 });
+    getCuenta(id);
+  }
 
   return (
     <ScrollView style={screenStyles.screen}>
@@ -210,7 +224,7 @@ export default function NuevaCuentaScreen({ navigation }) {
       />
       <Textbox
         propName="alias"
-        placeholder="Alias..."
+        placeholder="alias..."
         handleChange={handleChange}
         value={form.alias}
         isValid={validations.alias}
@@ -223,15 +237,6 @@ export default function NuevaCuentaScreen({ navigation }) {
         value={form.descripcion}
         isValid={validations.descripcion}
         validationMessage={validationMessages.descripcion}
-      /> 
-      <Textbox
-        propName="monto"
-        placeholder="Monto..."
-        handleChange={handleChange}
-        value={form.monto}
-        isValid={validations.monto}
-        validationMessage={validationMessages.monto}
-        keyboardType="numeric"
       /> 
 
       <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>

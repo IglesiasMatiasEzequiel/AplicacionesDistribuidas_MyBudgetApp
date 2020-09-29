@@ -4,14 +4,12 @@ import ForgotPasswordScreen from './Login/ForgotPasswordScreen';
 import DashboardScreen from './DashboardScreen';
 import IngresosScreen from './Ingresos/IngresosScreen';
 import NuevoIngresoScreen from './Ingresos/NuevoIngresoScreen';
-import BorrarIngresoScreen from './Ingresos/BorrarIngresoScreen';
 import TarjetasScreen from './Tarjetas/TarjetasScreen';
 import NuevaTarjetaScreen from './Tarjetas/NuevaTarjetaScreen';
 import GastosTarjetaScreen from './Tarjetas/GastosTarjetaScreen';
 import BorrarTarjetaScreen from './Tarjetas/BorrarTarjetaScreen';
 import EgresosScreen from './Egresos/EgresosScreen';
 import NuevoEgresoScreen from './Egresos/NuevoEgresoScreen';
-import BorrarEgresoScreen from './Egresos/BorrarEgresoScreen';
 import InversionesScreen from './Inversiones/InversionesScreen';
 import NuevaInversionScreen from './Inversiones/NuevaInversionScreen';
 import BorrarInversionScreen from './Inversiones/BorrarInversionScreen';
@@ -22,9 +20,9 @@ import PresupuestosScreen from './Presupuestos/PresupuestosScreen';
 import NuevoPresupuestoScreen from './Presupuestos/NuevoPresupuestoScreen';
 import BorrarPresupuestoScreen from './Presupuestos/BorrarPresupuestoScreen';
 import CuentasBancariasScreen from './Cuentas/CuentasBancariasScreen';
-import AdministrarCuentaScreen from './Cuentas/AdministrarCuentaScreen';
 import MovimientosCuentaScreen from './Cuentas/MovimientosCuentaScreen';
 import NuevaCuentaScreen from './Cuentas/NuevaCuentaScreen';
+import EditarCuentaScreen from './Cuentas/EditarCuentaScreen';
 import NotificacionesScreen from './Notificaciones/NotificacionesScreen';
 
 export {
@@ -34,15 +32,12 @@ export {
     DashboardScreen,
     IngresosScreen,
     NuevoIngresoScreen,
-    BorrarIngresoScreen,
     TarjetasScreen,
     NuevaTarjetaScreen,
     EgresosScreen,
     NuevoEgresoScreen,
-    BorrarEgresoScreen,
     GastosTarjetaScreen,
     BorrarTarjetaScreen,
-    AdministrarCuentaScreen,
     MovimientosCuentaScreen,
     NuevaCuentaScreen,
     InversionesScreen,
@@ -55,5 +50,6 @@ export {
     NuevoPresupuestoScreen,
     BorrarPresupuestoScreen,
     CuentasBancariasScreen,
+    EditarCuentaScreen,
     NotificacionesScreen
 }

@@ -70,6 +70,33 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _update(obj, successCallback, errorCallback) {
+  
+  var query =
+    "UPDATE " + tableName +
+    " SET idBanco = ?, " +
+    " idEntidadEmisora = ?, " +
+    " cbu = ?, " +
+    " alias = ?, " +
+    " descripcion = ?, " +
+    " tarjeta = ?, " +
+    " vencimiento = ? " + 
+    " WHERE id = ?";
+
+  var params = [
+    obj.idBanco,
+    obj.idEntidadEmisora,
+    obj.cbu,
+    obj.alias,
+    obj.descripcion,
+    obj.tarjeta,
+    obj.vencimiento,
+    obj.id
+  ];
+
+  db._insert(query, params, successCallback, errorCallback);
+}
+
 export function _insert(obj, successCallback, errorCallback) {
   
   var query =
@@ -114,4 +141,18 @@ export function _insertTx(tx, obj) {
     ];
 
   db._insertTx(tx, query, params);
+}
+
+export function _updateAgregarMonto(id, monto) {
+  var query = "UPDATE " + tableName + " SET monto = monto + ? WHERE id = ? ";
+  var params = [monto, id];
+
+  db._update(query, params);
+}
+
+export function _updateQuitarMonto(id, monto) {
+  var query = "UPDATE " + tableName + " SET monto = monto - ? WHERE id = ? ";
+  var params = [monto, id];
+
+  db._update(query, params);
 }
