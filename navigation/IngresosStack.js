@@ -26,15 +26,6 @@ export default function IngresosStack(props) {
             )
           }}
         />
-        <Stack.Screen
-          name="BorrarIngreso"
-          component={BorrarIngresoScreen}
-          options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Borrar Ingreso" scene={scene} navigation={navigation} />
-            )
-          }}
-        />
       </Stack.Navigator>
     );
   }

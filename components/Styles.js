@@ -92,7 +92,7 @@ const buttonStyles = StyleSheet.create({
     justifyContent: "center",
   },
   btnTableEdit: {
-    backgroundColor: "#2D882D",
+    backgroundColor: "#6698BF",
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",

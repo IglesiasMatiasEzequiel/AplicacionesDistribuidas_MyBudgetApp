@@ -1,6 +1,5 @@
 import React from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
-import { Text } from "galio-framework";
+import { View, ScrollView, TouchableOpacity, Text } from "react-native";
 import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
 
 import {
@@ -11,14 +10,14 @@ import {
 import {
   destinosData,
   tiposIngresoData,
-  categoriasIngresoData,
-  cuentasData
+  categoriasIngresoData
 } from "../../components/Data";
 
 import { validateRequired } from "../../components/Validations";
 import { CuentasQueries, IngresosQueries } from "../../database";
-import * as Session from "../../components/Session";
 import { formatStringDateToDB } from "../../components/Formatters";
+
+import * as Session from "../../components/Session";
 
 export default function NuevoIngresoScren({ navigation }) {
 
@@ -125,7 +124,12 @@ export default function NuevoIngresoScren({ navigation }) {
         }
   
         IngresosQueries._insert(obj,
-          (data) => {
+          () => {
+
+            if(form.destino === "1"){
+              CuentasQueries._updateAgregarMonto(form.cuenta, form.monto);
+            }
+
             setIsLoading(false);
             setModalData({
               message: "El ingreso se guardó correctamente.",

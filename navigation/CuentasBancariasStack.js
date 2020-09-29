@@ -1,5 +1,5 @@
 import React from 'react';
-import { CuentasBancariasScreen, NuevaCuentaScreen, AdministrarCuentaScreen, MovimientosCuentaScreen } from '../screens/index';
+import { CuentasBancariasScreen, NuevaCuentaScreen, EditarCuentaScreen, MovimientosCuentaScreen } from '../screens/index';
 import { Header } from '../components';
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -27,11 +27,11 @@ export default function CuentasBancariasStack(props) {
           }}
         />
         <Stack.Screen
-          name="AdministrarCuenta"
-          component={AdministrarCuentaScreen}
+          name="EditarCuenta"
+          component={EditarCuentaScreen}
           options={{
             header: ({ navigation, scene }) => (
-              <Header title="Administrar Cuenta" scene={scene} navigation={navigation} />
+              <Header title="Editar Cuenta" scene={scene} navigation={navigation} />
             )
           }}
         />

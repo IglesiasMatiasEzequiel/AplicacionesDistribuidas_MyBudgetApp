@@ -52,6 +52,31 @@ export function _dropTable(tx, tableName){
 
 /* INSERT */
 
+export function _updateTx(tx, query, params, successCallback, errorCallback) {
+  tx.executeSql(
+    query,
+    params,
+    (txObj, resultSet) => {
+      logSuccess(debugMode, "_update", params, query, resultSet?.insertId);
+      if (successCallback) {
+        successCallback(resultSet.insertId);
+      }
+    },
+    (txObj, error) => {
+      logError(debugMode, "_update", params, query);
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    }
+  );
+}
+
+export function _update(query, params, successCallback, errorCallback) {
+  _createTransaction((tx) => {
+    _updateTx(tx, query, params, successCallback, errorCallback);
+  });
+}
+
 export function _insertTx(tx, query, params, successCallback, errorCallback) {
   tx.executeSql(
     query,

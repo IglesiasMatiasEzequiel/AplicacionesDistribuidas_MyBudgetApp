@@ -70,7 +70,14 @@ export default function CuentasBancariasScreen({ route, navigation }) {
   };
 
   /* Botón Movimientos*/
+  /* Botón editar */
+  
+  const onEditar = (id) => {
+    limpiarState();
+    navigation.navigate("EditarCuenta", { id: id });
+  };
 
+  /* Botón editar */
   /* Botón borrar */
 
   const onCancelar = () => setModalData({ ...modalData, isVisible: false });
@@ -119,9 +126,17 @@ export default function CuentasBancariasScreen({ route, navigation }) {
     );
   };
 
+  const editButton = (data, index) => (
+    <TouchableOpacity onPress={() => onEditar(data)}>
+      <View style={buttonStyles.btnTableEdit}>
+        <CustomIcon name="md-create" size={22} />
+      </View>
+    </TouchableOpacity>
+  );
+
   const deleteButton = (data, index) => (
     <TouchableOpacity onPress={() => onBorrar(data)}>
-      <View style={buttonStyles.btnTable}>
+      <View style={buttonStyles.btnTableDelete}>
         <CustomIcon name="md-trash" size={22} />
       </View>
     </TouchableOpacity>
@@ -133,6 +148,7 @@ export default function CuentasBancariasScreen({ route, navigation }) {
 
   const tableHeaders = [
     "",
+    "",
     "CBU",
     "Alias",
     "Descripción",
@@ -142,7 +158,7 @@ export default function CuentasBancariasScreen({ route, navigation }) {
     "Tarjeta",
     "Vencimiento",
   ];
-  const columnWidth = [30, 250, 250, 250, 150, 250, 200, 200, 150];
+  const columnWidth = [30, 30, 250, 250, 250, 150, 250, 200, 200, 150];
 
   const getListado = () => {
     setListado((prevState) => ({ ...prevState, isLoading: true }));
@@ -154,6 +170,7 @@ export default function CuentasBancariasScreen({ route, navigation }) {
           var tableData =
             data?.map((item) => {
               return [
+                item.id,
                 item.id,
                 item.cbu,
                 item.alias,
@@ -201,10 +218,6 @@ export default function CuentasBancariasScreen({ route, navigation }) {
         <Text style={buttonStyles.btnText}>Nueva Cuenta</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onAdministrarCuenta} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Administrar Cuentas</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity onPress={onMovimientosCuenta} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Ver Movimiento Cuentas</Text>
       </TouchableOpacity>
@@ -248,9 +261,9 @@ export default function CuentasBancariasScreen({ route, navigation }) {
                               key={cellIndex.toString()}
                               width={columnWidth[cellIndex]}
                               data={
-                                cellIndex === 0
-                                  ? deleteButton(cellData, index)
-                                  : cellData
+                                cellIndex === 0 ? deleteButton(cellData, index)
+                              : cellIndex === 1 ? editButton(cellData, index)
+                              : cellData
                               }
                               textStyle={tableStyles.tableRowtext}
                             />
