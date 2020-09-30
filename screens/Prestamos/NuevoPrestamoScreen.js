@@ -202,10 +202,10 @@ export default function NuevoPrestamoScreen({ navigation }) {
 
               var contado_cuota = 0;
               var from = new Date();
-              while (contado_cuota!==form.cuota) {
-                var fechaPago;
-                fechaPago.setDate(form.vencimiento.getDate() + (30*(contado_cuota+1)));
-
+              while (form.cuota>contado_cuota) {
+                var fechaPago = new Date();
+                fechaPago.setDate(formatStringToDate(form.vencimiento).getDate() + parseInt((30*(contado_cuota+1))));
+                
                 var medio;
                 if (form.tipoEmisorDestinatario === "1") {
                   medio = 4; // Debito Automatico
@@ -216,7 +216,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
                 }
                 var obj_e = {
                   idUsuario: usuario.id,
-                  fecha: formatStringDateToDB(fechaPago),
+                  fecha: formatStringDateToDB(formatDateToString(fechaPago)),
                   monto: ((form.monto*form.intereses/100)+(form.monto))/form.cuota,
                   idTipoEgreso: 2, // Extraodinario
                   detalleEgreso: "Prestamo realizado",

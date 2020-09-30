@@ -318,63 +318,6 @@ export default function MovimientoCuenta({ route, navigation }) {
                 )}
               </ScrollView>
             </View>
-            <View
-              style={[screenStyles.containerDivider, titleStyles.titleContainer]}
-            >
-              <Text h5 style={titleStyles.titleText}>
-                Movimientos egresos
-              </Text>
-            </View>
-            <View style={tableStyles.tableContainer}>
-              <ScrollView horizontal>
-                {(listado.data !== null && listado.data.length > 0) && (
-                  <View>
-                    <Table borderStyle={tableStyles.tableHeaderBorder}>
-                      <Row
-                        data={tableHeaders}
-                        widthArr={columnWidth}
-                        style={tableStyles.tableHeader}
-                        textStyle={tableStyles.tableHeadertext}
-                      />
-                    </Table>
-                    <ScrollView
-                      style={[tableStyles.tableDataContainer, { height: 200 }]}
-                    >
-                      <Table borderStyle={tableStyles.tableDataBorder}>
-
-                      {listado.data.map((rowData, index) => (
-                        <TableWrapper
-                          key={index}
-                          style={[
-                            tableStyles.tableRow,
-                            index % 2 && { backgroundColor: "transparent" },
-                          ]}
-                        >
-                          {rowData.map((cellData, cellIndex) => (
-                            <Cell
-                              key={cellIndex.toString()}
-                              width={columnWidth[cellIndex]}
-                              data={
-                                cellIndex === 0
-                                  ? ingresosButton(cellData, index)
-                                  : cellData
-                              }
-                              textStyle={tableStyles.tableRowtext}
-                            />
-                          ))}
-                        </TableWrapper>
-                      ))}
-
-                      </Table>
-                    </ScrollView>
-                  </View>
-                )}
-
-                {(listado.data === null || listado.data.length === 0) && (
-                  <Alert type="danger" message="Sin información" />
-                )}
-              </ScrollView>
-            </View>
           </View>
         )}
 
