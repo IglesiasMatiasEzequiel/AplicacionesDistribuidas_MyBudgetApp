@@ -141,7 +141,7 @@ export default function Ingresos({ route, navigation }) {
   );
 
   const tableHeaders = ["", "Fecha", "Monto", "Descripcion", "Tipo", "Categoría", "Destino", "Cuenta"];
-  const columnWidth = [30, 120, 150, 300, 300, 150, 180, 350];
+  const columnWidth = [30, 120, 150, 300, 300, 150, 180, 450];
 
   const getListado = () => {
 

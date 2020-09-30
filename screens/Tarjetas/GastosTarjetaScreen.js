@@ -1,133 +1,258 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Text } from "react-native";
+
 import {
   screenStyles,
   tableStyles,
   titleStyles,
-  dropdownStyles,
 } from "../../components/Styles";
-import {
-  periodosData
-} from "../../components/Data";
 
-import DropDownPicker from "react-native-dropdown-picker";
+import { periodosTarjetaData } from "../../components/Data";
+
+import { CustomSpinner, Alert, Dropdown } from "../../components";
+
+import { EgresosQueries, TarjetasQueries } from "../../database";
+
+import {
+  formatDateToString,
+  formatStringDateToDB,
+  formatStringDateFromDB,
+} from "../../components/Formatters";
+
 import { Table, Row } from "react-native-table-component";
-import { Text } from "galio-framework";
+
+import * as Session from "../../components/Session";
 
 export default function Ingresos({ navigation }) {
-  
-  const [tarjeta, setTarjeta] = React.useState(null);
-  const [periodo, setPeriodo] = React.useState(null);
-  const [montoTotal, setMontoTotal] = React.useState(null);
+  /* State del CustomSpinner */
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const handleChangeTarjeta = (tarjeta) => {
-    setTarjeta(tarjeta);
-    setPeriodo(null);
-  }
-  const handleChangePeriodo = (periodo) => {
-    setPeriodo(periodo);
-    setMontoTotal("15000");
-  }
+  /* State del Listado */
+  const [listado, setListado] = React.useState({
+    data: null,
+    acumulado: 0,
+    isLoading: false,
+    periodo: null
+  });
 
-  const tableHeaders = ["Tipo", "Categoria", "Cuotas", "Fecha", "Monto"];
-  const columnWidth = [120, 150, 60, 120, 120];
+  const [dropdownData, setDropdownData] = React.useState(null);
 
-  const tableData = [
-    [
-      ["Periódico", "Servicios - Luz", "1", "17/9/2020", "$ 5000"],
-      ["Periódico", "Servicios - Gas", "1", "18/9/2020", "$ 3000"],
-      ["Periódico", "Servicios - Cable", "1", "19/9/2020", "$ 3200"],
-      ["Periódico", "Servicios - Teléfono", "1", "20/9/2020", "$ 3800"],
-    ],
-    [
-      ["Periódico", "Servicios - Gas", "1", "10/8/2020", "$ 6065"],
-      ["Periódico", "Servicios - Teléfono", "1", "11/8/2020", "$ 1800"],
-    ],
+  const handleChangeTarjeta = (prop, value) => {
+    setListado((prevState) => ({ 
+      ...prevState, 
+      data: null, 
+      isLoading: false,
+      tarjeta: value,
+      periodo: null
+     }));
+  };
+
+  const handleChangePeriodo = (prop, value) => {
+    setListado((prevState) => ({ 
+      ...prevState, 
+      data: null, 
+      isLoading: false,
+      periodo: value
+     }));
+     getListado();
+  };
+
+  const tableHeaders = [
+    "Fecha",
+    "Monto",
+    "Tipo",
+    "Categoria",
+    "Detalle",
+    "Nro. Cuota",
   ];
+  const columnWidth = [150, 150, 250, 300, 350, 150];
 
-  const misTarjetasData = [
-    { label: "Banco Galicia - **** **** **** 0856", value: "1" },
-    { label: "BBVA Francés - **** **** **** 4562", value: "2" },
-  ];
+  const getListado = () => {
+    setListado((prevState) => ({ ...prevState, isLoading: true }));
+
+    var substractDays =
+      listado.periodo === "1"
+        ? 7
+        : listado.periodo === "2"
+        ? 30
+        : listado.periodo === "3"
+        ? 365
+        : listado.periodo === "4"
+        ? 30
+        : 7;
+
+    var to = new Date();
+    var from = new Date();
+
+    from.setDate(from.getDate() - substractDays);
+
+    var toFormatted = formatStringDateToDB(formatDateToString(to));
+    var fromFormatted = formatStringDateToDB(formatDateToString(from));
+
+    EgresosQueries._getListadoGastosTarjeta(
+      listado.tarjeta,
+      fromFormatted,
+      toFormatted,
+      (data) => {
+        var tableData =
+          data?.map((item) => {
+            return [
+              formatStringDateFromDB(item.fecha),
+              "$ " + item.monto,
+              item.tipoEgreso,
+              item.categoriaEgreso ?? "-",
+              item.detalleEgreso ?? "-",
+              item.cuotas ?? "-"
+            ];
+          }) ?? [];
+
+        setListado((prevState) => ({
+          ...prevState,
+          data: tableData,
+          acumulado: data.reduce((prev, cur) => prev + cur.monto, 0),
+          isLoading: false,
+        }));
+      },
+      (error) => {
+        setListado((prevState) => ({
+          ...prevState,
+          data: [],
+          isLoading: false,
+        }));
+
+        console.log(error);
+      }
+    );
+  };
+
+  const fillDropdownData = () => {
+    setIsLoading(true);
+
+    Session.getUser().then((usuario) => {
+      TarjetasQueries._getListado(usuario.id, (data) => {
+        var tarjetas =
+          data?.map((item) => {
+            return {
+              label: item.entidadEmisora + " - **** **** **** " + item.tarjeta,
+              value: item.id.toString(),
+            };
+          }) ?? [];
+
+        setDropdownData({
+          tarjetas: tarjetas,
+        });
+
+        setIsLoading(false);
+      });
+    });
+  };
+
+  if (dropdownData === null && !isLoading) {
+    fillDropdownData();
+  }
 
   return (
     <ScrollView style={screenStyles.screen}>
+      {dropdownData !== null && (
+        <View>
+          <View
+            style={[screenStyles.containerDivider, titleStyles.titleContainer]}
+          >
+            <Text h5 style={titleStyles.titleText}>
+              Filtros
+            </Text>
+          </View>
 
-      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
-          <Text h5 style={titleStyles.titleText}>
-            Filtros
-          </Text>
-      </View>
-
-      <DropDownPicker
-        items={misTarjetasData}
-        defaultValue={tarjeta}
-        placeholder="Seleccione una tarjeta."
-        containerStyle={dropdownStyles.dropdownContainer}
-        style={dropdownStyles.dropdown}
-        itemStyle={dropdownStyles.dropdownItem}
-        onChangeItem={(item) => handleChangeTarjeta(item.value)}
-        zIndex={5000}
-      />
-
-      <DropDownPicker
-            items={periodosData}
-            defaultValue={periodo}
-            placeholder="Seleccione un periodo."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangePeriodo(item.value)}
-            zIndex={5000}
+          <Dropdown
+            propName="tarjeta"
+            items={dropdownData.tarjetas}
+            defaultValue={listado.tarjeta}
+            placeholder="Seleccione una tarjeta."
+            handleChange={handleChangeTarjeta}
           />
 
-      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-        <Text h5 style={titleStyles.titleText}>
-          Gastos 
-          {periodo === "1" ? " semanales "
-            : periodo === "2" ? " mensuales "
-            : periodo === "3" ? " anuales " : ""}
-          de la tarjeta
-          {periodo === "1" | periodo === "2" | periodo === "3" ?  "  -  Monto Total = $ " + montoTotal : ""}
-        </Text>
-      </View>
+          <Dropdown
+            propName="periodo"
+            items={periodosTarjetaData}
+            defaultValue={listado.periodo}
+            placeholder="Seleccione un periodo."
+            handleChange={handleChangePeriodo}
+          />
 
-      {tarjeta != null && periodo != null && (
-        <View>
-          <View style={tableStyles.tableContainer}>
-            <ScrollView horizontal>
-              <View>
-                <Table borderStyle={tableStyles.tableHeaderBorder}>
-                  <Row
-                    data={tableHeaders}
-                    widthArr={columnWidth}
-                    style={tableStyles.tableHeader}
-                    textStyle={tableStyles.tableHeadertext}
-                  />
-                </Table>
-                <ScrollView
-                  style={[tableStyles.tableDataContainer, { height: 200 }]}
-                >
-                  <Table borderStyle={tableStyles.tableDataBorder}>
-                    {tableData[parseInt(tarjeta) - 1].map((rowData, index) => (
-                      <Row
-                        key={index}
-                        data={rowData}
-                        widthArr={columnWidth}
+          {!listado.isLoading && (
+            <View>
+              <View
+                style={[
+                  screenStyles.containerDivider,
+                  titleStyles.titleContainer,
+                ]}
+              >
+                <Text h5 style={titleStyles.titleText}>
+                  Gastos
+                  {listado.periodo === "1"
+                ? " de la semana"
+                : listado.periodo === "2"
+                ? " del mes"
+                : listado.periodo === "3"
+                ? " del año"
+                : listado.periodo === "4"
+                ? " acumulados a la fecha"
+                : ""}
+                - $ {listado.acumulado ?? 0}
+                </Text>
+              </View>
+
+              <View style={tableStyles.tableContainer}>
+                <ScrollView horizontal>
+                  {listado.data !== null && listado.data.length > 0 && (
+                    <View>
+                      <Table borderStyle={tableStyles.tableHeaderBorder}>
+                        <Row
+                          data={tableHeaders}
+                          widthArr={columnWidth}
+                          style={tableStyles.tableHeader}
+                          textStyle={tableStyles.tableHeadertext}
+                        />
+                      </Table>
+                      <ScrollView
                         style={[
-                          tableStyles.tableRow,
-                          index % 2 && { backgroundColor: "transparent" },
+                          tableStyles.tableDataContainer,
+                          { height: 200 },
                         ]}
-                        textStyle={tableStyles.tableRowtext}
-                      />
-                    ))}
-                  </Table>
+                      >
+                        <Table borderStyle={tableStyles.tableDataBorder}>
+                          {listado.data.map(
+                            (rowData, index) => (
+                              <Row
+                                key={index}
+                                data={rowData}
+                                widthArr={columnWidth}
+                                style={[
+                                  tableStyles.tableRow,
+                                  index % 2 && {
+                                    backgroundColor: "transparent",
+                                  },
+                                ]}
+                                textStyle={tableStyles.tableRowtext}
+                              />
+                            )
+                          )}
+                        </Table>
+                      </ScrollView>
+                    </View>
+                  )}
+
+                  {(listado.data === null || listado.data.length === 0) && (
+                    <Alert type="danger" message="Sin información" />
+                  )}
                 </ScrollView>
               </View>
-            </ScrollView>
-          </View>
+            </View>
+          )}
         </View>
       )}
+
+      <CustomSpinner isLoading={isLoading} text={"Guardando egreso..."} />
     </ScrollView>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TarjetasScreen, NuevaTarjetaScreen, GastosTarjetaScreen, BorrarTarjetaScreen } from '../screens/index';
+import { TarjetasScreen, NuevaTarjetaScreen, GastosTarjetaScreen } from '../screens/index';
 import { Header } from '../components';
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -32,15 +32,6 @@ export default function TarjetasStack(props) {
           options={{
             header: ({ navigation, scene }) => (
               <Header title="Gastos Tarjeta" scene={scene} navigation={navigation} />
-            )
-          }}
-        />
-        <Stack.Screen
-          name="BorrarTarjeta"
-          component={BorrarTarjetaScreen}
-          options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Borrar Tarjeta" scene={scene} navigation={navigation} />
             )
           }}
         />

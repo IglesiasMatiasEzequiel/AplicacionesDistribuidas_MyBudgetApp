@@ -2,7 +2,7 @@ import * as db from "../DataBase";
 
 const tableName = "Ingresos";
 
-export function _createTable(tx) {
+export function _createTable(tx, successCallback, errorCallback) {
   var query = "CREATE TABLE IF NOT EXISTS " + tableName+ " (" +
   "id INTEGER PRIMARY KEY AUTOINCREMENT," +
   "idUsuario INTEGER," +
@@ -19,7 +19,7 @@ export function _createTable(tx) {
   "FOREIGN KEY(idDestinoIngreso) REFERENCES DestinosIngreso(id), " +
   "FOREIGN KEY(idCuenta) REFERENCES Cuentas(id))";
     
-  db._createTable(tx, tableName, query);
+  db._createTable(tx, tableName, query, successCallback, errorCallback);
 }
 
 export function _dropTable(tx) {
@@ -99,7 +99,7 @@ export function _getListadoCuenta(idUsuario, idCuenta, from, to, successCallback
   db._select(query, params, successCallback, errorCallback);
 }
 
-export function _insert(obj, successCallback, errorCallback) {
+export function _insertTx(tx, obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO Ingresos(" +
     " idUsuario," +
@@ -122,5 +122,11 @@ export function _insert(obj, successCallback, errorCallback) {
     obj.descripcion
   ];
 
-  db._insert(query, params, successCallback, errorCallback);
+  db._insertTx(tx, query, params, successCallback, errorCallback);
+}
+
+export function _insert(obj, successCallback, errorCallback) {
+  db._createTransaction((tx) => {
+    _insertTx(tx, query, params, successCallback, errorCallback);
+  });
 }

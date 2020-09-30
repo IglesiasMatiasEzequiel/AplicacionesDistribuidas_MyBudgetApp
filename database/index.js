@@ -121,8 +121,167 @@ export function createTables() {
         });
       });
 
-      EgresosQueries._createTable(tx);
-      IngresosQueries._createTable(tx);
+      "(idUsuario, idTipoEgreso, idCategoriaEgreso, idCuenta, idTarjeta, idMedioPago, fecha, monto, detalleEgreso, cuotas) " +
+
+      EgresosQueries._createTable(tx, () => {
+
+        EgresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoEgreso: 2,
+          idCategoriaEgreso: null,
+          idCuenta: null,
+          idTarjeta: null,
+          idMedioPago: 1,
+          fecha: '2020-09-29',
+          monto: 500,
+          detalleEgreso: 'A...',
+          cuotas: null
+        });
+
+        EgresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoEgreso: 2,
+          idCategoriaEgreso: null,
+          idCuenta: null,
+          idTarjeta: null,
+          idMedioPago: 1,
+          fecha: '2020-09-27',
+          monto: 1000,
+          detalleEgreso: 'B...',
+          cuotas: null
+        });
+
+        EgresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoEgreso: 2,
+          idCategoriaEgreso: null,
+          idCuenta: null,
+          idTarjeta: null,
+          idMedioPago: 1,
+          fecha: '2020-09-28',
+          monto: 3000,
+          detalleEgreso: 'C...',
+          cuotas: null
+        });
+
+        EgresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoEgreso: 1,
+          idCategoriaEgreso: 3,
+          idCuenta: 1,
+          idTarjeta: null,
+          idMedioPago: 3,
+          fecha: '2020-09-29',
+          monto: 5500,
+          detalleEgreso: 'D...',
+          cuotas: null
+        });
+
+        EgresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoEgreso: 1,
+          idCategoriaEgreso: 3,
+          idCuenta: null,
+          idTarjeta: 1,
+          idMedioPago: 2,
+          fecha: '2020-09-24',
+          monto: 5500,
+          detalleEgreso: 'E...',
+          cuotas: 1
+        });
+      });
+      
+      IngresosQueries._createTable(tx, () => {
+        
+        IngresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoIngreso: 1,
+          idCategoriaIngreso: 1,
+          idDestinoIngreso: 1,
+          idCuenta: 1,
+          fecha: '2020-09-29',
+          monto: 5563.69,
+          descripcion: 'A..'
+        });
+
+        IngresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoIngreso: 2,
+          idCategoriaIngreso: null,
+          idDestinoIngreso: 1,
+          idCuenta: 1,
+          fecha: '2020-09-23',
+          monto: 559.78,
+          descripcion: 'B..'
+        });
+
+        IngresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoIngreso: 2,
+          idCategoriaIngreso: null,
+          idDestinoIngreso: 2,
+          idCuenta: null,
+          fecha: '2020-09-24',
+          monto: 1111.65,
+          descripcion: 'C..'
+        });
+
+        IngresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoIngreso: 1,
+          idCategoriaIngreso: 3,
+          idDestinoIngreso: 2,
+          idCuenta: null,
+          fecha: '2020-09-23',
+          monto: 6734.59,
+          descripcion: 'D..'
+        });
+
+        IngresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoIngreso: 1,
+          idCategoriaIngreso: 4,
+          idDestinoIngreso: 2,
+          idCuenta: null,
+          fecha: '2020-10-01',
+          monto: 44.30,
+          descripcion: 'E..'
+        });
+
+        IngresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoIngreso: 1,
+          idCategoriaIngreso: 2,
+          idDestinoIngreso: 1,
+          idCuenta: 2,
+          fecha: '2020-09-29',
+          monto: 56778.69,
+          descripcion: 'F..'
+        });
+
+        IngresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoIngreso: 1,
+          idCategoriaIngreso: 3,
+          idDestinoIngreso: 1,
+          idCuenta: 2,
+          fecha: '2020-09-26',
+          monto: 7.99,
+          descripcion: 'G..'
+        });
+
+        IngresosQueries._insertTx(tx, {
+          idUsuario: 1,
+          idTipoIngreso: 1,
+          idCategoriaIngreso: 1,
+          idDestinoIngreso: 1,
+          idCuenta: 3,
+          fecha: '2020-09-27',
+          monto: 4444.23,
+          descripcion: 'H..'
+        });
+      });
+
       PrestamosQueries._createTable(tx);
       PresupuestosQueries._createTable(tx);
       InversionesQueries._createTable(tx);

@@ -192,6 +192,7 @@ export default function NuevoEgresoScren({ navigation }) {
 
               obj.monto = montoPorCuota;
               obj.fecha = formatStringDateToDB(fechaCuota);
+              obj.nroCuota = cuota;
 
               EgresosQueries._insertTx(tx, obj);
             }

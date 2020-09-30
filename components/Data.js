@@ -90,6 +90,13 @@ const periodosData = [
   { label: "Anual", value: "3" }
 ]
 
+const periodosTarjetaData = [
+  { label: "Semanal", value: "1" },
+  { label: "Mensual", value: "2" },
+  { label: "Anual", value: "3" },
+  { label: "Acumulado al día de la fecha", value: "4" }
+]
+
 const periodosBorrarData = [
   { label: "Última semana", value: "1" },
   { label: "Último mes", value: "2" },
@@ -130,6 +137,7 @@ export {
   entidadesEmisorasData,
   tipoInversionData,
   periodosData,
+  periodosTarjetaData,
   periodosBorrarData,
   estadosPrestamoData,
   tipoPrestamoData,
