@@ -310,7 +310,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={buttonStyles.btnBackText}>Registrarse</Text>
       </TouchableOpacity>
 
-      <CustomSpinner isLoading={isLoading} text="Ingresando..." />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}

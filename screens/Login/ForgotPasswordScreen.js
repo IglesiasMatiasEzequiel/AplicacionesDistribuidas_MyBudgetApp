@@ -38,7 +38,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <CustomSpinner isLoading={isLoading} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}

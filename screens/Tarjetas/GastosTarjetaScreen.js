@@ -252,7 +252,7 @@ export default function Ingresos({ navigation }) {
         </View>
       )}
 
-      <CustomSpinner isLoading={isLoading} text={"Guardando egreso..."} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
     </ScrollView>
   );
 }

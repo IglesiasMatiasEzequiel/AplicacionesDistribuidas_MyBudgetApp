@@ -433,7 +433,7 @@ export default function NuevoEgresoScren({ navigation }) {
           </TouchableOpacity>
         </View>
       )}
-      <CustomSpinner isLoading={isLoading} text={"Guardando egreso..."} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}
