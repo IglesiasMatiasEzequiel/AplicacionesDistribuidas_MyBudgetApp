@@ -2,7 +2,7 @@ import * as db from "../DataBase";
 
 const tableName = "Egresos";
 
-export function _createTable(tx) {
+export function _createTable(tx, successCallback, errorCallback) {
   var query = 
   "CREATE TABLE IF NOT EXISTS Egresos (" +
     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -16,6 +16,7 @@ export function _createTable(tx) {
     "monto NUMERIC(10, 2)," +
     "detalleEgreso VARCHAR(255)," +
     "cuotas INTEGER," +
+    "nroCuota INTEGER," +
     "FOREIGN KEY(idMedioPago) REFERENCES MediosPago(id)," +
     "FOREIGN KEY(idTarjeta) REFERENCES Tarjetas(id)," +
     "FOREIGN KEY(idCuenta) REFERENCES Cuentas(id)," +
@@ -23,7 +24,7 @@ export function _createTable(tx) {
     "FOREIGN KEY(idTipoEgreso) REFERENCES TiposEgreso(id)," +
     "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id))";
   
-  db._createTable(tx, tableName, query);
+  db._createTable(tx, tableName, query, successCallback, errorCallback);
 }
 
 export function _dropTable(tx) {
@@ -52,7 +53,7 @@ export function _getListado(idUsuario, from, to, successCallback, errorCallback)
   " egreso.fecha, " +
   " egreso.monto, " +
   " egreso.detalleEgreso, " +
-  " egreso.cuotas, " +
+  " egreso.nroCuota || '/' || egreso.cuotas as cuotas, " +
   " medioPago.medioPago, " +
   " tipoEgreso.tipoEgreso, " +
   " categoriaEgreso.categoriaEgreso, " +
@@ -67,9 +68,32 @@ export function _getListado(idUsuario, from, to, successCallback, errorCallback)
   " LEFT JOIN Tarjetas tarjeta ON egreso.idTarjeta = tarjeta.id " +
   " LEFT JOIN EntidadesEmisoras entidadEmisora ON tarjeta.idEntidadEmisora = entidadEmisora.id " +
   " WHERE egreso.idUsuario = ? " +
-  " AND egreso.fecha BETWEEN ? AND ? ";
+  " AND egreso.fecha BETWEEN ? AND ? " + 
+  " ORDER BY egreso.fecha DESC, egreso.idCuenta, egreso.idTarjeta, egreso.nroCuota";
 
   var params = [idUsuario, from, to];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
+export function _getListadoGastosTarjeta(idTarjeta, from, to, successCallback, errorCallback){
+
+  var query = "SELECT egreso.id, " +
+  " egreso.fecha, " +
+  " egreso.monto, " +
+  " egreso.detalleEgreso, " +
+  " egreso.nroCuota || '/' || egreso.cuotas as cuotas, " +
+  " tipoEgreso.tipoEgreso, " +
+  " categoriaEgreso.categoriaEgreso " +
+  " FROM " + tableName + " as egreso " +
+  " INNER JOIN TiposEgreso tipoEgreso ON egreso.idTipoEgreso = tipoEgreso.id " +
+  " LEFT JOIN CategoriasEgreso categoriaEgreso ON egreso.idCategoriaEgreso = categoriaEgreso.id " +
+  " WHERE egreso.idMedioPago = '2' " + 
+  " AND egreso.idTarjeta = ? " +
+  " AND egreso.fecha BETWEEN ? AND ? " + 
+  " ORDER BY egreso.fecha DESC, egreso.idCuenta, egreso.idTarjeta, egreso.nroCuota";
+
+  var params = [idTarjeta, from, to];
 
   db._select(query, params, successCallback, errorCallback);
 }
@@ -87,8 +111,8 @@ export function _insertTx(tx, obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO " +
     tableName +
-    "(idUsuario, idTipoEgreso, idCategoriaEgreso, idCuenta, idTarjeta, idMedioPago, fecha, monto, detalleEgreso, cuotas ) " +
-    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "(idUsuario, idTipoEgreso, idCategoriaEgreso, idCuenta, idTarjeta, idMedioPago, fecha, monto, detalleEgreso, cuotas, nroCuota) " +
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
    
   var params = [
     obj.idUsuario,
@@ -101,6 +125,7 @@ export function _insertTx(tx, obj, successCallback, errorCallback) {
     obj.monto,
     obj.detalleEgreso,
     obj.cuotas,
+    obj.nroCuota ?? null
   ];
 
   db._insertTx(tx, query, params, successCallback, errorCallback);

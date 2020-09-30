@@ -130,11 +130,11 @@ export default function Egresos({ route, navigation }) {
     "Categoria",
     "Detalle",
     "Medio Pago",
-    "Cuotas",
     "Cuenta",
-    "Tarjeta"
+    "Tarjeta",
+    "Cuotas"
   ];
-  const columnWidth = [30, 150, 150, 250, 300, 350, 150, 150, 450, 350];
+  const columnWidth = [30, 150, 150, 250, 300, 350, 150, 450, 450, 150];
 
   const getListado = () => {
     setListado((prevState) => ({ ...prevState, isLoading: true }));
@@ -172,9 +172,9 @@ export default function Egresos({ route, navigation }) {
                 item.categoriaEgreso ?? "-",
                 item.detalleEgreso ?? "-",
                 item.medioPago ?? "-",
-                item.cuotas ?? "-",
                 item.cuenta ?? "-",
                 item.tarjeta ?? "-",
+                item.cuotas ?? "-"
               ];
             }) ?? [];
 

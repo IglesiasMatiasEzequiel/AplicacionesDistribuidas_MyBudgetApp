@@ -1,5 +1,5 @@
 import React from 'react';
-import { InversionesScreen, NuevaInversionScreen, BorrarInversionScreen } from '../screens/index';
+import { InversionesScreen, NuevaInversionScreen } from '../screens/index';
 import { Header } from '../components';
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -23,15 +23,6 @@ export default function InversionesStack(props) {
           options={{
             header: ({ route, navigation, scene }) => (
               <Header title="Nueva Inversion" scene={scene} route={route} navigation={navigation} />
-            )
-          }}
-        />
-        <Stack.Screen
-          name="BorrarInversion"
-          component={BorrarInversionScreen}
-          options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Borrar Inversion" scene={scene} route={route} navigation={navigation} />
             )
           }}
         />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { PrestamosScreen, NuevoPrestamoScreen, BorrarPrestamoScreen } from '../screens/index';
+import { PrestamosScreen, NuevoPrestamoScreen } from '../screens/index';
 import { Header } from '../components';
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -23,15 +23,6 @@ export default function PrestamosStack(props) {
           options={{
             header: ({ navigation, scene }) => (
               <Header title="Nuevo Prestamo" scene={scene} navigation={navigation} />
-            )
-          }}
-        />
-        <Stack.Screen
-          name="BorrarPrestamo"
-          component={BorrarPrestamoScreen}
-          options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Borrar Prestamo" scene={scene} navigation={navigation} />
             )
           }}
         />

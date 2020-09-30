@@ -1,5 +1,5 @@
 import React from 'react';
-import { PresupuestosScreen, NuevoPresupuestoScreen, BorrarPresupuestoScreen } from '../screens/index';
+import { PresupuestosScreen, NuevoPresupuestoScreen } from '../screens/index';
 import { Header } from '../components';
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -25,16 +25,7 @@ export default function PresupuestosStack(props) {
               <Header title="Nuevo Presupuesto" scene={scene} navigation={navigation} />
             )
           }}
-        />
-        <Stack.Screen
-          name="BorrarPresupuesto"
-          component={BorrarPresupuestoScreen}
-          options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Borrar Presupuesto" scene={scene} navigation={navigation} />
-            )
-          }}
-        />
+        />        
       </Stack.Navigator>
     );
   }
