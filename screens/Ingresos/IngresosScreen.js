@@ -79,16 +79,10 @@ export default function Ingresos({ route, navigation }) {
     });
   };
 
-  /* Botón Nuevo*/
-
   const onNuevo = () => {
     limpiarState();
     navigation.navigate("NuevoIngreso");
   }
-
-  /* Botón Nuevo*/
-
-  /* Botón borrar */
 
   const onCancelar = () => setModalData({ ...modalData, isVisible: false });
 
@@ -136,6 +130,8 @@ export default function Ingresos({ route, navigation }) {
       );
   }
 
+  /* Listado */
+
   const deleteButton = (data, index) => (
     <TouchableOpacity onPress={() => onBorrar(data)}>
       <View style={buttonStyles.btnTable}>
@@ -143,10 +139,6 @@ export default function Ingresos({ route, navigation }) {
       </View>
     </TouchableOpacity>
   );
-
-  /* Botón borrar */
-
-  /* Listado */
 
   const tableHeaders = ["", "Fecha", "Monto", "Descripcion", "Tipo", "Categoría", "Destino", "Cuenta"];
   const columnWidth = [30, 120, 150, 300, 300, 150, 180, 350];
