@@ -13,10 +13,15 @@ import {
 } from "../../components/Styles";
 
 import { validateRequired } from "../../components/Validations";
-import { CuentasQueries, IngresosQueries } from "../../database";
+import { CuentasQueries, IngresosQueries,EgresosQueries } from "../../database";
 import { InversionesQueries } from "../../database";
 import * as Session from "../../components/Session";
-import { formatStringDateToDB } from "../../components/Formatters";
+import { 
+  formatStringToDate,
+  formatDateToString, 
+  formatStringDateToDB, 
+  formatStringDateFromDB 
+} from "../../components/Formatters";
 
 export default function NuevaInversionScreen({ navigation }) {
 
@@ -107,6 +112,57 @@ export default function NuevaInversionScreen({ navigation }) {
 
         InversionesQueries._insert(obj,
           (data) => {
+
+            CuentasQueries._updateQuitarMonto(form.origen, form.monto);
+
+            var obj_e = {
+              idUsuario: usuario.id,
+              fecha: form.fechaInicio,
+              monto: form.monto,
+              idTipoEgreso: 2, // Extraodinario
+              //idCategoriaEgreso: form.categoriaEgreso,
+              detalleEgreso: "Inversion: " + form.nombre,
+              idMedioPago: 4, // Debito Automatico
+              //cuotas: form.cuotas,
+              idCuenta: form.origen,
+              //idTarjeta: form.tarjeta,
+            }
+            EgresosQueries._insert(obj_e,
+              (data) => {
+                console.log("Se inserto correctamente el egreso. ");
+              },
+              (error) => {
+                console.log("Ocurrió un error al insertar el egreso. - " + error);
+              }
+            );
+ 
+            if(form.tipo === "2"){ // Plazo fijo
+              var to = new Date();
+              to = formatStringToDate(form.fechaInicio);
+              to.setDate(to.getDate + form.duracion);
+
+              var obj_i = {
+                idUsuario: usuario.id,
+                idTipoIngreso: 2, // Extraordinario
+                //idCategoriaIngreso: form.categoriaIngreso,
+                idDestinoIngreso: 1,
+                idCuenta: form.cuenta,
+                fecha: formatStringDateToDB(formatDateToString(to)),
+                monto: form.monto,
+                descripcion: "Inversion: " + form.nombre,
+              }
+        
+              IngresosQueries._insert(obj_i,
+                () => {
+                  CuentasQueries._updateAgregarMonto(form.cuenta, form.monto);
+                  console.log("Se inserto correctamente el ingreso. ");
+                },
+                (error) => {
+                  console.log("Ocurrió un error al insertar el ingreso. - " + error);
+                }
+              );
+            }
+
             setIsLoading(false);
             setModalData({
               message: "La inversion se guardó correctamente.",
