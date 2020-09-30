@@ -18,6 +18,7 @@ import {
 import { validateRequired } from "../../components/Validations";
 import { PresupuestosQueries } from "../../database";
 import * as Session from "../../components/Session";
+import { formatStringDateToDB } from "../../components/Formatters";
 
 export default function NuevoPresupuestoScreen({ navigation }) {
 
@@ -84,7 +85,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
       Session.getUser().then((usuario) => {
         var obj = {
           idUsuario: usuario.id,
-          fecha: form.fecha,
+          fechaInicio: formatStringDateToDB(form.fecha),
           monto: form.monto,
           idCategoriaEgreso: form.tipo,
         }
@@ -132,8 +133,9 @@ export default function NuevoPresupuestoScreen({ navigation }) {
 
   const onBack = () => {
     limpiarState();
-    navigation.navigate("Presupuestos");
+    navigation.navigate("Presupuestos", { isReload: true });
   };
+
 
   return (
     <ScrollView style={screenStyles.screen}>

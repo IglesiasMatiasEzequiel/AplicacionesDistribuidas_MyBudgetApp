@@ -61,7 +61,7 @@ export default function InversionesScreen({ route,navigation }) {
     isLoading: false,
     periodo: null
   });
-  console.log(listado.periodo);
+
   const handleChangePeriodo = (periodo) => {
     setListado((prevState) => ({ 
       ...prevState, 

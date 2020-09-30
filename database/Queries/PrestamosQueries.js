@@ -7,11 +7,13 @@ export function _createTable(tx) {
   "id INTEGER PRIMARY KEY AUTOINCREMENT," +
   "idUsuario INTEGER," +
   "idTipo INTEGER," +
+  "idCuenta INTEGER," +
   "emisorDestinatario VARCHAR(50)," +
   "monto NUMERIC(10, 2)," +
   "intereses NUMERIC(3, 2)," +
   "vencimiento DATE," +
   "FOREIGN KEY(idTipo) REFERENCES TipoPrestamos(id)," +
+  "FOREIGN KEY(idCuenta) REFERENCES Cuentas(id)," +
   "FOREIGN KEY(idUsuario) REFERENCES Usuarios(id))";
   db._createTable(tx, tableName, query);
 }
@@ -36,17 +38,36 @@ export function _deleteById(id, successCallback, errorCallback) {
   db._deleteById(tableName, id, successCallback, errorCallback);
 }
 
+export function _getListado(idUsuario, successCallback, errorCallback){
+
+  var query = "SELECT prestamo.id, " +
+  " tipo.tipoPrestamo, " +
+  " prestamo.emisorDestinatario, " +
+  " prestamo.monto, " +
+  " prestamo.intereses, " +
+  " prestamo.vencimiento " +
+  " FROM " + tableName + " as prestamo " +
+  " INNER JOIN TiposPrestamo tipo ON prestamo.idTipo = tipo.id " +
+  " WHERE prestamo.idUsuario = ? ";
+
+  var params = [idUsuario];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
+
 export function _insert(obj, successCallback, errorCallback) {
   
   var query =
     "INSERT INTO " +
     tableName +
-    "(idUsuario, idTipo, emisorDestinatario, monto, intereses, vencimiento) " +
-    "VALUES (?, ?, ?, ?, ?, ?)";
+    "(idUsuario, idTipo, idCuenta, emisorDestinatario, monto, intereses, vencimiento) " +
+    "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
   var params = [
     obj.idUsuario,
     obj.idTipo,
+    obj.idCuenta,
     obj.emisorDestinatario,
     obj.monto,
     obj.intereses,
@@ -56,58 +77,3 @@ export function _insert(obj, successCallback, errorCallback) {
   db._insert(query, params, successCallback, errorCallback);
 }
 
-// db.transaction((tx) => {
-//     tx.executeSql(
-//       "CREATE TABLE IF NOT EXISTS Prestamos (" +
-//         "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-//         "idUsuario INTEGER FOREIGN KEY REFERENCES Usuario(id)," +
-//         "tipo VARCHAR(150)," +
-//         "tipoPersona VARCHAR(100)," +
-//         "monto VARCHAR(100)," +
-//         "intereses VARCHAR(50))",
-//       null,
-//       () => {
-//         console.log("Tabla Prestamos creada correctamente.");
-//       },
-//       () => {
-//         console.log("ERROR - La Tabla Prestamos no pudo ser creada.");
-//       }
-//     );
-//   });
-
-// export function insertPrestamo (idUsuario, tipo, tipoPersona, monto, intereses){
-//   db.transaction(tx => {
-//     tx.executeSql("INSERT INTO prestamos(idUsuario, tipo, tipoPersona, monto, intereses) VALUES (?, ?, ?, ?, ?)",[idUsuario, tipo, tipoPersona, monto, intereses],
-//     (txObj, resultSet) => { successCallback(resultSet.insertId) } ,
-//     (txObj, error) => { errorCallback() })
-//   })
-// }
-
-// export function deletePrestamoById (id, idUsuario, successCallback, errorCallback){
-//   dt.transaction(tx => {
-//     tx.executeSql("DELETE FROM prestamos WHERE WHERE id = ? idUsuario =?", [id, idUsuario],
-//       (txObj, { rows: { _array } }) => { successCallback(_array)},
-//       (txObj, error) => errorCallback())
-//   })
-// }
-
-// export function selectPrestamoById (id, idUsuario, successCallback, errorCallback) {
-//   db.transaction(tx => {
-//     tx.executeSql("Select * FROM Prestamos WHERE id = ? idUsuario = ?",[id, idUsuario],
-//       (txObj, { rows: { _array } }) => { successCallback(_array)},
-//       (txObj, error) => errorCallback())
-//   })
-// }
-
-// export function selectPrestamos (successCallback, errorCallback) {
-//   db.transaction(tx => {
-//     tx.executeSql("SELECT * FROM Prestamos idUsuario =", [idUsuario],
-//       (txObj, { rows: { _array } }) => { successCallback(_array)},
-//       (txObj, error) => errorCallback())
-//   })
-// }
-
-/*Prestamos*/
-
-
-/* Presupuestos */

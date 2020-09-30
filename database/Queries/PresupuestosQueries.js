@@ -34,6 +34,22 @@ export function _selectAllByIdUsuario(obj, successCallback, errorCallback) {
   db._selectAllByIdUsuario(query, params, successCallback, errorCallback);
 }
 
+export function _getListado(idUsuario, from, to, successCallback, errorCallback){
+
+  var query = "SELECT presupuesto.id, " +
+  " tipo.categoriaEgreso, " +
+  " presupuesto.fechaInicio, " +
+  " presupuesto.monto " +
+  " FROM " + tableName + " as presupuesto " +
+  " INNER JOIN CategoriasEgreso tipo ON presupuesto.idCategoriaEgreso = tipo.id " +
+  " WHERE presupuesto.idUsuario = ? " +
+  " AND presupuesto.fechaInicio BETWEEN ? AND ? ";
+
+  var params = [idUsuario, from, to];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _selectById(id, successCallback, errorCallback) {
   db._selectById(tableName, id, successCallback, errorCallback);
 }
@@ -52,7 +68,7 @@ export function _insert(obj, successCallback, errorCallback) {
 
   var params = [
     obj.idUsuario,
-    obj.fecha,
+    obj.fechaInicio,
     obj.monto,
     obj.idCategoriaEgreso
   ];
