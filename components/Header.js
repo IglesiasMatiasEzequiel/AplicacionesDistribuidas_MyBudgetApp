@@ -5,35 +5,80 @@ import {
   StyleSheet,
   Platform,
   Dimensions,
+  View
 } from "react-native";
 import { Block, NavBar, theme } from "galio-framework";
 
 import Icon from "react-native-vector-icons/Ionicons";
 import materialTheme from "../constants/Theme";
+import * as Session from "../components/Session";
+import { NotificacionesQueries } from "../database";
+
 
 const { height, width } = Dimensions.get("window");
 const iPhoneX = () =>
   Platform.OS === "ios" &&
   (height === 812 || width === 812 || height === 896 || width === 896);
 
-const NotificationsButton = ({ isWhite, style, navigation }) => (
-  <TouchableOpacity
-    style={[styles.button, style]}
-    onPress={() => navigation.navigate("Notificaciones")}
-  >
-    <Icon
-      size={24}
-      name="md-notifications"
-      color={theme.COLORS[isWhite ? "WHITE" : "ICON"]}
-    />
-    <Block middle style={styles.notify} />
-  </TouchableOpacity>
-);
+function Header({ route, navigation, title, white, transparent, back, hideNotificationsButton }) {
 
-function Header({ navigation, title, white, transparent, back }) {
-  
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [notify, setNotify] = React.useState(null);
+
+  const NotificationsButton = ({ isWhite, style, navigation }) => (
+    <TouchableOpacity
+      style={[styles.button, style]}
+      onPress={() => navigation.navigate("Notificaciones", { isReload: true })}
+    >
+      <Icon
+        size={24}
+        name="md-notifications"
+        color={theme.COLORS[isWhite ? "WHITE" : "ICON"]}
+      />
+      <Block middle style={notify ? styles.notify : {}} />
+    </TouchableOpacity>
+  );
+
   const handleLeftPress = () => back ? navigation.goBack() : navigation.openDrawer();
-  const renderNotifications = () => <NotificationsButton navigation={navigation} isWhite={white} />;
+  const renderNotifications = () => hideNotificationsButton ? <View/> : <NotificationsButton navigation={navigation} isWhite={white} />;
+
+  const limpiarState = () => {
+    setIsLoading(false);
+    setNotify(false);
+  };
+
+  const isNotify = () => {
+
+    setIsLoading(true);
+
+    Session.getUser().then((usuario) => {
+      NotificacionesQueries._isNotify(
+        usuario.id,
+        (data) => {
+
+          setIsLoading(false);
+          setNotify(data[0].cantidad !== 0);
+        },
+        (error) => {
+          
+          setIsLoading(false);
+          setNotify(false);
+
+          console.log(error);
+        }
+      );
+    });
+  };
+
+  if((notify === null
+    || (route?.params?.isReload ?? false))
+    && !isLoading){ 
+
+    /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
+    navigation.setParams({ isReload: false });
+
+    isNotify();
+  }
 
   return (
     <Block styles={styles.shadow}>

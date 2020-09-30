@@ -29,7 +29,7 @@ export default function LoginStack(props) {
         component={RegisterScreen}
         options={{
           header: ({ navigation }) => (
-            <Header title="Registro" navigation={navigation} back/>
+            <Header title="Registro" navigation={navigation} back hideNotificationsButton/>
           ),
         }}
       />
@@ -38,7 +38,7 @@ export default function LoginStack(props) {
         component={ForgotPasswordScreen}
         options={{
           header: ({ navigation }) => (
-            <Header title="Olvidé mi contraseña" navigation={navigation} back/>
+            <Header title="Olvidé mi contraseña" navigation={navigation} back hideNotificationsButton/>
           ),
         }}
       />

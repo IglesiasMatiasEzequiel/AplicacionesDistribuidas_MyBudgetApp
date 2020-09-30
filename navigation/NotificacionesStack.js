@@ -13,7 +13,7 @@ export default function NotificacionesStack(props) {
           component={NotificacionesScreen}
           options={{
             header: ({ navigation, scene }) => (
-              <Header title="Mis Notificaciones" scene={scene} navigation={navigation} />
+              <Header title="Mis Notificaciones" scene={scene} navigation={navigation} hideNotificationsButton={true}/>
             )
           }}
         />

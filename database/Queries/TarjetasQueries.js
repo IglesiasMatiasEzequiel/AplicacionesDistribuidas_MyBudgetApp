@@ -57,6 +57,26 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _getTarjetasActualizarResumen(idUsuario, today, successCallback, errorCallback){
+
+  var query = "SELECT tarjeta.id, " +
+  " banco.banco, " +
+  " entidadEmisora.entidadEmisora, " +
+  " tarjeta.tarjeta, " +
+  " tarjeta.vencimiento, " +
+  " tarjeta.cierreResumen, " +
+  " tarjeta.vencimientoResumen " +
+  " FROM " + tableName + " as tarjeta " +
+  " INNER JOIN Bancos banco ON tarjeta.idBanco = banco.id " +
+  " INNER JOIN EntidadesEmisoras entidadEmisora ON tarjeta.idEntidadEmisora = entidadEmisora.id " +
+  " WHERE tarjeta.idUsuario = ? " + 
+  " AND tarjeta.cierreResumen <= ? ";
+
+  var params = [idUsuario, today];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _insert(obj, successCallback, errorCallback) {
   db._createTransaction((tx) => {
     db._insertTx(tx, obj, successCallback, errorCallback);
