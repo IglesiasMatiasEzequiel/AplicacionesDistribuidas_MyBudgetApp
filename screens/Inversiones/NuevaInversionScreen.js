@@ -131,7 +131,7 @@ export default function NuevaInversionScreen({ navigation }) {
 
               var obj_e = {
                 idUsuario: usuario.id,
-                fecha: form.fechaInicio,
+                fecha: formatStringDateToDB(form.fechaInicio),
                 monto: form.monto,
                 idTipoEgreso: 2, // Extraodinario
                 detalleEgreso: "Inversion: " + form.nombre,
