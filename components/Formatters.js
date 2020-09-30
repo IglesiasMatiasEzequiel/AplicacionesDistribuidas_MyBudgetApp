@@ -11,7 +11,7 @@ export function formatDateToString(date){
 
 export function formatStringToDate(dateString){
     var dateArr = dateString.split('/');
-    return new Date(dateArr[2], parseInt(dateArr[1]) - 1, dateArr[0] - 1);
+    return new Date(dateArr[2], parseInt(dateArr[1]) - 1, dateArr[0]);
 }
 
 export function formatDateToDB(date){

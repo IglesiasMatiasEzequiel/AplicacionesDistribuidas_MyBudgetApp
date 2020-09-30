@@ -4,7 +4,7 @@ import { Card } from "react-native-elements";
 import { PieChart } from "react-native-chart-kit";
 import { screenStyles } from "../components/Styles";
 
-import { EgresosQueries } from "../database";
+import { CuentasQueries, EgresosQueries } from "../database";
 
 import {
   formatDateToString,
@@ -36,30 +36,6 @@ const colors = [
   "#DA6CA8",
   "#C8F277",
   "#FDFF7E",
-];
-
-const saldosCuentas = [
-  {
-    id: "1",
-    name: "Banco Galicia",
-    saldo: 75040.9,
-    porc: 68,
-    color: colors[0],
-  },
-  {
-    id: "2",
-    name: "BBVA Francés",
-    saldo: 12546.34,
-    porc: 11,
-    color: colors[1],
-  },
-  {
-    id: "3",
-    name: "HSBC",
-    saldo: 25768.99,
-    porc: 21,
-    color: colors[2],
-  },
 ];
 
 const chartConfig = {
@@ -150,13 +126,16 @@ export default function DashboardScreen({ route, navigation }) {
         fromFormatted,
         toFormatted,
         (data) => {
+
+          var gastoTotal = data?.reduce((a, b) => a + (b.gasto || 0), 0) ?? 0;
+
           var dataGastosMes =
             data?.map((item, index) => {
               return {
                 id: index,
                 name: item.medioPago,
                 gasto: item.gasto,
-                porc: 4,
+                porc: parseFloat((item.gasto / gastoTotal) * 100).toFixed(2),
                 color: colors[index],
               };
             }) ?? [];
@@ -180,20 +159,58 @@ export default function DashboardScreen({ route, navigation }) {
     });
   };
 
-  console.log(route?.params);
-  console.log(route?.params?.isReload ?? false);
+  const getSaldosCuentas = () => {
+    setSaldosCuentas((prevState) => ({ ...prevState, isLoading: true }));
+
+    Session.getUser().then((usuario) => {
+      CuentasQueries._getListado(
+        usuario.id,
+        (data) => {
+
+          var saldoTotal = data?.reduce((a, b) => a + (b.monto || 0), 0) ?? 0;
+
+          var dataSaldosCuentas =
+            data?.map((item, index) => {
+              return {
+                id: index,
+                name: item.medioPago,
+                saldo: item.monto,
+                porc: parseFloat((item.monto / saldoTotal) * 100).toFixed(2),
+                color: colors[index],
+              };
+            }) ?? [];
+
+          setSaldosCuentas((prevState) => ({
+            ...prevState,
+            data: dataSaldosCuentas,
+            isLoading: false,
+          }));
+        },
+        (error) => {
+          setSaldosCuentas((prevState) => ({
+            ...prevState,
+            data: [],
+            isLoading: false,
+          }));
+
+          console.log(error);
+        }
+      );
+    });
+  };
 
   if (
     (gastosMes.data === null ||
-      //saldosCuentas.data === null ||
+      saldosCuentas.data === null ||
       (route?.params?.isReload ?? false)) &&
     !gastosMes.isLoading
-     //&& !saldosCuentas.isLoading
+     && !saldosCuentas.isLoading
   ) {
     /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
     navigation.setParams({ isReload: false });
 
     getGastosMes();
+    getSaldosCuentas();
   }
 
   return (
@@ -258,7 +275,7 @@ export default function DashboardScreen({ route, navigation }) {
                 }}
               >
                 <FlatList
-                  data={saldosCuentas}
+                  data={saldosCuentas.data}
                   renderItem={renderItemSaldo}
                   keyExtractor={(item) => item.id}
                 />
