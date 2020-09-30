@@ -167,7 +167,7 @@ export default function Ingresos({ route, navigation }) {
           var tableData = data?.map((item) => {
               return [item.id,
                 formatStringDateFromDB(item.fecha),
-                "$ " + item.monto,
+                "$ " + parseFloat(item.monto).toFixed(2),
                 item.descripcion ?? "-",
                 item.tipoIngreso,
                 item.categoriaIngreso ?? "-",

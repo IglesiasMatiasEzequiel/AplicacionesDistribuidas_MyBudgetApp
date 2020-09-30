@@ -167,7 +167,7 @@ export default function PresupuestosScreen({ route, navigation }) {
               return [
                 item.id,
                 item.categoriaEgreso,
-                item.monto,
+                "$ " + parseFloat(item.monto).toFixed(2),
                 formatStringDateFromDB(item.fechaInicio),
               ];
             }) ?? [];

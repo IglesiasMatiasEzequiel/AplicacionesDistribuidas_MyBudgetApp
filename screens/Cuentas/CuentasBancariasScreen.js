@@ -157,7 +157,7 @@ export default function CuentasBancariasScreen({ route, navigation }) {
                 item.cbu,
                 item.alias,
                 item.descripcion ?? "-",
-                "$" + item.monto,
+                "$ " + parseFloat(item.monto).toFixed(2),
                 item.banco,
                 item.entidadEmisora,
                 "**** **** **** " + item.tarjeta,

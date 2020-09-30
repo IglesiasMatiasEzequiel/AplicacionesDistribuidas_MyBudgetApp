@@ -98,7 +98,7 @@ export default function Ingresos({ navigation }) {
           data?.map((item) => {
             return [
               formatStringDateFromDB(item.fecha),
-              "$ " + item.monto,
+              "$ " + parseFloat(item.monto).toFixed(2),
               item.tipoEgreso,
               item.categoriaEgreso ?? "-",
               item.detalleEgreso ?? "-",
@@ -106,10 +106,12 @@ export default function Ingresos({ navigation }) {
             ];
           }) ?? [];
 
+       var gastoTotal = data?.reduce((a, b) => a + (b.monto || 0), 0) ?? 0;
+
         setListado((prevState) => ({
           ...prevState,
           data: tableData,
-          acumulado: data.reduce((prev, cur) => prev + cur.monto, 0),
+          acumulado: parseFloat(gastoTotal).toFixed(2),
           isLoading: false,
         }));
       },
@@ -190,13 +192,13 @@ export default function Ingresos({ navigation }) {
                 <Text h5 style={titleStyles.titleText}>
                   Gastos
                   {listado.periodo === "1"
-                    ? " de la semana"
+                    ? " de la semana "
                     : listado.periodo === "2"
-                    ? " del mes"
+                    ? " del mes "
                     : listado.periodo === "3"
-                    ? " del año"
+                    ? " del año "
                     : listado.periodo === "4"
-                    ? " acumulados a la fecha"
+                    ? " acumulados a la fecha "
                     : ""}
                   - $ {listado.acumulado ?? 0}
                 </Text>

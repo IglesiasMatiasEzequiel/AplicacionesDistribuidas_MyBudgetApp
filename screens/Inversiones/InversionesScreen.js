@@ -183,10 +183,10 @@ export default function InversionesScreen({ route,navigation }) {
             data?.map((item) => {
               return [item.id,
                 item.tipoInversion,
-                item.monto,
+                "$ " + parseFloat(item.monto).toFixed(2),
                 item.cuenta,
-                item.fechaInicio!==null ?formatStringDateFromDB(item.fechaInicio): "-",
-                item.fechaVencimiento!==null ? formatStringDateFromDB(item.fechaVencimiento):"-",
+                item.fechaInicio !== null ? formatStringDateFromDB(item.fechaInicio): "-",
+                item.fechaVencimiento !== null ? formatStringDateFromDB(item.fechaVencimiento):"-",
                 item.duracion,
                 item.nombre,
               ];

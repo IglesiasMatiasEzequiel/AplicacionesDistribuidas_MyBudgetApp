@@ -167,7 +167,7 @@ export default function Egresos({ route, navigation }) {
               return [
                 item.id,
                 formatStringDateFromDB(item.fecha),
-                "$ " + item.monto,
+                "$ " + parseFloat(item.monto).toFixed(2),
                 item.tipoEgreso,
                 item.categoriaEgreso ?? "-",
                 item.detalleEgreso ?? "-",

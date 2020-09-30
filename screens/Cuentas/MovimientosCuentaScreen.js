@@ -116,7 +116,7 @@ export default function MovimientoCuenta({ route, navigation }) {
               return [
                 item.tipoRegistro,
                 formatStringDateFromDB(item.fecha),
-                "$ " + item.monto,
+                "$ " + parseFloat(item.monto).toFixed(2),
                 item.descripcion ?? "-",
                 item.tipo,
                 item.categoria ?? "-",

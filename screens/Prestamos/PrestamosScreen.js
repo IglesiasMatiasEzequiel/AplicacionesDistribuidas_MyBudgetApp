@@ -135,7 +135,7 @@ export default function PrestamosScreen({ route, navigation }) {
                 item.id,
                 item.tipoPrestamo,
                 item.emisorDestinatario,
-                item.monto,
+                "$ " + parseFloat(item.monto).toFixed(2),
                 item.intereses,
                 item.cuota,
                 item.vencimiento,
