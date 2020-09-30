@@ -1,60 +1,65 @@
 import React from "react";
-import { View, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, TouchableOpacity, ScrollView, Text } from "react-native";
 
-import { Text, theme } from "galio-framework";
-import DropDownPicker from "react-native-dropdown-picker";
-import { Textbox, TextboxDate, Dropdown, CustomSpinner, CustomModal } from "../../components";
+import {
+  Textbox,
+  TextboxDate,
+  Dropdown,
+  CustomSpinner,
+  CustomModal,
+} from "../../components";
 import { tipoInversionData } from "../../components/Data";
 import {
   screenStyles,
   buttonStyles,
-  textboxStyles,
-  dropdownStyles,
 } from "../../components/Styles";
 
 import { validateRequired } from "../../components/Validations";
-import { CuentasQueries, IngresosQueries,EgresosQueries } from "../../database";
+import {
+  CuentasQueries,
+  IngresosQueries,
+  EgresosQueries,
+  DataBase,
+} from "../../database";
 import { InversionesQueries } from "../../database";
 import * as Session from "../../components/Session";
-import { 
+import {
   formatStringToDate,
-  formatDateToString, 
-  formatStringDateToDB, 
-  formatStringDateFromDB 
+  formatDateToString,
+  formatStringDateToDB,
 } from "../../components/Formatters";
 
 export default function NuevaInversionScreen({ navigation }) {
-
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
 
   const [dropdownData, setDropdownData] = React.useState(null);
-  
+
   const [form, setForm] = React.useState({
     tipo: null,
     monto: "",
-    origen: null,
+    cuenta: null,
     fechaInicio: "",
     nombre: "",
-    duracion: ""
+    duracion: "",
   });
 
   const [validations, setValidations] = React.useState({
     tipo: true,
     monto: true,
-    origen: true,
+    cuenta: true,
     fechaInicio: true,
     nombre: true,
-    duracion: true
+    duracion: true,
   });
 
   const [validationMessages, setValidationMessages] = React.useState({
     tipo: "",
     monto: "",
-    origen: "",
+    cuenta: "",
     fechaInicio: "",
     nombre: "",
-    duracion: ""
+    duracion: "",
   });
 
   const handleChange = (prop, value) => {
@@ -63,118 +68,112 @@ export default function NuevaInversionScreen({ navigation }) {
   };
 
   const limpiarState = () => {
-
     setForm({
       tipo: null,
       monto: "",
-      origen: null,
+      cuenta: null,
       fechaInicio: "",
       nombre: "",
-      duracion: ""
+      duracion: "",
     });
 
     setValidations({
       tipo: true,
       monto: true,
-      origen: true,
+      cuenta: true,
       fechaInicio: true,
       nombre: true,
-      duracion: true
+      duracion: true,
     });
 
     setValidationMessages({
       tipo: "",
       monto: "",
-      origen: "",
+      cuenta: "",
       fechaInicio: "",
       nombre: "",
-      duracion: ""
+      duracion: "",
     });
   };
 
   const onConfirmar = async () => {
-
     const isValidForm = await validateForm();
 
-    if(isValidForm){
+    if (isValidForm) {
       setIsLoading(true);
 
       Session.getUser().then((usuario) => {
         var obj = {
           idUsuario: usuario.id,
           idTipo: form.tipo,
+          idCuenta: form.cuenta,
           monto: form.monto,
-          origen: form.origen,
           fechaInicio: formatStringDateToDB(form.fechaInicio),
           nombre: form.nombre,
-          duracion: form.duracion
+          duracion: form.duracion,
+        };
+
+        var fechaVencimiento = new Date();
+
+        if(form.tipo === "2") {
+          fechaVencimiento = formatStringToDate(form.fechaInicio);
+          fechaVencimiento.setDate(fechaVencimiento.getDate() + parseInt(form.duracion));
+
+          obj.fechaVencimiento = formatStringDateToDB(formatDateToString(fechaVencimiento))
         }
 
-        InversionesQueries._insert(obj,
-          (data) => {
+        DataBase._createTransaction((tx) => {
+          InversionesQueries._insertTx(
+            tx,
+            obj,
+            () => {
+              CuentasQueries._updateQuitarMonto(form.cuenta, form.monto);
 
-            CuentasQueries._updateQuitarMonto(form.origen, form.monto);
-
-            var obj_e = {
-              idUsuario: usuario.id,
-              fecha: form.fechaInicio,
-              monto: form.monto,
-              idTipoEgreso: 2, // Extraodinario
-              //idCategoriaEgreso: form.categoriaEgreso,
-              detalleEgreso: "Inversion: " + form.nombre,
-              idMedioPago: 4, // Debito Automatico
-              //cuotas: form.cuotas,
-              idCuenta: form.origen,
-              //idTarjeta: form.tarjeta,
-            }
-            EgresosQueries._insert(obj_e,
-              (data) => {
-                console.log("Se inserto correctamente el egreso. ");
-              },
-              (error) => {
-                console.log("Ocurrió un error al insertar el egreso. - " + error);
-              }
-            );
- 
-            if(form.tipo === "2"){ // Plazo fijo
-              var to = new Date();
-              to = formatStringToDate(form.fechaInicio);
-              to.setDate(to.getDate + form.duracion);
-
-              var obj_i = {
+              var obj_e = {
                 idUsuario: usuario.id,
-                idTipoIngreso: 2, // Extraordinario
-                //idCategoriaIngreso: form.categoriaIngreso,
-                idDestinoIngreso: 1,
-                idCuenta: form.cuenta,
-                fecha: formatStringDateToDB(formatDateToString(to)),
+                fecha: form.fechaInicio,
                 monto: form.monto,
-                descripcion: "Inversion: " + form.nombre,
-              }
-        
-              IngresosQueries._insert(obj_i,
-                () => {
+                idTipoEgreso: 2, // Extraodinario
+                detalleEgreso: "Inversion: " + form.nombre,
+                idMedioPago: 4, // Debito Automatico
+                idCuenta: form.cuenta,
+              };
+
+              EgresosQueries._insertTx(tx, obj_e);
+
+              if (form.tipo === "2") {
+                // Plazo fijo
+
+                var obj_i = {
+                  idUsuario: usuario.id,
+                  idTipoIngreso: 2, // Extraordinario
+                  idDestinoIngreso: 1,
+                  idCuenta: form.cuenta,
+                  fecha: obj.fechaVencimiento,
+                  monto: form.monto,
+                  descripcion: "Inversion: " + form.nombre,
+                };
+
+                IngresosQueries._insertTx(tx, obj_i, () => {
                   CuentasQueries._updateAgregarMonto(form.cuenta, form.monto);
-                  console.log("Se inserto correctamente el ingreso. ");
-                },
-                (error) => {
-                  console.log("Ocurrió un error al insertar el ingreso. - " + error);
-                }
+                });
+              }
+
+              setIsLoading(false);
+              setModalData({
+                message: "La inversion se guardó correctamente.",
+                isVisible: true,
+                isSuccess: true,
+                successBtnText: "Aceptar",
+              });
+            },
+            (error) => {
+              console.log(
+                "Ocurrió un error al insertar la inversión. - " + error
               );
             }
-
-            setIsLoading(false);
-            setModalData({
-              message: "La inversion se guardó correctamente.",
-              isVisible: true,
-              isSuccess: true,
-              successBtnText: "Aceptar",
-            });
-          },
-          (error) => {
-            console.log("Ocurrió un error al insertar el ingreso. - " + error);
-          }
-        );
+          );
+        });
       });
     }
   };
@@ -182,47 +181,50 @@ export default function NuevaInversionScreen({ navigation }) {
   const validateForm = async () => {
     const isTipoValid = await validateRequired(form.tipo);
     const isMontoValid = await validateRequired(form.monto);
-    const isOrigenValid = await validateRequired(form.origen);
+    const isCuentaValid = await validateRequired(form.cuenta);
     const isFechaInicioValid = await validateRequired(form.fechaInicio);
-    
+
     var isNombreValid = true;
-    if(form.tipo !== null){
+    if (form.tipo !== null) {
       isNombreValid = await validateRequired(form.nombre);
     }
 
     var isDuracionValid = true;
-    if(form.tipo === "2"){
+    if (form.tipo === "2") {
       isDuracionValid = await validateRequired(form.duracion);
     }
-    
+
     setValidations((prevState) => ({
       ...prevState,
       tipo: isTipoValid,
       monto: isMontoValid,
-      origen: isOrigenValid,
+      cuenta: isCuentaValid,
       fechaInicio: isFechaInicioValid,
       nombre: isNombreValid,
-      duracion: isDuracionValid
+      duracion: isDuracionValid,
     }));
 
     setValidationMessages((prevState) => ({
       ...prevState,
       tipo: !isTipoValid ? "Debe seleccionar un tipo..." : "",
       monto: !isMontoValid ? "El monto es requerido..." : "",
-      origen: !isOrigenValid ? "Debe seleccionar el origen de la inversión..." : "",
+      cuenta: !isCuentaValid
+        ? "Debe seleccionar una cuenta origen..."
+        : "",
       fechaInicio: !isFechaInicioValid ? "La fecha es requerida..." : "",
       nombre: !isNombreValid ? "Debe ingresar un nombre a la inversión..." : "",
-      duracion: !isDuracionValid ? "Debe ingresar la duración..." : ""
+      duracion: !isDuracionValid ? "Debe ingresar la duración..." : "",
     }));
 
-    return isTipoValid 
-    && isMontoValid 
-    && isOrigenValid 
-    && isFechaInicioValid 
-    && isNombreValid 
-    && isDuracionValid;
+    return (
+      isTipoValid &&
+      isMontoValid &&
+      isCuentaValid &&
+      isFechaInicioValid &&
+      isNombreValid &&
+      isDuracionValid
+    );
   };
-
 
   const onBack = () => {
     limpiarState();
@@ -230,18 +232,17 @@ export default function NuevaInversionScreen({ navigation }) {
   };
 
   const fillDropdownData = () => {
-
     setIsLoading(true);
 
     Session.getUser().then((usuario) => {
       CuentasQueries._selectAllByIdUsuario(usuario.id, (data) => {
-
-        var cuentas = data?.map((item) => {
-          return {
-            label: "CBU: " + item.cbu + " - " + item.descripcion,
-            value: item.id.toString()
-          }   
-        }) ?? [];           
+        var cuentas =
+          data?.map((item) => {
+            return {
+              label: "CBU: " + item.cbu + " - " + item.descripcion,
+              value: item.id.toString(),
+            };
+          }) ?? [];
 
         setDropdownData({
           cuentas: cuentas,
@@ -250,67 +251,74 @@ export default function NuevaInversionScreen({ navigation }) {
         setIsLoading(false);
       });
     });
-  }
+  };
 
-  if(dropdownData === null && !isLoading){
+  if (dropdownData === null && !isLoading) {
     fillDropdownData();
   }
-
 
   return (
     <ScrollView style={screenStyles.screen}>
       {dropdownData !== null && (
         <View>
-            <Dropdown
-              propName="tipo"
-              items={tipoInversionData}
-              defaultValue={form.tipo}
-              placeholder="Seleccione un tipo de inversión."
-              handleChange={handleChange}
-              isValid={validations.tipo}
-              validationMessage={validationMessages.tipo}
-            />
+          <Dropdown
+            propName="tipo"
+            items={tipoInversionData}
+            defaultValue={form.tipo}
+            placeholder="Seleccione un tipo de inversión."
+            handleChange={handleChange}
+            isValid={validations.tipo}
+            validationMessage={validationMessages.tipo}
+          />
+          <Textbox
+            propName="monto"
+            placeholder="Monto..."
+            handleChange={handleChange}
+            value={form.monto}
+            isValid={validations.monto}
+            validationMessage={validationMessages.monto}
+            keyboardType="numeric"
+          />
+          <Dropdown
+            propName="cuenta"
+            items={dropdownData.cuentas}
+            defaultValue={form.cuenta}
+            placeholder="Seleccione un cuenta."
+            handleChange={handleChange}
+            isValid={validations.cuenta}
+            validationMessage={validationMessages.cuenta}
+          />
+          <TextboxDate
+            propName="fechaInicio"
+            placeholder="Fecha..."
+            handleChange={handleChange}
+            value={form.fechaInicio}
+            isValid={validations.fechaInicio}
+            validationMessage={validationMessages.fechaInicio}
+          />
+
+          {form.tipo !== null && (
             <Textbox
-              propName="monto"
-              placeholder="Monto..."
-              handleChange={handleChange}
-              value={form.monto}
-              isValid={validations.monto}
-              validationMessage={validationMessages.monto}
-              keyboardType="numeric"
-            />
-            <Dropdown
-              propName="origen"
-              items={dropdownData.cuentas}
-              defaultValue={form.origen}
-              placeholder="Seleccione un origen."
-              handleChange={handleChange}
-              isValid={validations.origen}
-              validationMessage={validationMessages.origen}
-            />
-            <TextboxDate
-              propName="fechaInicio"
-              placeholder="Fecha..."
-              handleChange={handleChange}
-              value={form.fechaInicio}
-              isValid={validations.fechaInicio}
-              validationMessage={validationMessages.fechaInicio}
-            />
-            
-            {form.tipo !== null && (<Textbox
               propName="nombre"
               placeholder={
-                form.tipo === "1" ? "Nombre de la acción..." 
-                : form.tipo === "2" ? "Nombre del plazo fijo..."
-                : form.tipo === "3" ? "Nombre del fondo común..."
-                : form.tipo === "4" ? "Nombre del bono..." : "" }
+                form.tipo === "1"
+                  ? "Nombre de la acción..."
+                  : form.tipo === "2"
+                  ? "Nombre del plazo fijo..."
+                  : form.tipo === "3"
+                  ? "Nombre del fondo común..."
+                  : form.tipo === "4"
+                  ? "Nombre del bono..."
+                  : ""
+              }
               handleChange={handleChange}
               value={form.nombre}
               isValid={validations.nombre}
               validationMessage={validationMessages.nombre}
-            />)}
+            />
+          )}
 
-            {form.tipo === "2" && (
+          {form.tipo === "2" && (
             <Textbox
               propName="duracion"
               placeholder="Duración (30 a 365 días)..."
@@ -320,7 +328,7 @@ export default function NuevaInversionScreen({ navigation }) {
               validationMessage={validationMessages.duracion}
               keyboardType="numeric"
             />
-            )}
+          )}
         </View>
       )}
 

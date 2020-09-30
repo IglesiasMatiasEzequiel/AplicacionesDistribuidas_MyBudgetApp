@@ -9,10 +9,10 @@ import {
 import { Textbox, CustomModal, CustomSpinner } from "../../components";
 import { screenStyles, buttonStyles } from "../../components/Styles";
 
-import { DataBase, TarjetasQueries, UsuariosQueries, NotificacionesQueries } from "../../database";
+import { DataBase, TarjetasQueries, UsuariosQueries, NotificacionesQueries, InversionesQueries } from "../../database";
 import * as Session from "../../components/Session";
 import { validateRequired } from "../../components/Validations";
-import { formatStringDateToDB, formatDateToString } from '../../components/Formatters'
+import { formatStringDateToDB, formatDateToString, formatStringDateFromDB } from '../../components/Formatters'
 
 export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
@@ -135,6 +135,33 @@ export default function LoginScreen({ navigation }) {
 
   const enviarNotificacionesInversiones = (idUsuario) => {
     
+    var to = new Date();
+    var from = new Date();
+
+    to.setDate(to.getDate() + 7); //Avisa los que están por vencer en los próximos 7 días
+
+    var toFormatted = formatStringDateToDB(formatDateToString(to));
+    var fromFormatted = formatStringDateToDB(formatDateToString(from));
+
+    InversionesQueries._getProximosVencimientos(
+      idUsuario,
+      fromFormatted,
+      toFormatted,
+      (data) => {
+        if (data !== null && data.length > 0) {
+          DataBase._createTransaction((tx) => {
+            data.forEach(inversion => {
+              NotificacionesQueries._insertTx(tx, {
+                idUsuario: idUsuario, 
+                titulo: 'Vencimiento de inversión',
+                mensaje: 'La inversión ' + inversion.nombre + ' está por vencer el día ' + formatStringDateFromDB(inversion.fechaVencimiento),
+                fecha: toFormatted,
+                leido: 0
+              });
+            });
+          });
+        }
+      });
   }
 
   const validateForm = async () => {

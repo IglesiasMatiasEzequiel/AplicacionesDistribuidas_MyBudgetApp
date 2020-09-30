@@ -151,13 +151,14 @@ export default function InversionesScreen({ route,navigation }) {
   const tableHeaders = [
     "",
     "Tipo",
-    "Dinero",
-    "F. Inicio.",
-    "Origen",
-    "Duracion",
+    "Monto",
+    "Cuenta",
+    "F. Inicio",
+    "F. Venc.",
+    "Duración",
     "Nombre"
   ];
-  const columnWidth = [30, 150, 80, 150, 150, 150,200];
+  const columnWidth = [30, 200, 150, 450, 150, 150, 200, 200];
 
   const getListado = () => {
     setListado((prevState) => ({ ...prevState, isLoading: true }));
@@ -183,8 +184,9 @@ export default function InversionesScreen({ route,navigation }) {
               return [item.id,
                 item.tipoInversion,
                 item.monto,
-                item.origen,
+                item.cuenta,
                 formatStringDateFromDB(item.fechaInicio),
+                formatStringDateFromDB(item.fechaVencimiento),
                 item.duracion,
                 item.nombre,
               ];
