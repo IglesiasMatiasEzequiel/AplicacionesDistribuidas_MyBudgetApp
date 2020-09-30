@@ -4,7 +4,7 @@ const tableName = "Egresos";
 
 export function _createTable(tx, successCallback, errorCallback) {
   var query = 
-  "CREATE TABLE IF NOT EXISTS Egresos (" +
+  "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
     "idUsuario INTEGER," +
     "idTipoEgreso INTEGER," +
@@ -17,6 +17,7 @@ export function _createTable(tx, successCallback, errorCallback) {
     "detalleEgreso VARCHAR(255)," +
     "cuotas INTEGER," +
     "nroCuota INTEGER," +
+    "proxVencimiento DATE," +
     "FOREIGN KEY(idMedioPago) REFERENCES MediosPago(id)," +
     "FOREIGN KEY(idTarjeta) REFERENCES Tarjetas(id)," +
     "FOREIGN KEY(idCuenta) REFERENCES Cuentas(id)," +
@@ -98,6 +99,28 @@ export function _getListadoGastosTarjeta(idTarjeta, from, to, successCallback, e
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _getPagosAGenerar(idUsuario, vencimiento, successCallback, errorCallback){
+
+  var query = "SELECT egreso.id, " +
+  " egreso.idTipoEgreso, " +
+  " egreso.idCategoriaEgreso, " +
+  " egreso.idTarjeta, " +
+  " egreso.fecha, " +
+  " egreso.monto, " +
+  " egreso.detalleEgreso, " +
+  " egreso.cuotas, " +
+  " egreso.nroCuota, " +
+  " egreso.proxVencimiento " +
+  " FROM " + tableName + " as egreso " +
+  " WHERE egreso.idUsuario = ? " + 
+  " AND egreso.idMedioPago = '2' " + 
+  " AND egreso.proxVencimiento <= ? ";
+
+  var params = [idUsuario, vencimiento];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _getGastosMesPorTipoPago(idUsuario, from, to, successCallback, errorCallback){
 
   var query = "SELECT " +
@@ -127,8 +150,8 @@ export function _insertTx(tx, obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO " +
     tableName +
-    "(idUsuario, idTipoEgreso, idCategoriaEgreso, idCuenta, idTarjeta, idMedioPago, fecha, monto, detalleEgreso, cuotas, nroCuota) " +
-    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "(idUsuario, idTipoEgreso, idCategoriaEgreso, idCuenta, idTarjeta, idMedioPago, fecha, monto, detalleEgreso, cuotas, nroCuota, proxVencimiento) " +
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
    
   var params = [
     obj.idUsuario,
@@ -141,7 +164,8 @@ export function _insertTx(tx, obj, successCallback, errorCallback) {
     obj.monto,
     obj.detalleEgreso,
     obj.cuotas,
-    obj.nroCuota ?? null
+    obj.nroCuota ?? null,
+    obj.proxVencimiento ?? null,
   ];
 
   db._insertTx(tx, query, params, successCallback, errorCallback);
@@ -151,4 +175,11 @@ export function _insert(obj, successCallback, errorCallback) {
   db._createTransaction((tx) => {
     _insertTx(tx, obj, successCallback, errorCallback);
   });
+}
+
+export function _updateProxVencimientoTx(tx, id, successCallback, errorCallback) {
+  
+  var query = "UPDATE " + tableName + " SET proxVencimiento = NULL WHERE id = ? ";
+
+  db._updateTx(tx, query, [id], successCallback, errorCallback);
 }

@@ -9,10 +9,22 @@ import {
 import { Textbox, CustomModal, CustomSpinner } from "../../components";
 import { screenStyles, buttonStyles } from "../../components/Styles";
 
-import { DataBase, TarjetasQueries, UsuariosQueries, NotificacionesQueries, InversionesQueries } from "../../database";
+import {
+  DataBase,
+  TarjetasQueries,
+  UsuariosQueries,
+  NotificacionesQueries,
+  InversionesQueries,
+  EgresosQueries,
+} from "../../database";
 import * as Session from "../../components/Session";
 import { validateRequired } from "../../components/Validations";
-import { formatStringDateToDB, formatDateToString, formatStringDateFromDB } from '../../components/Formatters'
+import {
+  formatStringDateToDB,
+  formatDateToString,
+  formatStringDateFromDB,
+  formatStringToDate,
+} from "../../components/Formatters";
 
 export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
@@ -53,7 +65,6 @@ export default function LoginScreen({ navigation }) {
   };
 
   const onLogin = async () => {
-    
     Session.cleanSession();
 
     const isValidForm = await validateForm();
@@ -63,15 +74,15 @@ export default function LoginScreen({ navigation }) {
 
       var loginObj = {
         email: form.email,
-        password: form.password
-      }
+        password: form.password,
+      };
 
-      UsuariosQueries._login(loginObj, async (data) => {
-
+      UsuariosQueries._login(
+        loginObj,
+        async (data) => {
           setIsLoading(false);
 
           if (data && data.length === 1) {
-            
             limpiarState();
 
             var usuario = {
@@ -85,6 +96,7 @@ export default function LoginScreen({ navigation }) {
             Session.setUser(usuario);
 
             enviarNotificaciones(usuario.id);
+            generarPagoCuotas(usuario.id);
 
             navigation.navigate("App", { usuario: usuario });
           } else {
@@ -106,7 +118,7 @@ export default function LoginScreen({ navigation }) {
   const enviarNotificaciones = (idUsuario) => {
     enviarNotificacionesResumenTarjeta(idUsuario);
     enviarNotificacionesInversiones(idUsuario);
-  }
+  };
 
   const enviarNotificacionesResumenTarjeta = (idUsuario) => {
     var today = new Date();
@@ -118,23 +130,24 @@ export default function LoginScreen({ navigation }) {
       (data) => {
         if (data !== null && data.length > 0) {
           DataBase._createTransaction((tx) => {
-            data.forEach(tarjeta => {
+            data.forEach((tarjeta) => {
               NotificacionesQueries._insertTx(tx, {
-                idUsuario: idUsuario, 
-                titulo: 'Fecha de Resúmen de Tarjeta',
-                mensaje: 'Debe actualizar la fecha del resúmen de la tarjeta ' + tarjeta.tarjeta,
+                idUsuario: idUsuario,
+                titulo: "Fecha de Resúmen de Tarjeta",
+                mensaje:
+                  "Debe actualizar la fecha del resúmen de la tarjeta " +
+                  tarjeta.tarjeta,
                 fecha: todayFormatted,
-                leido: 0
+                leido: 0,
               });
             });
           });
         }
       }
     );
-  }
+  };
 
   const enviarNotificacionesInversiones = (idUsuario) => {
-    
     var to = new Date();
     var from = new Date();
 
@@ -150,19 +163,68 @@ export default function LoginScreen({ navigation }) {
       (data) => {
         if (data !== null && data.length > 0) {
           DataBase._createTransaction((tx) => {
-            data.forEach(inversion => {
+            data.forEach((inversion) => {
               NotificacionesQueries._insertTx(tx, {
-                idUsuario: idUsuario, 
-                titulo: 'Vencimiento de inversión',
-                mensaje: 'La inversión ' + inversion.nombre + ' está por vencer el día ' + formatStringDateFromDB(inversion.fechaVencimiento),
+                idUsuario: idUsuario,
+                titulo: "Vencimiento de inversión",
+                mensaje:
+                  "La inversión " +
+                  inversion.nombre +
+                  " está por vencer el día " +
+                  formatStringDateFromDB(inversion.fechaVencimiento),
                 fecha: toFormatted,
-                leido: 0
+                leido: 0,
               });
             });
           });
         }
-      });
-  }
+      }
+    );
+  };
+
+  const generarPagoCuotas = (idUsuario) => {
+    var today = new Date();
+    var todayFormatted = formatStringDateToDB(formatDateToString(today));
+
+    EgresosQueries._getPagosAGenerar(
+      idUsuario,
+      todayFormatted,
+      (pagosAGenerar) => {
+        if (pagosAGenerar !== null && pagosAGenerar.length > 0) {
+          DataBase._createTransaction((tx) => {
+            pagosAGenerar.forEach((pago) => {
+              
+              var today = new Date();
+              var proxVencimiento = formatStringToDate(
+                formatStringDateFromDB(pago.proxVencimiento)
+              );
+              proxVencimiento.setDate(proxVencimiento.getDate() + 30);
+
+              //Actualizo la fecha a null del que venció
+              EgresosQueries._updateProxVencimientoTx(tx, pago.id);
+
+              if (pago.nroCuota <= pago.cuotas) {
+                //Inserto el ingreso que venció
+                EgresosQueries._insertTx(tx, {
+                  idUsuario: idUsuario,
+                  fecha: formatStringDateToDB(formatDateToString(today)),
+                  monto: pago.monto,
+                  idTipoEgreso: pago.idTipoEgreso,
+                  idCategoriaEgreso: pago.idCategoriaEgreso,
+                  detalleEgreso: pago.detalleEgreso,
+                  idMedioPago: "2",
+                  cuotas: pago.cuotas,
+                  idTarjeta: pago.idTarjeta,
+                  nroCuota: pago.nroCuota + 1,
+                  proxVencimiento: formatStringDateToDB(formatDateToString(proxVencimiento))
+                });
+              }
+            });
+          });
+        }
+      }
+    );
+  };
 
   const validateForm = async () => {
     const isEmailValid = await validateRequired(form.email);
@@ -200,7 +262,8 @@ export default function LoginScreen({ navigation }) {
     });
   };
 
-  const onCloseModal = () => setModalData(prevState => ({ ...prevState, isVisible: false }));
+  const onCloseModal = () =>
+    setModalData((prevState) => ({ ...prevState, isVisible: false }));
 
   const onRegister = () => {
     limpiarState();
@@ -213,7 +276,6 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-
     <ScrollView style={screenStyles.screen}>
       <View style={styles.logoContainer}>
         <Text style={styles.logo}>MyBudgetApp</Text>
@@ -225,7 +287,7 @@ export default function LoginScreen({ navigation }) {
         value={form.email}
         isValid={validations.email}
         validationMessage={validationMessages.email}
-        keyboardType='email-address'
+        keyboardType="email-address"
       />
       <Textbox
         propName="password"

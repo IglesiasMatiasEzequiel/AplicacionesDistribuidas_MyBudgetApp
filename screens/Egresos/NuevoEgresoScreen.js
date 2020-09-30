@@ -22,7 +22,7 @@ import {
 
 import { validateRequired } from "../../components/Validations";
 import { DataBase, EgresosQueries, CuentasQueries, TarjetasQueries } from "../../database";
-import { formatDateToString, formatStringDateToDB, formatStringToDate } from "../../components/Formatters";
+import { formatDateToString, formatStringDateToDB, formatStringDateFromDB, formatStringToDate } from "../../components/Formatters";
 
 import * as Session from "../../components/Session";
 
@@ -141,7 +141,7 @@ export default function NuevoEgresoScren({ navigation }) {
         
         var obj = {
           idUsuario: usuario.id,
-          fecha: form.fecha,
+          fecha: formatStringDateToDB(form.fecha),
           monto: form.monto,
           idTipoEgreso: form.tipoEgreso,
           idCategoriaEgreso: form.categoriaEgreso,
@@ -152,13 +152,24 @@ export default function NuevoEgresoScren({ navigation }) {
           idTarjeta: form.tarjeta,
         };
         
-        if(form.medioPago === "1"){
+        if(form.medioPago === "2"){
 
-          obj.fecha = formatStringDateToDB(obj.fecha);
+          var proxVencimientoDate = formatStringToDate(form.fecha);
+          proxVencimientoDate.setDate(proxVencimientoDate.getDate() + 30);
+
+          obj.monto = form.monto / form.cuotas;
+          obj.nroCuota = 1;
+          obj.proxVencimiento = formatStringDateToDB(formatDateToString(proxVencimientoDate));
+        }
 
           EgresosQueries._insert(
             obj,
             () => {
+
+              if (form.medioPago === "3" || form.medioPago === "4" || form.medioPago === "5") { //Cuenta bancaria
+                CuentasQueries._updateQuitarMonto(form.cuenta, form.monto);
+              }
+
               setIsLoading(false);
               setModalData({
                 message: "El egreso se guardó correctamente.",
@@ -172,65 +183,7 @@ export default function NuevoEgresoScren({ navigation }) {
               console.log("Ocurrió un error al insertar el egreso. - " + error);
             }
           );
-        }
-
-        if (form.medioPago === "2") { //Tarjeta de crédito
-
-          DataBase._createTransaction((tx) => {
-            var fechaPrimerCuota = obj.fecha;
-            var montoPorCuota = obj.monto / obj.cuotas;
-
-            var cuota;
-            for (cuota = 1; cuota <= form.cuotas; cuota++) {
-              var fechaCuota = fechaPrimerCuota;
-
-              if (cuota !== 1) {
-                var fechaCuotaDate = formatStringToDate(fechaCuota);
-                fechaCuotaDate.setDate(fechaCuotaDate.getDate() + 30 * cuota);
-                fechaCuota = formatDateToString(fechaCuotaDate);
-              }
-
-              obj.monto = montoPorCuota;
-              obj.fecha = formatStringDateToDB(fechaCuota);
-              obj.nroCuota = cuota;
-
-              EgresosQueries._insertTx(tx, obj);
-            }
-
-            setIsLoading(false);
-            setModalData({
-              message: "El egreso se guardó correctamente.",
-              isVisible: true,
-              isSuccess: true,
-              successBtnText: "Aceptar",
-            });
-          });
-        } 
-        
-        if (form.medioPago === "3" || form.medioPago === "4" || form.medioPago === "5") { //Cuenta bancaria
-
-          obj.fecha = formatStringDateToDB(obj.fecha);
-
-          EgresosQueries._insert(
-            obj,
-            () => {
-              CuentasQueries._updateQuitarMonto(form.cuenta, form.monto, () => {
-                setIsLoading(false);
-                setModalData({
-                  message: "El egreso se guardó correctamente.",
-                  isVisible: true,
-                  isSuccess: true,
-                  successBtnText: "Aceptar",
-                });
-              });
-            },
-            (error) => {
-              setIsLoading(false);
-              console.log("Ocurrió un error al insertar el egreso. - " + error);
-            }
-          );
-        } 
-      });
+      });  
     }
   };
 
