@@ -9,9 +9,10 @@ import {
 import { Textbox, CustomModal, CustomSpinner } from "../../components";
 import { screenStyles, buttonStyles } from "../../components/Styles";
 
-import { UsuariosQueries } from "../../database";
+import { DataBase, TarjetasQueries, UsuariosQueries, NotificacionesQueries } from "../../database";
 import * as Session from "../../components/Session";
 import { validateRequired } from "../../components/Validations";
+import { formatStringDateToDB, formatDateToString } from '../../components/Formatters'
 
 export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
@@ -83,6 +84,8 @@ export default function LoginScreen({ navigation }) {
 
             Session.setUser(usuario);
 
+            enviarNotificaciones(usuario.id);
+
             navigation.navigate("App", { usuario: usuario });
           } else {
             setModalData({
@@ -99,6 +102,40 @@ export default function LoginScreen({ navigation }) {
       );
     }
   };
+
+  const enviarNotificaciones = (idUsuario) => {
+    enviarNotificacionesResumenTarjeta(idUsuario);
+    enviarNotificacionesInversiones(idUsuario);
+  }
+
+  const enviarNotificacionesResumenTarjeta = (idUsuario) => {
+    var today = new Date();
+    var todayFormatted = formatStringDateToDB(formatDateToString(today));
+
+    TarjetasQueries._getTarjetasActualizarResumen(
+      idUsuario,
+      todayFormatted,
+      (data) => {
+        if (data !== null && data.length > 0) {
+          DataBase._createTransaction((tx) => {
+            data.forEach(tarjeta => {
+              NotificacionesQueries._insertTx(tx, {
+                idUsuario: idUsuario, 
+                titulo: 'Fecha de Resúmen de Tarjeta',
+                mensaje: 'Debe actualizar la fecha del resúmen de la tarjeta ' + tarjeta.tarjeta,
+                fecha: todayFormatted,
+                leido: 0
+              });
+            });
+          });
+        }
+      }
+    );
+  }
+
+  const enviarNotificacionesInversiones = (idUsuario) => {
+    
+  }
 
   const validateForm = async () => {
     const isEmailValid = await validateRequired(form.email);

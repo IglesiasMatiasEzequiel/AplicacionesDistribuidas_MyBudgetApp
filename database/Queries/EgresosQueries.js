@@ -46,6 +46,34 @@ export function _deleteById(id, successCallback, errorCallback) {
   db._deleteById(tableName, id, successCallback, errorCallback);
 }
 
+export function _getListado(idUsuario, from, to, successCallback, errorCallback){
+
+  var query = "SELECT egreso.id, " +
+  " egreso.fecha, " +
+  " egreso.monto, " +
+  " egreso.detalleEgreso, " +
+  " egreso.cuotas, " +
+  " medioPago.medioPago, " +
+  " tipoEgreso.tipoEgreso, " +
+  " categoriaEgreso.categoriaEgreso, " +
+  " banco.banco || ' - ' || cuenta.cbu as cuenta, " +
+  " entidadEmisora.entidadEmisora || ' - **** **** **** ' || tarjeta.tarjeta as tarjeta " +
+  " FROM " + tableName + " as egreso " +
+  " INNER JOIN TiposEgreso tipoEgreso ON egreso.idTipoEgreso = tipoEgreso.id " +
+  " INNER JOIN MediosPago medioPago ON egreso.idMedioPago = medioPago.id " +
+  " LEFT JOIN CategoriasEgreso categoriaEgreso ON egreso.idCategoriaEgreso = categoriaEgreso.id " +
+  " LEFT JOIN Cuentas cuenta ON egreso.idCuenta = cuenta.id " +
+  " LEFT JOIN Bancos banco ON cuenta.idBanco = banco.id " +
+  " LEFT JOIN Tarjetas tarjeta ON egreso.idTarjeta = tarjeta.id " +
+  " LEFT JOIN EntidadesEmisoras entidadEmisora ON tarjeta.idEntidadEmisora = entidadEmisora.id " +
+  " WHERE egreso.idUsuario = ? " +
+  " AND egreso.fecha BETWEEN ? AND ? ";
+
+  var params = [idUsuario, from, to];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _deleteByIdCuentaTx(tx, idCuenta, successCallback, errorCallback) {
   
   var query = "DELETE FROM " + tableName + " WHERE idCuenta = ? ";
@@ -54,7 +82,7 @@ export function _deleteByIdCuentaTx(tx, idCuenta, successCallback, errorCallback
   db._deleteTx(tx, query, params, successCallback, errorCallback)
 }
 
-export function _insert(obj, successCallback, errorCallback) {
+export function _insertTx(tx, obj, successCallback, errorCallback) {
   
   var query =
     "INSERT INTO " +
@@ -75,5 +103,11 @@ export function _insert(obj, successCallback, errorCallback) {
     obj.cuotas,
   ];
 
-  db._insert(query, params, successCallback, errorCallback);
+  db._insertTx(tx, query, params, successCallback, errorCallback);
+}
+
+export function _insert(obj, successCallback, errorCallback) {
+  db._createTransaction((tx) => {
+    _insertTx(tx, obj, successCallback, errorCallback);
+  });
 }

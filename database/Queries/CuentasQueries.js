@@ -126,16 +126,16 @@ export function _insertTx(tx, obj, successCallback, errorCallback) {
   db._insertTx(tx, query, params, successCallback, errorCallback);
 }
 
-export function _updateAgregarMonto(id, monto) {
+export function _updateAgregarMonto(id, monto, successCallback, errorCallback) {
   var query = "UPDATE " + tableName + " SET monto = monto + ? WHERE id = ? ";
   var params = [monto, id];
 
-  db._update(query, params);
+  db._update(query, params, successCallback, errorCallback);
 }
 
-export function _updateQuitarMonto(id, monto) {
+export function _updateQuitarMonto(id, monto, successCallback, errorCallback) {
   var query = "UPDATE " + tableName + " SET monto = monto - ? WHERE id = ? ";
   var params = [monto, id];
 
-  db._update(query, params);
+  db._update(query, params, successCallback, errorCallback);
 }

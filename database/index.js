@@ -20,6 +20,7 @@ import * as EstadosPrestamoQueries from './Queries/EstadosPrestamoQueries';
 import * as PeriodosQueries from './Queries/PeriodosQueries';
 import * as TiposInversionQueries from './Queries/TiposInversionQueries';
 import * as TiposPrestamoQueries from './Queries/TiposPrestamoQueries';
+import * as NotificacionesQueries from './Queries/NotificacionesQueries';
 
 export function createTables() {
 
@@ -95,8 +96,8 @@ export function createTables() {
           idEntidadEmisora: 1, 
           tarjeta: 1234, 
           vencimiento: '2023-10-29',
-          cierreResumen: '2020-10-21',
-          vencimientoResumen: '2020-10-29'
+          cierreResumen: '2020-09-28',
+          vencimientoResumen: '2020-10-03'
         });
 
         TarjetasQueries._insertTx(tx, { 
@@ -125,6 +126,7 @@ export function createTables() {
       PrestamosQueries._createTable(tx);
       PresupuestosQueries._createTable(tx);
       InversionesQueries._createTable(tx);
+      NotificacionesQueries._createTable(tx);
     });
   });
 }
@@ -154,10 +156,12 @@ export function dropTables() {
     InversionesQueries._dropTable(tx);
     CuentasQueries._dropTable(tx);
     TarjetasQueries._dropTable(tx);
+    NotificacionesQueries._dropTable(tx);
   });
 }
 
 export {
+  DataBase,
   UsuariosQueries,
   IngresosQueries,
   EgresosQueries,
@@ -169,5 +173,6 @@ export {
   MediosPagoQueries,
   TiposIngresoQueries,
   TiposEgresoQueries,
-  CategoriasEgresoQueries
+  CategoriasEgresoQueries,
+  NotificacionesQueries
 };

@@ -12,8 +12,8 @@ export default function InversionesStack(props) {
           name="Inversiones"
           component={InversionesScreen}
           options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Inversiones" scene={scene} navigation={navigation} />
+            header: ({ route, navigation, scene }) => (
+              <Header title="Inversiones" scene={scene} route={route} navigation={navigation} />
             )
           }}
         />
@@ -21,8 +21,8 @@ export default function InversionesStack(props) {
           name="NuevaInversion"
           component={NuevaInversionScreen}
           options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Nueva Inversion" scene={scene} navigation={navigation} />
+            header: ({ route, navigation, scene }) => (
+              <Header title="Nueva Inversion" scene={scene} route={route} navigation={navigation} />
             )
           }}
         />
@@ -31,7 +31,7 @@ export default function InversionesStack(props) {
           component={BorrarInversionScreen}
           options={{
             header: ({ navigation, scene }) => (
-              <Header title="Borrar Inversion" scene={scene} navigation={navigation} />
+              <Header title="Borrar Inversion" scene={scene} route={route} navigation={navigation} />
             )
           }}
         />
