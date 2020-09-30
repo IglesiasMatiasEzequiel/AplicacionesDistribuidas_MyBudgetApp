@@ -1,16 +1,17 @@
 import React from "react";
-import {
-  ScrollView,
-  SafeAreaView,
-  View,
-  FlatList,
-  Text,
-} from "react-native";
+import { ScrollView, SafeAreaView, View, FlatList, Text } from "react-native";
 import { Card } from "react-native-elements";
 import { PieChart } from "react-native-chart-kit";
+import { screenStyles } from "../components/Styles";
+
+import { EgresosQueries } from "../database";
+
 import {
-  screenStyles
-} from "../components/Styles";
+  formatDateToString,
+  formatStringDateToDB,
+} from "../components/Formatters";
+
+import * as Session from "../components/Session";
 
 const months = [
   "Enero",
@@ -35,44 +36,6 @@ const colors = [
   "#DA6CA8",
   "#C8F277",
   "#FDFF7E",
-];
-
-const gastosMes = [
-  {
-    id: "1",
-    name: "Efectivo",
-    gasto: 7557.8,
-    porc: 9,
-    color: colors[0],
-  },
-  {
-    id: "2",
-    name: "Débito Aut.",
-    gasto: 12546.34,
-    porc: 11,
-    color: colors[1],
-  },
-  {
-    id: "3",
-    name: "Crédito",
-    gasto: 15768.99,
-    porc: 14,
-    color: colors[2],
-  },
-  {
-    id: "4",
-    name: "Transferencia",
-    gasto: 23421.34,
-    porc: 23,
-    color: colors[3],
-  },
-  {
-    id: "5",
-    name: "Débito",
-    gasto: 31908.54,
-    porc: 43,
-    color: colors[4],
-  },
 ];
 
 const saldosCuentas = [
@@ -136,7 +99,8 @@ const renderItemGasto = (item) => {
 
 const renderItemSaldo = (item) => {
   var saldo = item.item;
-  var descripcion = "$ " + saldo.saldo + " (" + saldo.porc + "%) - " + saldo.name;
+  var descripcion =
+    "$ " + saldo.saldo + " (" + saldo.porc + "%) - " + saldo.name;
 
   return (
     <View>
@@ -153,68 +117,156 @@ const renderItemSaldo = (item) => {
   );
 };
 
-export default class DashboardScreen extends React.Component {
-  render() {
-    const today = new Date();
+export default function DashboardScreen({ route, navigation }) {
+  const today = new Date();
+  
+  /* State del Listado */
+  const [gastosMes, setGastosMes] = React.useState({
+    data: null,
+    isLoading: false,
+  });
 
-    return (
-      <ScrollView style={screenStyles.dashboardScreen}>
+  const [saldosCuentas, setSaldosCuentas] = React.useState({
+    data: null,
+    isLoading: false,
+  });
+
+  const getGastosMes = () => {
+    setGastosMes((prevState) => ({ ...prevState, isLoading: true }));
+
+    var to = new Date();
+
+    var currentMonth = (to.getMonth() + 1).toString().padStart(2, "0");
+    var currentYear = to.getFullYear();
+
+    var toFormatted = formatStringDateToDB(formatDateToString(to));
+    var fromFormatted = formatStringDateToDB(
+      "01/" + currentMonth + "/" + currentYear
+    );
+
+    Session.getUser().then((usuario) => {
+      EgresosQueries._getGastosMesPorTipoPago(
+        usuario.id,
+        fromFormatted,
+        toFormatted,
+        (data) => {
+          var dataGastosMes =
+            data?.map((item, index) => {
+              return {
+                id: index,
+                name: item.medioPago,
+                gasto: item.gasto,
+                porc: 4,
+                color: colors[index],
+              };
+            }) ?? [];
+
+          setGastosMes((prevState) => ({
+            ...prevState,
+            data: dataGastosMes,
+            isLoading: false,
+          }));
+        },
+        (error) => {
+          setGastosMes((prevState) => ({
+            ...prevState,
+            data: [],
+            isLoading: false,
+          }));
+
+          console.log(error);
+        }
+      );
+    });
+  };
+
+  console.log(route?.params);
+  console.log(route?.params?.isReload ?? false);
+
+  if (
+    (gastosMes.data === null ||
+      //saldosCuentas.data === null ||
+      (route?.params?.isReload ?? false)) &&
+    !gastosMes.isLoading
+     //&& !saldosCuentas.isLoading
+  ) {
+    /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
+    navigation.setParams({ isReload: false });
+
+    getGastosMes();
+  }
+
+  return (
+    <ScrollView style={screenStyles.dashboardScreen}>
+      {!gastosMes.isLoading && (
         <Card>
           <Card.Title>Gastos de {months[today.getMonth()]}</Card.Title>
           <Card.Divider />
-          <PieChart
-            data={gastosMes}
-            width={300}
-            height={300}
-            chartConfig={chartConfig}
-            accessor="gasto"
-            backgroundColor="transparent"
-            hasLegend={false}
-            paddingLeft={95}
-          />
+          {gastosMes.data !== null && gastosMes.data.length > 0 && (
 
-          <SafeAreaView
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          >
-            <FlatList
-              data={gastosMes}
-              renderItem={renderItemGasto}
-              keyExtractor={(item) => item.id}
-            />
-          </SafeAreaView>
+            <View>
+              <PieChart
+                data={gastosMes.data}
+                width={300}
+                height={300}
+                chartConfig={chartConfig}
+                accessor="gasto"
+                backgroundColor="transparent"
+                hasLegend={false}
+                paddingLeft={95}
+              />
+
+              <SafeAreaView
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 20,
+                }}
+              >
+                <FlatList
+                  data={gastosMes.data}
+                  renderItem={renderItemGasto}
+                  keyExtractor={(item) => item.id}
+                />
+              </SafeAreaView>
+            </View>
+          )}
         </Card>
+      )}
+
+      {!saldosCuentas.isLoading && (
         <Card>
           <Card.Title>Saldos</Card.Title>
           <Card.Divider />
-          <PieChart
-            data={saldosCuentas}
-            width={300}
-            height={300}
-            chartConfig={chartConfig}
-            accessor="saldo"
-            backgroundColor="transparent"
-            hasLegend={false}
-            paddingLeft={95}
-          />
-          <SafeAreaView
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          >
-            <FlatList
-              data={saldosCuentas}
-              renderItem={renderItemSaldo}
-              keyExtractor={(item) => item.id}
-            />
-          </SafeAreaView>
+          {saldosCuentas.data !== null && saldosCuentas.data.length > 0 && (
+            <View>
+              <PieChart
+                data={saldosCuentas.data}
+                width={300}
+                height={300}
+                chartConfig={chartConfig}
+                accessor="saldo"
+                backgroundColor="transparent"
+                hasLegend={false}
+                paddingLeft={95}
+              />
+              <SafeAreaView
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: 20,
+                }}
+              >
+                <FlatList
+                  data={saldosCuentas}
+                  renderItem={renderItemSaldo}
+                  keyExtractor={(item) => item.id}
+                />
+              </SafeAreaView>
+            </View>
+          )}
         </Card>
-      </ScrollView>
-    );
-  }
+      )}
+    </ScrollView>
+  );
 }

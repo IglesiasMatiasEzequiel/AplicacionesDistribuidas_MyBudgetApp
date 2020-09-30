@@ -98,6 +98,22 @@ export function _getListadoGastosTarjeta(idTarjeta, from, to, successCallback, e
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _getGastosMesPorTipoPago(idUsuario, from, to, successCallback, errorCallback){
+
+  var query = "SELECT " +
+  " medioPago.medioPago, " + 
+  " SUM(egreso.monto) as gasto" +
+  " FROM " + tableName + " as egreso " +
+  " INNER JOIN MediosPago medioPago ON egreso.idMedioPago = medioPago.id " +
+  " WHERE egreso.idUsuario = ? " +
+  " AND egreso.fecha BETWEEN ? AND ? " + 
+  " GROUP BY medioPago.medioPago";
+
+  var params = [idUsuario, from, to];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _deleteByIdCuentaTx(tx, idCuenta, successCallback, errorCallback) {
   
   var query = "DELETE FROM " + tableName + " WHERE idCuenta = ? ";
