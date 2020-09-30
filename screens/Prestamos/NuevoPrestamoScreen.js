@@ -40,6 +40,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
     cuenta: null,
     monto: "",
     intereses: "",
+    cuota: "",
     vencimiento: "",
   });
 
@@ -50,6 +51,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
     cuenta: true,
     monto: true,
     intereses: true,
+    cuota: true,
     vencimiento: true,
   });
 
@@ -60,6 +62,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
     cuenta: "",
     monto: "",
     intereses: "",
+    cuota: "",
     vencimiento: "",
   });
 
@@ -88,6 +91,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
       cuenta: null,
       monto: "",
       intereses: "",
+      cuota: "",
       vencimiento: "",
     });
 
@@ -98,6 +102,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
       cuenta: true,
       monto: true,
       intereses: true,
+      cuota: true,
       vencimiento: true,
     });
 
@@ -108,6 +113,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
       cuenta: "",
       monto: "",
       intereses: "",
+      cuota: "",
       vencimiento: "",
     });
 
@@ -128,6 +134,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
           emisorDestinatario: form.emisorDestinatario,
           monto: form.monto,
           intereses: form.intereses,
+          cuota: form.cuota,
           vencimiento: form.vencimiento,
         }
         console.log(obj);
@@ -138,7 +145,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
 
               var hoy = new Date();
               var medio;
-              if (form.tipoEmisorDestinatario === "1") {
+              if (form.tipoEmisorDestinatario === "1") { // Cuenta Bancaria
                 medio = 4; // Debito Automatico
                 CuentasQueries._updateQuitarMonto(form.cuenta, form.monto);
               }
@@ -167,8 +174,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
             if(form.tipo === "2"){ // Tomado
               var hoy = new Date();
               var destino;
-              var cuenta;
-              if (form.tipoEmisorDestinatario === "1") {
+              if (form.tipoEmisorDestinatario === "1") { // Cuenta Bancaria
                 destino = 1;
                 CuentasQueries._updateAgregarMonto(form.cuenta, form.monto);
               }
@@ -194,31 +200,40 @@ export default function NuevoPrestamoScreen({ navigation }) {
                 }
               );
 
-              var medio;
-              if (form.tipoEmisorDestinatario === "1") {
-                medio = 4; // Debito Automatico
-                CuentasQueries._updateQuitarMonto(form.cuenta, ((form.monto*form.intereses/100)+(form.monto)));
-              }
-              if (form.tipoEmisorDestinatario === "2") {
-                medio= 1; // Efectivo
-              }
-              var obj_e = {
-                idUsuario: usuario.id,
-                fecha: formatStringDateToDB(form.vencimiento),
-                monto: ((form.monto*form.intereses/100)+(form.monto)),
-                idTipoEgreso: 2, // Extraodinario
-                detalleEgreso: "Prestamo realizado",
-                idMedioPago: medio, 
-                idCuenta: form.cuenta,
-              }
-              EgresosQueries._insert(obj_e,
-                (data) => {
-                  console.log("Se inserto correctamente el egreso. ");
-                },
-                (error) => {
-                  console.log("Ocurrió un error al insertar el egreso. - " + error);
+              var contado_cuota = 0;
+              var from = new Date();
+              while (contado_cuota!==form.cuota) {
+                var fechaPago;
+                fechaPago.setDate(form.vencimiento.getDate() + (30*(contado_cuota+1)));
+
+                var medio;
+                if (form.tipoEmisorDestinatario === "1") {
+                  medio = 4; // Debito Automatico
+                  CuentasQueries._updateQuitarMonto(form.cuenta, ((form.monto*form.intereses/100)+(form.monto))/form.cuota);
                 }
-              );
+                if (form.tipoEmisorDestinatario === "2") {
+                  medio= 1; // Efectivo
+                }
+                var obj_e = {
+                  idUsuario: usuario.id,
+                  fecha: formatStringDateToDB(fechaPago),
+                  monto: ((form.monto*form.intereses/100)+(form.monto))/form.cuota,
+                  idTipoEgreso: 2, // Extraodinario
+                  detalleEgreso: "Prestamo realizado",
+                  idMedioPago: medio, 
+                  idCuenta: form.cuenta,
+                }
+                EgresosQueries._insert(obj_e,
+                  (data) => {
+                    console.log("Se inserto correctamente el egreso. ");
+                  },
+                  (error) => {
+                    console.log("Ocurrió un error al insertar el egreso. - " + error);
+                  }
+                );
+
+                contado_cuota++;
+              }
             }
 
             setIsLoading(false);
@@ -242,6 +257,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
     const isEmisorDestinatarioValid = await validateRequired(form.emisorDestinatario);
     const isTipoEmisorDestinatarioValid = await validateRequired(form.tipoEmisorDestinatario);
     const isMontoValid = await validateRequired(form.monto);
+    const isCuotaValid = await validateRequired(form.cuota);
     const isInteresesValid = await validateRequired(form.intereses);
 
     var isVencimientoValid = true;
@@ -261,6 +277,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
       cuenta: isCuentaValid,
       monto: isMontoValid,
       intereses: isInteresesValid,
+      cuota: isCuotaValid,
       vencimiento: isVencimientoValid,
     }));
 
@@ -272,10 +289,11 @@ export default function NuevoPrestamoScreen({ navigation }) {
       cuenta: !isCuentaValid ? "La cuenta es requerida..." : "",
       monto: !isMontoValid ? "El monto es requerido..." : "",
       intereses: !isInteresesValid ? "El interes es requerido..." : "",
+      cuota: !isCuotaValid ? "la cuota es requerida..." : "",
       vencimiento: !isVencimientoValid ? "El vencimeinto es requerido..." : "",
     }));
 
-    return isTipoValid && isEmisorDestinatarioValid && isTipoEmisorDestinatarioValid && isCuentaValid && isMontoValid && isInteresesValid && isVencimientoValid;
+    return isTipoValid && isEmisorDestinatarioValid && isTipoEmisorDestinatarioValid && isCuentaValid && isMontoValid && isInteresesValid && isCuotaValid && isVencimientoValid;
   };
 
   const onBack = () => {
@@ -381,7 +399,15 @@ export default function NuevoPrestamoScreen({ navigation }) {
         validationMessage={validationMessages.intereses}
         keyboardType="numeric"
       />
-      
+      <Textbox
+        propName="cuota"
+        placeholder="Cuota..."
+        handleChange={handleChange}
+        value={form.cuota}
+        isValid={validations.cuota}
+        validationMessage={validationMessages.cuota}
+        keyboardType="numeric"
+      />
       {form.tipo === "2" && (
         <TextboxDate
         propName="vencimiento"
