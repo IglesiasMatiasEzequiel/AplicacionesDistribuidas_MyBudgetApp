@@ -100,7 +100,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
           intereses: form.intereses,
           vencimiento: form.vencimiento,
         }
-  
+        console.log(obj);
         PrestamosQueries._insert(obj,
           (data) => {
             setIsLoading(false);
@@ -124,7 +124,6 @@ export default function NuevoPrestamoScreen({ navigation }) {
     const isEmisorDestinatarioValid = await validateRequired(form.emisorDestinatario);
     const isMontoValid = await validateRequired(form.monto);
     const isInteresesValid = await validateRequired(form.intereses);
-    //const isVencimientoValid = await validateRequired(form.vencimiento);
 
     var isVencimientoValid = true;
     if(form.tipo === "2"){ //Tomado
@@ -154,7 +153,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
 
   const onBack = () => {
     limpiarState();
-    navigation.navigate("Prestamos");
+    navigation.navigate("Prestamos", { isReload: true });
   };
 
   return (

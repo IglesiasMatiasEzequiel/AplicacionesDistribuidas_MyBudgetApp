@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 const db = SQLite.openDatabase('db.MyBudgetApp');
 
-const debugMode = false;
+const debugMode = true;
 
 function log(debugMode, status, method, params, query, id, data) {
   if (debugMode) {    

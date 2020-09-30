@@ -1,5 +1,21 @@
 import React from "react";
-import { View, TouchableOpacity, ScrollView } from "react-native";
+
+import { 
+  ScrollView, 
+  View,
+  Text, 
+  TouchableOpacity 
+} from "react-native";
+
+import DropDownPicker from "react-native-dropdown-picker";
+
+import { 
+  Table, 
+  Row, 
+  TableWrapper, 
+  Cell 
+} from "react-native-table-component";
+
 import {
   screenStyles,
   buttonStyles,
@@ -7,112 +23,261 @@ import {
   titleStyles,
   dropdownStyles
 } from "../../components/Styles";
+
+import {
+  periodosData
+} from "../../components/Data";
+
+import { 
+  CustomSpinner, 
+  CustomModal, 
+  CustomIcon, 
+  Alert 
+} from "../../components";
+
 import {
   estadosPrestamoData
 } from "../../components/Data";
 
-import DropDownPicker from "react-native-dropdown-picker";
-import { Text } from "galio-framework";
-import { Table, Row } from "react-native-table-component";
+import { 
+  formatDateToString, 
+  formatStringDateToDB, 
+  formatStringDateFromDB 
+} from "../../components/Formatters";
 
-export default function PrestamosScreen({ navigation }) {
 
-  const [estadoPrestamo, setEstadoPrestamo] = React.useState(null);
+import { PrestamosQueries } from "../../database";
+import * as Session from "../../components/Session";
 
-  const handleChangeEstadoPrestamo = (estadoPrestamo) => setEstadoPrestamo(estadoPrestamo);
+export default function PrestamosScreen({ route, navigation }) {
+
+  /* State del CustomSpinner */
+  const [isLoading, setIsLoading] = React.useState(false);
+    
+  /* State del CustomModal */
+  const [modalData, setModalData] = React.useState(null);
+
+  /* State del Listado */
+  const [listado, setListado] = React.useState({
+    data: null,
+    isLoading: false,
+    periodo: null
+  });
 
   const limpiarState = () => {
-    setEstadoPrestamo(null);
+    setListado({
+      data: null, 
+      isLoading: false, 
+      periodo: null
+    });
   };
 
-  const onNuevoPrestamo = () => {
+  /* Botón Nuevo*/
+
+  const onNuevo = () => {
     limpiarState();
     navigation.navigate("NuevoPrestamo");
   }
-  const onBorrarPrestamo= () => { 
-    limpiarState();
-    navigation.navigate("BorrarPrestamo"); }
 
-  const tableHeaders = [
-    "Tipo",
-    "Destino/Emisor",
-    "Monto",
-    "Intereses",
-  ];
-  const columnWidth = [150, 200, 150, 120];
+  /* Botón Nuevo*/
 
-  const tableData = [
-    ["Realizados", "Santiago Garcia", "$4000","%4"],
-    ["Tomados", "Banco Santander", "$10000", "%34"],
-    ["Tomados", "Banco Galicia", "$8000", "%23"],
-  ];
+  /* Botón borrar */
+
+  const onCancelar = () => setModalData({ ...modalData, isVisible: false });
+
+  const onBorrar = (id) => { 
+    setModalData({ 
+      title: "Eliminar ingreso",
+      message: "¿Está seguro de que desea eliminar el prestamo?",
+      handleBtnOnSuccess: () => onConfirmarBorrar(id),
+      handleBtnOnError: () => onCancelar(),
+      showErrorBtn: true,
+      isVisible: true
+    });
+  }
+
+  const onConfirmarBorrar = (id) => { 
+    
+    setIsLoading(true);
+
+      PrestamosQueries._deleteById(id, 
+        () => {
+          setIsLoading(false);
+          setModalData({ 
+            title: "¡Borrado exitoso!",
+            message: "El prestamos se eliminó correctamente.",
+            isVisible: true,
+            isSuccess: true,
+            handleBtnOnSuccess: () => { 
+              limpiarState();
+              onCancelar();
+            },
+            successBtnText: "Volver",
+            showErrorBtn: false
+          });
+        },
+        (error) => {
+          
+          setListado((prevState) => ({ 
+            ...prevState, 
+            data: [],
+            isLoading: false, 
+          }));
+
+          console.log(error);
+        }
+      );
+  }
+
+  const deleteButton = (data, index) => (
+    <TouchableOpacity onPress={() => onBorrar(data)}>
+      <View style={buttonStyles.btnTable}>
+        <CustomIcon name="md-trash" size={22}/>
+      </View>
+    </TouchableOpacity>
+  );
+
+  /* Botón borrar */
+
+  /* Listado */
+
+  const tableHeaders = ["", "Tipo", "Emisor/Destinatario", "Monto", "Intereses","Vencimiento"];
+  const columnWidth = [30, 120, 200, 100, 100, 110];
+
+  const getListado = () => {
+
+    setListado((prevState) => ({ ...prevState, isLoading: true }));
+
+    Session.getUser().then((usuario) => {
+      PrestamosQueries._getListado(
+        usuario.id,
+        (data) => {
+
+          var tableData = data?.map((item) => {
+              return [item.id,
+                item.tipoPrestamo,
+                item.emisorDestinatario,
+                item.monto,
+                item.intereses,
+                item.vencimiento,
+              ];
+            }) ?? [];            
+
+          setListado((prevState) => ({ 
+            ...prevState, 
+            data: tableData,
+            isLoading: false, 
+          }));
+        },
+        (error) => {
+          
+          setListado((prevState) => ({ 
+            ...prevState, 
+            data: [],
+            isLoading: false, 
+          }));
+
+          console.log(error);
+        }
+      );
+    });
+  };
+
+  if((listado.data === null
+    || (route?.params?.isReload ?? false))
+    && !listado.isLoading){ 
+
+    /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
+    navigation.setParams({ isReload: false });
+
+    getListado();
+  }
+
+  /* Listado */
+
 
   return (
     <ScrollView style={screenStyles.screen}>
-      <TouchableOpacity onPress={onNuevoPrestamo} style={buttonStyles.btn}>
+      <TouchableOpacity onPress={onNuevo} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Nuevo Prestamos</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBorrarPrestamo} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Borrar Prestamos</Text>
-      </TouchableOpacity>
 
       <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
           <Text h5 style={titleStyles.titleText}>
-            Filtros
+            Mis Prestamos
           </Text>
       </View>
 
-      <DropDownPicker
-            items={estadosPrestamoData}
-            defaultValue={estadoPrestamo}
-            placeholder="Seleccione un estado."
-            containerStyle={dropdownStyles.dropdownContainer}
-            style={dropdownStyles.dropdown}
-            itemStyle={dropdownStyles.dropdownItem}
-            onChangeItem={(item) => handleChangeEstadoPrestamo(item.value)}
-          />
+      {!listado.isLoading && (
+        <View>
+          <View style={tableStyles.tableContainer}>
+            <ScrollView horizontal>
+              {(listado.data !== null && listado.data.length > 0) && (
+                <View>
+                  <Table borderStyle={tableStyles.tableHeaderBorder}>
+                    <Row
+                      data={tableHeaders}
+                      widthArr={columnWidth}
+                      style={tableStyles.tableHeader}
+                      textStyle={tableStyles.tableHeadertext}
+                    />
+                  </Table>
+                  <ScrollView
+                    style={[tableStyles.tableDataContainer, { height: 200 }]}
+                  >
+                    <Table borderStyle={tableStyles.tableDataBorder}>
 
-      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-        <Text h5 style={titleStyles.titleText}>
-          Mis prestamos
-          {estadoPrestamo === "1" ? " activos"
-            : estadoPrestamo === "2" ? " vencidos" : ""}
-        </Text>
-      </View>
+                    {listado.data.map((rowData, index) => (
+                      <TableWrapper
+                        key={index}
+                        style={[
+                          tableStyles.tableRow,
+                          index % 2 && { backgroundColor: "transparent" },
+                        ]}
+                      >
+                        {rowData.map((cellData, cellIndex) => (
+                          <Cell
+                            key={cellIndex.toString()}
+                            width={columnWidth[cellIndex]}
+                            data={
+                              cellIndex === 0
+                                ? deleteButton(cellData, index)
+                                : cellData
+                            }
+                            textStyle={tableStyles.tableRowtext}
+                          />
+                        ))}
+                      </TableWrapper>
+                    ))}
 
-      <View style={tableStyles.tableContainer}>
-        <ScrollView horizontal>
-          <View>
-            <Table borderStyle={tableStyles.tableHeaderBorder}>
-              <Row
-                data={tableHeaders}
-                widthArr={columnWidth}
-                style={tableStyles.tableHeader}
-                textStyle={tableStyles.tableHeadertext}
-              />
-            </Table>
-            <ScrollView
-              style={[tableStyles.tableDataContainer, { height: 200 }]}
-            >
-              <Table borderStyle={tableStyles.tableDataBorder}>
-                {tableData.map((rowData, index) => (
-                  <Row
-                    key={index}
-                    data={rowData}
-                    widthArr={columnWidth}
-                    style={[
-                      tableStyles.tableRow,
-                      index % 2 && { backgroundColor: "transparent" },
-                    ]}
-                    textStyle={tableStyles.tableRowtext}
-                  />
-                ))}
-              </Table>
+                    </Table>
+                  </ScrollView>
+                </View>
+              )}
+
+              {(listado.data === null || listado.data.length === 0) && (
+                <Alert type="danger" message="Sin información" />
+              )}
             </ScrollView>
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      )}
+
+      <CustomSpinner isLoading={isLoading} text={"Eliminando..."} />
+
+      <CustomModal
+        title={modalData?.title}
+        message={modalData?.message}
+        isSuccess={modalData?.isSuccess}
+        isVisible={modalData?.isVisible}
+        handleBtnOnSuccess={modalData?.handleBtnOnSuccess}
+        handleBtnOnError={modalData?.handleBtnOnError}
+        successBtnText={modalData?.successBtnText}
+        errorBtnText={modalData?.errorBtnText}
+        showErrorBtn={modalData?.showErrorBtn}
+      />
+
     </ScrollView>
   );
 }
