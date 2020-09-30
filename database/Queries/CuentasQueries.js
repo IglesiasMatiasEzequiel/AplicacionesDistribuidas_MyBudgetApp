@@ -98,29 +98,12 @@ export function _update(obj, successCallback, errorCallback) {
 }
 
 export function _insert(obj, successCallback, errorCallback) {
-  
-  var query =
-    "INSERT INTO " +
-    tableName +
-    "(idUsuario, idBanco, idEntidadEmisora, cbu, alias, descripcion, monto, tarjeta, vencimiento) " +
-    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-  var params = [
-    obj.idUsuario,
-    obj.idBanco,
-    obj.idEntidadEmisora,
-    obj.cbu,
-    obj.alias,
-    obj.descripcion,
-    obj.monto,
-    obj.tarjeta,
-    obj.vencimiento,
-  ];
-
-  db._insert(query, params, successCallback, errorCallback);
+  db._createTransaction((tx) => {
+    db._insertTx(tx, obj, successCallback, errorCallback);
+  });
 }
 
-export function _insertTx(tx, obj) {
+export function _insertTx(tx, obj, successCallback, errorCallback) {
 
   var query =
     "INSERT INTO " +
@@ -140,7 +123,7 @@ export function _insertTx(tx, obj) {
       obj.vencimiento,
     ];
 
-  db._insertTx(tx, query, params);
+  db._insertTx(tx, query, params, successCallback, errorCallback);
 }
 
 export function _updateAgregarMonto(id, monto) {

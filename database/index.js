@@ -51,9 +51,6 @@ export function createTables() {
       /* Crear tablas principales */
 
       CuentasQueries._createTable(tx, () => {
-
-        "(idUsuario, idBanco, idEntidadEmisora, cbu, alias, descripcion, monto, tarjeta, vencimiento) " +
-
         CuentasQueries._insertTx(tx, { 
           idUsuario: 1, 
           idBanco: 1, 
@@ -77,6 +74,50 @@ export function createTables() {
           tarjeta: 8544,
           vencimiento: '2022-04-01'
         });
+
+        CuentasQueries._insertTx(tx, { 
+          idUsuario: 1, 
+          idBanco: 3, 
+          idEntidadEmisora: 4, 
+          cbu: '1118589892333366501444', 
+          alias: 'CALAVERA.LAPIZ.TOMATE', 
+          descripcion: 'Cuenta terciaria', 
+          monto: 75900,
+          tarjeta: 2242,
+          vencimiento: '2025-02-01'
+        });
+      });
+
+      TarjetasQueries._createTable(tx, () => {
+        TarjetasQueries._insertTx(tx, { 
+          idUsuario: 1, 
+          idBanco: 1, 
+          idEntidadEmisora: 1, 
+          tarjeta: 1234, 
+          vencimiento: '2023-10-29',
+          cierreResumen: '2020-10-21',
+          vencimientoResumen: '2020-10-29'
+        });
+
+        TarjetasQueries._insertTx(tx, { 
+          idUsuario: 1, 
+          idBanco: 2, 
+          idEntidadEmisora: 2, 
+          tarjeta: 4443, 
+          vencimiento: '2025-10-19',
+          cierreResumen: '2020-10-19',
+          vencimientoResumen: '2020-10-21',
+        });
+
+        TarjetasQueries._insertTx(tx, { 
+          idUsuario: 1, 
+          idBanco: 3, 
+          idEntidadEmisora: 3,
+          tarjeta: 5647, 
+          vencimiento: '2021-11-04',
+          cierreResumen: '2020-11-02',
+          vencimientoResumen: '2020-11-07',
+        });
       });
 
       EgresosQueries._createTable(tx);
@@ -84,7 +125,6 @@ export function createTables() {
       PrestamosQueries._createTable(tx);
       PresupuestosQueries._createTable(tx);
       InversionesQueries._createTable(tx);
-      TarjetasQueries._createTable(tx);
     });
   });
 }

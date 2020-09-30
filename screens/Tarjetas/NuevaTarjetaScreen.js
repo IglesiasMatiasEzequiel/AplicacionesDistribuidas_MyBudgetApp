@@ -8,6 +8,7 @@ import { bancosData, entidadesEmisorasData } from "../../components/Data";
 import {
   screenStyles,
   buttonStyles,
+  titleStyles,
   textboxStyles,
   dropdownStyles,
 } from "../../components/Styles";
@@ -15,6 +16,7 @@ import {
 import { validateRequired } from "../../components/Validations";
 import { TarjetasQueries } from "../../database";
 import * as Session from "../../components/Session";
+import { formatStringDateToDB } from "../../components/Formatters";
 
 export default function NuevaTarjetaScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -50,14 +52,6 @@ export default function NuevaTarjetaScreen({ navigation }) {
   const handleChange = (prop, value) => {
     setValidations((prevState) => ({ ...prevState, [prop]: true }));
     setForm((prevState) => ({ ...prevState, [prop]: value }));
-  };
-  const handleChangeBanco = (prop, value) => {
-    setValidations((prevState) => ({ ...prevState, [prop]: true }));
-    setForm((prevState) => ({ ...prevState, [prop]: value}));
-  };
-  const handleChangeEntidadEmisora = (prop, value) => {
-    setValidations((prevState) => ({ ...prevState, [prop]: true }));
-    setForm((prevState) => ({ ...prevState, [prop]: value}));
   };
 
   const limpiarState = () => {
@@ -103,9 +97,9 @@ export default function NuevaTarjetaScreen({ navigation }) {
           idBanco: form.banco,
           idEntidadEmisora: form.entidadEmisora,
           tarjeta: form.tarjeta,
-          vencimiento: form.vencimiento,
-          cierreResumem: form.cierreResumen,
-          vencimientoResumem: form.vencimientoResumen,
+          vencimiento: formatStringDateToDB(form.vencimiento),
+          cierreResumen: formatStringDateToDB(form.cierreResumen),
+          vencimientoResumen: formatStringDateToDB(form.vencimientoResumen),
         }
   
         TarjetasQueries._insert(obj,
@@ -134,6 +128,18 @@ export default function NuevaTarjetaScreen({ navigation }) {
     const isCierreResumenValid = await validateRequired(form.cierreResumen); 
     const isVencimientoResumenValid = await validateRequired(form.vencimientoResumen); 
     
+    var bancoValidationMessage = "El banco es requerido...";
+    var entidadEmisoraValidationMessage = "La entidad emisora es requerido...";
+    var tarjetaValidationMessage = "La tarjeta es requerida...";
+    var vencimientoValidationMessage = "El vencimiento es requerido...";
+    var cierreResumenValidationMessage = "El cierre del resúmen es requerido...";
+    var vencimientoResumenValidationMessage = "La vencimiento del resúmen es requerida...";
+
+    if(isTarjetaValid && form.tarjeta.toString().length != 4) {
+      isTarjetaValid  = false;
+      tarjetaValidationMessage = "Debe ingresar los 4 dígitos de la tarjeta..."
+    }
+
      setValidations((prevState) => ({
       ...prevState,
       banco: isBancoValid,
@@ -146,12 +152,12 @@ export default function NuevaTarjetaScreen({ navigation }) {
 
     setValidationMessages((prevState) => ({
       ...prevState,
-      banco: !isBancoValid ? "El banco es requerida..." : "",
-      entidadEmisora: !isEntidadEmisoraValid ? "La entidad emisora es requerida..." : "",
-      tarjeta: !isTarjetaValid ? "La tarjeta es requerida..." : "",
-      vencimiento: !isVencimientoValid ? "El vencimiento es requerido..." : "",
-      cierreResumen: !isCierreResumenValid ? "El cierre del resumen es requerido..." : "",
-      vencimientoResumen: !isVencimientoResumenValid ? "El vencimiento del resumen es requerido..." : "",
+      banco: bancoValidationMessage,
+      entidadEmisora: entidadEmisoraValidationMessage,
+      tarjeta: tarjetaValidationMessage,
+      vencimiento: vencimientoValidationMessage,
+      cierreResumen: cierreResumenValidationMessage,
+      vencimientoResumen: vencimientoResumenValidationMessage,
     }));
 
     return isBancoValid && isEntidadEmisoraValid && isTarjetaValid && isVencimientoValid && isCierreResumenValid  && isVencimientoResumenValid;
@@ -159,7 +165,7 @@ export default function NuevaTarjetaScreen({ navigation }) {
 
   const onBack = () => {
     limpiarState();
-    navigation.navigate("Tarjetas");
+    navigation.navigate("Tarjetas", { isReload: true });
   };
 
   return (
@@ -169,16 +175,16 @@ export default function NuevaTarjetaScreen({ navigation }) {
         items={bancosData}
         defaultValue={form.banco}
         placeholder="Seleccione un banco."
-        handleChange={handleChangeBanco}
+        handleChange={handleChange}
         isValid={validations.banco}
         validationMessage={validationMessages.banco}
       />
       <Dropdown
         propName="entidadEmisora"
         items={entidadesEmisorasData}
-        defaultValue={form.entidadEmisoraIngreso}
-        placeholder="Seleccione una entidadEmisora."
-        handleChange={handleChangeEntidadEmisora}
+        defaultValue={form.entidadEmisora}
+        placeholder="Seleccione una entidad emisora."
+        handleChange={handleChange}
         isValid={validations.entidadEmisora}
         validationMessage={validationMessages.entidadEmisora}
       />
@@ -220,11 +226,9 @@ export default function NuevaTarjetaScreen({ navigation }) {
         <Text style={buttonStyles.btnText}>Confirmar</Text>
       </TouchableOpacity>
 
-      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-        <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
-          <Text style={buttonStyles.btnBackText}>Volver</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
+        <Text style={buttonStyles.btnBackText}>Volver</Text>
+      </TouchableOpacity>
 
       <CustomSpinner isLoading={isLoading} text={"Guardando Tarjeta..."} />
 
@@ -236,6 +240,7 @@ export default function NuevaTarjetaScreen({ navigation }) {
         successBtnText={modalData?.successBtnText}
         handleBtnOnSuccess={onBack}
       />
+
     </ScrollView>
   );
 }

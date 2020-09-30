@@ -1,8 +1,18 @@
 import React from "react";
 
-import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+import { 
+  ScrollView, 
+  View, 
+  Text, 
+  TouchableOpacity 
+} from "react-native";
 
-import { Table, Row, TableWrapper, Cell } from "react-native-table-component";
+import { 
+  Table, 
+  TableWrapper,
+  Row,   
+  Cell 
+} from "react-native-table-component";
 
 import {
   screenStyles,
@@ -18,9 +28,13 @@ import {
   Alert,
 } from "../../components";
 
-import { CuentasQueries } from "../../database";
+import {
+   CuentasQueries 
+} from "../../database";
 
-import { formatStringDateFromDB } from "../../components/Formatters";
+import { 
+  formatStringDateFromDB
+} from "../../components/Formatters";
 
 import * as Session from "../../components/Session";
 
@@ -44,43 +58,27 @@ export default function CuentasBancariasScreen({ route, navigation }) {
     });
   };
 
-  /* Botón Nuevo*/
+  const onCancelar = () => setModalData({ ...modalData, isVisible: false });
 
   const onNuevo = () => {
     limpiarState();
     navigation.navigate("NuevaCuenta");
   };
 
-  /* Botón Nuevo*/
-
-  /* Botón Administrar*/
-
   const onAdministrarCuenta = () => {
     limpiarState();
     navigation.navigate("AdministrarCuenta");
   };
-
-  /* Botón Administrar*/
-
-  /* Botón Movimientos*/
 
   const onMovimientosCuenta = () => {
     limpiarState();
     navigation.navigate("MovimientosCuenta");
   };
 
-  /* Botón Movimientos*/
-  /* Botón editar */
-  
   const onEditar = (id) => {
     limpiarState();
     navigation.navigate("EditarCuenta", { id: id });
   };
-
-  /* Botón editar */
-  /* Botón borrar */
-
-  const onCancelar = () => setModalData({ ...modalData, isVisible: false });
 
   const onBorrar = (id) => {
     setModalData({
@@ -126,24 +124,6 @@ export default function CuentasBancariasScreen({ route, navigation }) {
     );
   };
 
-  const editButton = (data, index) => (
-    <TouchableOpacity onPress={() => onEditar(data)}>
-      <View style={buttonStyles.btnTableEdit}>
-        <CustomIcon name="md-create" size={22} />
-      </View>
-    </TouchableOpacity>
-  );
-
-  const deleteButton = (data, index) => (
-    <TouchableOpacity onPress={() => onBorrar(data)}>
-      <View style={buttonStyles.btnTableDelete}>
-        <CustomIcon name="md-trash" size={22} />
-      </View>
-    </TouchableOpacity>
-  );
-
-  /* Botón borrar */
-
   /* Listado */
 
   const tableHeaders = [
@@ -159,6 +139,22 @@ export default function CuentasBancariasScreen({ route, navigation }) {
     "Vencimiento",
   ];
   const columnWidth = [30, 30, 250, 250, 250, 150, 250, 200, 200, 150];
+
+  const editButton = (data, index) => (
+    <TouchableOpacity onPress={() => onEditar(data)}>
+      <View style={buttonStyles.btnTableEdit}>
+        <CustomIcon name="md-create" size={22} />
+      </View>
+    </TouchableOpacity>
+  );
+
+  const deleteButton = (data, index) => (
+    <TouchableOpacity onPress={() => onBorrar(data)}>
+      <View style={buttonStyles.btnTableDelete}>
+        <CustomIcon name="md-trash" size={22} />
+      </View>
+    </TouchableOpacity>
+  );
 
   const getListado = () => {
     setListado((prevState) => ({ ...prevState, isLoading: true }));
