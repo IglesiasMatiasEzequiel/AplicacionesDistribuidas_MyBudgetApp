@@ -185,8 +185,8 @@ export default function InversionesScreen({ route,navigation }) {
                 item.tipoInversion,
                 item.monto,
                 item.cuenta,
-                formatStringDateFromDB(item.fechaInicio),
-                formatStringDateFromDB(item.fechaVencimiento),
+                item.fechaInicio!==null ?formatStringDateFromDB(item.fechaInicio): "-",
+                item.fechaVencimiento!==null ? formatStringDateFromDB(item.fechaVencimiento):"-",
                 item.duracion,
                 item.nombre,
               ];
