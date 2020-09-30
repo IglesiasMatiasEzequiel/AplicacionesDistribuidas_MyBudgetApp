@@ -81,16 +81,12 @@ export function _getListadoCuenta(idUsuario, idCuenta, from, to, successCallback
   " ingreso.monto, " +
   " ingreso.descripcion, " +
   " tipoIngreso.tipoIngreso, " +
-  " categoriaIngreso.categoriaIngreso, " +
-  " destinoIngreso.destinoIngreso, " +
-  " banco.banco || ' - ' || cuenta.cbu as cuenta " +
+  " categoriaIngreso.categoriaIngreso " +
   " FROM " + tableName + " as ingreso " +
   " INNER JOIN TiposIngreso tipoIngreso ON ingreso.idTipoIngreso = tipoIngreso.id " +
-  " INNER JOIN DestinosIngreso destinoIngreso ON ingreso.idDestinoIngreso = destinoIngreso.id " +
   " LEFT JOIN CategoriasIngreso categoriaIngreso ON ingreso.idCategoriaIngreso = categoriaIngreso.id " +
-  " LEFT JOIN Cuentas cuenta ON ingreso.idCuenta = cuenta.id " +
-  " LEFT JOIN Bancos banco ON cuenta.idBanco = banco.id " +
   " WHERE ingreso.idUsuario = ? " +
+  " AND ingreso.idDestinoIngreso = '1' " +
   " AND ingreso.idCuenta = ? " +
   " AND ingreso.fecha BETWEEN ? AND ? ";
 
@@ -127,6 +123,6 @@ export function _insertTx(tx, obj, successCallback, errorCallback) {
 
 export function _insert(obj, successCallback, errorCallback) {
   db._createTransaction((tx) => {
-    _insertTx(tx, query, params, successCallback, errorCallback);
+    _insertTx(tx, obj, successCallback, errorCallback);
   });
 }

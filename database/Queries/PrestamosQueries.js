@@ -57,7 +57,7 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   db._select(query, params, successCallback, errorCallback);
 }
 
-export function _insert(obj, successCallback, errorCallback) {
+export function _insertTx(tx, obj, successCallback, errorCallback) {
   
   var query =
     "INSERT INTO " +
@@ -76,6 +76,11 @@ export function _insert(obj, successCallback, errorCallback) {
     obj.vencimiento
   ];
 
-  db._insert(query, params, successCallback, errorCallback);
+  db._insertTx(tx, query, params, successCallback, errorCallback);
 }
 
+export function _insert(obj, successCallback, errorCallback) {
+  db._createTransaction((tx) => {
+    _insertTx(tx, obj, successCallback, errorCallback);
+  })
+}

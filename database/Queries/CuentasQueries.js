@@ -70,6 +70,45 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _getMovimientos(idUsuario, idCuenta, from, to, successCallback, errorCallback) {
+  var query =
+    "SELECT id, tipoRegistro, fecha, monto, descripcion, tipo, categoria FROM " +
+    "(SELECT egreso.id as id, " +
+    " 2 as tipoRegistro, " +
+    " egreso.fecha as fecha, " +
+    " egreso.monto as monto, " +
+    " egreso.detalleEgreso as descripcion, " +
+    " tipoEgreso.tipoEgreso as tipo, " +
+    " categoriaEgreso.categoriaEgreso as categoria " +
+    " FROM Egresos as egreso " +
+    " INNER JOIN TiposEgreso tipoEgreso ON egreso.idTipoEgreso = tipoEgreso.id " +
+    " LEFT JOIN CategoriasEgreso categoriaEgreso ON egreso.idCategoriaEgreso = categoriaEgreso.id " +
+    " WHERE egreso.idUsuario = ? " +
+    " AND egreso.idCuenta = ? " +
+    " AND (egreso.idMedioPago = '3' OR egreso.idMedioPago = '4' OR egreso.idMedioPago = '5')" +
+    " AND egreso.fecha BETWEEN ? AND ?" +
+    " UNION " +
+    " SELECT ingreso.id as id, " +
+    " 1 as tipoRegistro, " +
+    " ingreso.fecha as fecha, " +
+    " ingreso.monto as monto, " +
+    " ingreso.descripcion as descripcion, " +
+    " tipoIngreso.tipoIngreso as tipo, " +
+    " categoriaIngreso.categoriaIngreso as categoria" +
+    " FROM Ingresos as ingreso " +
+    " INNER JOIN TiposIngreso tipoIngreso ON ingreso.idTipoIngreso = tipoIngreso.id " +
+    " LEFT JOIN CategoriasIngreso categoriaIngreso ON ingreso.idCategoriaIngreso = categoriaIngreso.id " +
+    " WHERE ingreso.idUsuario = ? " +
+    " AND ingreso.idDestinoIngreso = '1' " +
+    " AND ingreso.idCuenta = ? " +
+    " AND ingreso.fecha BETWEEN ? AND ?)" +
+    " ORDER BY fecha DESC";
+
+  var params = [idUsuario, idCuenta, from, to, idUsuario, idCuenta, from, to];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _update(obj, successCallback, errorCallback) {
   
   var query =

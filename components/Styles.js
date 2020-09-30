@@ -85,6 +85,12 @@ const buttonStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  btnTableSuccess: {
+    backgroundColor: "#3AA63A",
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   btnTableDelete: {
     backgroundColor: "#AA3939",
     borderRadius: 5,
