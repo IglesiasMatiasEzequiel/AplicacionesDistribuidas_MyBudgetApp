@@ -138,7 +138,7 @@ export function _update(obj, successCallback, errorCallback) {
 
 export function _insert(obj, successCallback, errorCallback) {
   db._createTransaction((tx) => {
-    db._insertTx(tx, obj, successCallback, errorCallback);
+    _insertTx(tx, obj, successCallback, errorCallback);
   });
 }
 

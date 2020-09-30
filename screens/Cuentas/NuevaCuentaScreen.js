@@ -97,6 +97,7 @@ export default function NuevaCuentaScreen({ navigation }) {
     const isValidForm = await validateForm();
     
     if (isValidForm) {
+
       setIsLoading(true);
       Session.getUser().then((usuario) => {
         var obj = {
@@ -122,6 +123,7 @@ export default function NuevaCuentaScreen({ navigation }) {
             });
           },
           (error) => {
+            setIsLoading(false);
             console.log("Ocurrió un error al insertar la cuenta. - " + error);
           }
         );
