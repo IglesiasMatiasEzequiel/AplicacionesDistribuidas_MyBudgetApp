@@ -141,8 +141,8 @@ export default function PrestamosScreen({ route, navigation }) {
 
   /* Listado */
 
-  const tableHeaders = ["", "Tipo", "Emisor/Destinatario", "Monto", "Intereses","Vencimiento"];
-  const columnWidth = [30, 120, 200, 100, 100, 110];
+  const tableHeaders = ["", "Tipo", "Emisor/Destinatario", "Monto", "Intereses", "Cuota","Vencimiento"];
+  const columnWidth = [30, 120, 200, 100, 100, 100, 110];
 
   const getListado = () => {
 
@@ -159,6 +159,7 @@ export default function PrestamosScreen({ route, navigation }) {
                 item.emisorDestinatario,
                 item.monto,
                 item.intereses,
+                item.cuota,
                 item.vencimiento,
               ];
             }) ?? [];            

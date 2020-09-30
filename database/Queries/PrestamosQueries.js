@@ -11,6 +11,7 @@ export function _createTable(tx) {
   "emisorDestinatario VARCHAR(50)," +
   "monto NUMERIC(10, 2)," +
   "intereses NUMERIC(3, 2)," +
+  "cuota INTEGER," +
   "vencimiento DATE," +
   "FOREIGN KEY(idTipo) REFERENCES TipoPrestamos(id)," +
   "FOREIGN KEY(idCuenta) REFERENCES Cuentas(id)," +
@@ -45,6 +46,7 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   " prestamo.emisorDestinatario, " +
   " prestamo.monto, " +
   " prestamo.intereses, " +
+  " prestamo.cuota, " +
   " prestamo.vencimiento " +
   " FROM " + tableName + " as prestamo " +
   " INNER JOIN TiposPrestamo tipo ON prestamo.idTipo = tipo.id " +
@@ -55,14 +57,13 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   db._select(query, params, successCallback, errorCallback);
 }
 
-
 export function _insert(obj, successCallback, errorCallback) {
   
   var query =
     "INSERT INTO " +
     tableName +
-    "(idUsuario, idTipo, idCuenta, emisorDestinatario, monto, intereses, vencimiento) " +
-    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    "(idUsuario, idTipo, idCuenta, emisorDestinatario, monto, intereses, cuota, vencimiento) " +
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
   var params = [
     obj.idUsuario,
@@ -71,6 +72,7 @@ export function _insert(obj, successCallback, errorCallback) {
     obj.emisorDestinatario,
     obj.monto,
     obj.intereses,
+    obj.cuota,
     obj.vencimiento
   ];
 

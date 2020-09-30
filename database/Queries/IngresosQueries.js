@@ -74,6 +74,31 @@ export function _getListado(idUsuario, from, to, successCallback, errorCallback)
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _getListadoCuenta(idUsuario, idCuenta, from, to, successCallback, errorCallback){
+
+  var query = "SELECT ingreso.id, " +
+  " ingreso.fecha, " +
+  " ingreso.monto, " +
+  " ingreso.descripcion, " +
+  " tipoIngreso.tipoIngreso, " +
+  " categoriaIngreso.categoriaIngreso, " +
+  " destinoIngreso.destinoIngreso, " +
+  " banco.banco || ' - ' || cuenta.cbu as cuenta " +
+  " FROM " + tableName + " as ingreso " +
+  " INNER JOIN TiposIngreso tipoIngreso ON ingreso.idTipoIngreso = tipoIngreso.id " +
+  " INNER JOIN DestinosIngreso destinoIngreso ON ingreso.idDestinoIngreso = destinoIngreso.id " +
+  " LEFT JOIN CategoriasIngreso categoriaIngreso ON ingreso.idCategoriaIngreso = categoriaIngreso.id " +
+  " LEFT JOIN Cuentas cuenta ON ingreso.idCuenta = cuenta.id " +
+  " LEFT JOIN Bancos banco ON cuenta.idBanco = banco.id " +
+  " WHERE ingreso.idUsuario = ? " +
+  " AND ingreso.idCuenta = ? " +
+  " AND ingreso.fecha BETWEEN ? AND ? ";
+
+  var params = [idUsuario, idCuenta, from, to];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _insert(obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO Ingresos(" +
