@@ -173,7 +173,7 @@ export default function DashboardScreen({ route, navigation }) {
             data?.map((item, index) => {
               return {
                 id: index,
-                name: item.medioPago,
+                name: item.descripcion,
                 saldo: item.monto,
                 porc: parseFloat((item.monto / saldoTotal) * 100).toFixed(2),
                 color: colors[index],
