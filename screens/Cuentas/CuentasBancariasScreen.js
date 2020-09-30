@@ -1,18 +1,8 @@
 import React from "react";
 
-import { 
-  ScrollView, 
-  View, 
-  Text, 
-  TouchableOpacity 
-} from "react-native";
+import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 
-import { 
-  Table, 
-  TableWrapper,
-  Row,   
-  Cell 
-} from "react-native-table-component";
+import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
 
 import {
   screenStyles,
@@ -28,13 +18,9 @@ import {
   Alert,
 } from "../../components";
 
-import {
-   CuentasQueries 
-} from "../../database";
+import { CuentasQueries } from "../../database";
 
-import { 
-  formatStringDateFromDB
-} from "../../components/Formatters";
+import { formatStringDateFromDB } from "../../components/Formatters";
 
 import * as Session from "../../components/Session";
 
@@ -228,9 +214,9 @@ export default function CuentasBancariasScreen({ route, navigation }) {
             </Text>
           </View>
 
-          <View style={tableStyles.tableContainer}>
-            <ScrollView horizontal>
-              {listado.data !== null && listado.data.length > 0 && (
+          {listado.data !== null && listado.data.length > 0 && (
+            <View style={tableStyles.tableContainer}>
+              <ScrollView horizontal>
                 <View>
                   <Table borderStyle={tableStyles.tableHeaderBorder}>
                     <Row
@@ -257,9 +243,11 @@ export default function CuentasBancariasScreen({ route, navigation }) {
                               key={cellIndex.toString()}
                               width={columnWidth[cellIndex]}
                               data={
-                                cellIndex === 0 ? deleteButton(cellData, index)
-                              : cellIndex === 1 ? editButton(cellData, index)
-                              : cellData
+                                cellIndex === 0
+                                  ? deleteButton(cellData, index)
+                                  : cellIndex === 1
+                                  ? editButton(cellData, index)
+                                  : cellData
                               }
                               textStyle={tableStyles.tableRowtext}
                             />
@@ -269,13 +257,13 @@ export default function CuentasBancariasScreen({ route, navigation }) {
                     </Table>
                   </ScrollView>
                 </View>
-              )}
+              </ScrollView>
+            </View>
+          )}
 
-              {(listado.data === null || listado.data.length === 0) && (
-                <Alert type="danger" message="Sin información" />
-              )}
-            </ScrollView>
-          </View>
+          {(listado.data === null || listado.data.length === 0) && (
+            <Alert type="danger" message="Sin información" />
+          )}
         </View>
       )}
 

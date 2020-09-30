@@ -117,7 +117,7 @@ export default function Egresos({ route, navigation }) {
   const deleteButton = (data, index) => (
     <TouchableOpacity onPress={() => onBorrar(data)}>
       <View style={buttonStyles.btnTable}>
-        <CustomIcon name="md-trash" size={22}/>
+        <CustomIcon name="md-trash" size={22} />
       </View>
     </TouchableOpacity>
   );
@@ -126,13 +126,13 @@ export default function Egresos({ route, navigation }) {
     "",
     "Fecha",
     "Monto",
-    "Tipo",    
+    "Tipo",
     "Categoria",
     "Detalle",
     "Medio Pago",
     "Cuenta",
     "Tarjeta",
-    "Cuotas"
+    "Cuotas",
   ];
   const columnWidth = [30, 150, 150, 250, 300, 350, 150, 450, 450, 150];
 
@@ -174,7 +174,7 @@ export default function Egresos({ route, navigation }) {
                 item.medioPago ?? "-",
                 item.cuenta ?? "-",
                 item.tarjeta ?? "-",
-                item.cuotas ?? "-"
+                item.cuotas ?? "-",
               ];
             }) ?? [];
 
@@ -246,9 +246,9 @@ export default function Egresos({ route, navigation }) {
             </Text>
           </View>
 
-          <View style={tableStyles.tableContainer}>
-            <ScrollView horizontal>
-              {listado.data !== null && listado.data.length > 0 && (
+          {listado.data !== null && listado.data.length > 0 && (
+            <View style={tableStyles.tableContainer}>
+              <ScrollView horizontal>
                 <View>
                   <Table borderStyle={tableStyles.tableHeaderBorder}>
                     <Row
@@ -287,13 +287,13 @@ export default function Egresos({ route, navigation }) {
                     </Table>
                   </ScrollView>
                 </View>
-              )}
+              </ScrollView>
+            </View>
+          )}
 
-              {(listado.data === null || listado.data.length === 0) && (
-                <Alert type="danger" message="Sin información" />
-              )}
-            </ScrollView>
-          </View>
+          {(listado.data === null || listado.data.length === 0) && (
+            <Alert type="danger" message="Sin información" />
+          )}
         </View>
       )}
 

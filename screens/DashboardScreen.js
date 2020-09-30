@@ -3,6 +3,7 @@ import { ScrollView, SafeAreaView, View, FlatList, Text } from "react-native";
 import { Card } from "react-native-elements";
 import { PieChart } from "react-native-chart-kit";
 import { screenStyles } from "../components/Styles";
+import { Alert } from "../components";
 
 import { CuentasQueries, EgresosQueries } from "../database";
 
@@ -220,7 +221,6 @@ export default function DashboardScreen({ route, navigation }) {
           <Card.Title>Gastos de {months[today.getMonth()]}</Card.Title>
           <Card.Divider />
           {gastosMes.data !== null && gastosMes.data.length > 0 && (
-
             <View>
               <PieChart
                 data={gastosMes.data}
@@ -247,6 +247,10 @@ export default function DashboardScreen({ route, navigation }) {
                 />
               </SafeAreaView>
             </View>
+          )}
+
+          {(gastosMes.data === null || gastosMes.data.length === 0) && (
+            <Alert type="info" message="Sin información" />
           )}
         </Card>
       )}
@@ -281,6 +285,10 @@ export default function DashboardScreen({ route, navigation }) {
                 />
               </SafeAreaView>
             </View>
+          )}
+
+          {(saldosCuentas.data === null || saldosCuentas.data.length === 0) && (
+            <Alert type="info" message="Sin información" />
           )}
         </Card>
       )}

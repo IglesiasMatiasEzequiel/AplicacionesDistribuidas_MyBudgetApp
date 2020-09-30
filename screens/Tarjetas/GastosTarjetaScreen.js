@@ -32,29 +32,29 @@ export default function Ingresos({ navigation }) {
     data: null,
     acumulado: 0,
     isLoading: false,
-    periodo: null
+    periodo: null,
   });
 
   const [dropdownData, setDropdownData] = React.useState(null);
 
   const handleChangeTarjeta = (prop, value) => {
-    setListado((prevState) => ({ 
-      ...prevState, 
-      data: null, 
+    setListado((prevState) => ({
+      ...prevState,
+      data: null,
       isLoading: false,
       tarjeta: value,
-      periodo: null
-     }));
+      periodo: null,
+    }));
   };
 
   const handleChangePeriodo = (prop, value) => {
-    setListado((prevState) => ({ 
-      ...prevState, 
-      data: null, 
+    setListado((prevState) => ({
+      ...prevState,
+      data: null,
       isLoading: false,
-      periodo: value
-     }));
-     getListado();
+      periodo: value,
+    }));
+    getListado();
   };
 
   const tableHeaders = [
@@ -102,7 +102,7 @@ export default function Ingresos({ navigation }) {
               item.tipoEgreso,
               item.categoriaEgreso ?? "-",
               item.detalleEgreso ?? "-",
-              item.cuotas ?? "-"
+              item.cuotas ?? "-",
             ];
           }) ?? [];
 
@@ -190,21 +190,21 @@ export default function Ingresos({ navigation }) {
                 <Text h5 style={titleStyles.titleText}>
                   Gastos
                   {listado.periodo === "1"
-                ? " de la semana"
-                : listado.periodo === "2"
-                ? " del mes"
-                : listado.periodo === "3"
-                ? " del año"
-                : listado.periodo === "4"
-                ? " acumulados a la fecha"
-                : ""}
-                - $ {listado.acumulado ?? 0}
+                    ? " de la semana"
+                    : listado.periodo === "2"
+                    ? " del mes"
+                    : listado.periodo === "3"
+                    ? " del año"
+                    : listado.periodo === "4"
+                    ? " acumulados a la fecha"
+                    : ""}
+                  - $ {listado.acumulado ?? 0}
                 </Text>
               </View>
 
-              <View style={tableStyles.tableContainer}>
-                <ScrollView horizontal>
-                  {listado.data !== null && listado.data.length > 0 && (
+              {listado.data !== null && listado.data.length > 0 && (
+                <View style={tableStyles.tableContainer}>
+                  <ScrollView horizontal>
                     <View>
                       <Table borderStyle={tableStyles.tableHeaderBorder}>
                         <Row
@@ -221,32 +221,30 @@ export default function Ingresos({ navigation }) {
                         ]}
                       >
                         <Table borderStyle={tableStyles.tableDataBorder}>
-                          {listado.data.map(
-                            (rowData, index) => (
-                              <Row
-                                key={index}
-                                data={rowData}
-                                widthArr={columnWidth}
-                                style={[
-                                  tableStyles.tableRow,
-                                  index % 2 && {
-                                    backgroundColor: "transparent",
-                                  },
-                                ]}
-                                textStyle={tableStyles.tableRowtext}
-                              />
-                            )
-                          )}
+                          {listado.data.map((rowData, index) => (
+                            <Row
+                              key={index}
+                              data={rowData}
+                              widthArr={columnWidth}
+                              style={[
+                                tableStyles.tableRow,
+                                index % 2 && {
+                                  backgroundColor: "transparent",
+                                },
+                              ]}
+                              textStyle={tableStyles.tableRowtext}
+                            />
+                          ))}
                         </Table>
                       </ScrollView>
                     </View>
-                  )}
+                  </ScrollView>
+                </View>
+              )}
 
-                  {(listado.data === null || listado.data.length === 0) && (
-                    <Alert type="danger" message="Sin información" />
-                  )}
-                </ScrollView>
-              </View>
+              {(listado.data === null || listado.data.length === 0) && (
+                <Alert type="danger" message="Sin información" />
+              )}
             </View>
           )}
         </View>

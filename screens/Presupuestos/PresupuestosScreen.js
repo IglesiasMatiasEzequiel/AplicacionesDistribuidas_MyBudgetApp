@@ -1,32 +1,20 @@
-import React from 'react'
+import React from "react";
 
-import { 
-  ScrollView, 
-  View,
-  Text, 
-  TouchableOpacity 
-} from "react-native";
+import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
 
-import { 
-  Table, 
-  Row, 
-  TableWrapper, 
-  Cell 
-} from "react-native-table-component";
+import { Table, Row, TableWrapper, Cell } from "react-native-table-component";
 
 import {
   screenStyles,
   buttonStyles,
   tableStyles,
   titleStyles,
-  dropdownStyles
+  dropdownStyles,
 } from "../../components/Styles";
 
-import {
-  periodosData
-} from "../../components/Data";
+import { periodosData } from "../../components/Data";
 
 import {
   CustomSpinner,
@@ -35,10 +23,10 @@ import {
   Alert,
 } from "../../components";
 
-import { 
-  formatDateToString, 
-  formatStringDateToDB, 
-  formatStringDateFromDB 
+import {
+  formatDateToString,
+  formatStringDateToDB,
+  formatStringDateFromDB,
 } from "../../components/Formatters";
 
 // import { Text } from "galio-framework";
@@ -46,122 +34,119 @@ import {
 import { PresupuestosQueries } from "../../database";
 import * as Session from "../../components/Session";
 
-export default function PresupuestosScreen({ route,navigation }) {
+export default function PresupuestosScreen({ route, navigation }) {
+  /* State del CustomSpinner */
+  const [isLoading, setIsLoading] = React.useState(false);
 
- /* State del CustomSpinner */
- const [isLoading, setIsLoading] = React.useState(false);
-  
- /* State del CustomModal */
- const [modalData, setModalData] = React.useState(null);
+  /* State del CustomModal */
+  const [modalData, setModalData] = React.useState(null);
 
- /* State del Listado */
- const [listado, setListado] = React.useState({
-   data: null,
-   isLoading: false,
-   periodo: null
- });
+  /* State del Listado */
+  const [listado, setListado] = React.useState({
+    data: null,
+    isLoading: false,
+    periodo: null,
+  });
 
- const handleChangePeriodo = (periodo) => {
-   setListado((prevState) => ({ 
-     ...prevState, 
-     data: null, 
-     isLoading: false,
-     periodo: periodo
+  const handleChangePeriodo = (periodo) => {
+    setListado((prevState) => ({
+      ...prevState,
+      data: null,
+      isLoading: false,
+      periodo: periodo,
     }));
- };
+  };
 
- const limpiarState = () => {
-   setListado({
-     data: null, 
-     isLoading: false, 
-     periodo: null
-   });
- };
+  const limpiarState = () => {
+    setListado({
+      data: null,
+      isLoading: false,
+      periodo: null,
+    });
+  };
 
   /* Botón Nuevo*/
 
   const onNuevo = () => {
     limpiarState();
     navigation.navigate("NuevoPresupuesto");
-  }
+  };
 
   /* Botón Nuevo*/
 
-   /* Botón borrar */
+  /* Botón borrar */
 
-   const onCancelar = () => setModalData({ ...modalData, isVisible: false });
+  const onCancelar = () => setModalData({ ...modalData, isVisible: false });
 
-   const onBorrar = (id) => { 
-     setModalData({ 
-       title: "Eliminar presupuesto",
-       message: "¿Está seguro de que desea eliminar el presupuesto",
-       handleBtnOnSuccess: () => onConfirmarBorrar(id),
-       handleBtnOnError: () => onCancelar(),
-       showErrorBtn: true,
-       isVisible: true
-     });
-   }
- 
-   const onConfirmarBorrar = (id) => { 
-     
-     setIsLoading(true);
- 
-       PresupuestosQueries._deleteById(id, 
-         () => {
-           setIsLoading(false);
-           setModalData({ 
-             title: "¡Borrado exitoso!",
-             message: "El presupuesto se eliminó correctamente.",
-             isVisible: true,
-             isSuccess: true,
-             handleBtnOnSuccess: () => { 
-               limpiarState();
-               onCancelar();
-             },
-             successBtnText: "Volver",
-             showErrorBtn: false
-           });
-         },
-         (error) => {
-           
-           setListado((prevState) => ({ 
-             ...prevState, 
-             data: [],
-             isLoading: false, 
-           }));
- 
-           console.log(error);
-         }
-       );
-   }
- 
-   const deleteButton = (data, index) => (
-     <TouchableOpacity onPress={() => onBorrar(data)}>
-       <View style={buttonStyles.btnTable}>
-         <CustomIcon name="md-trash" size={22}/>
-       </View>
-     </TouchableOpacity>
-   );
- 
-   /* Botón borrar */
+  const onBorrar = (id) => {
+    setModalData({
+      title: "Eliminar presupuesto",
+      message: "¿Está seguro de que desea eliminar el presupuesto",
+      handleBtnOnSuccess: () => onConfirmarBorrar(id),
+      handleBtnOnError: () => onCancelar(),
+      showErrorBtn: true,
+      isVisible: true,
+    });
+  };
 
+  const onConfirmarBorrar = (id) => {
+    setIsLoading(true);
 
-/* Listado */
+    PresupuestosQueries._deleteById(
+      id,
+      () => {
+        setIsLoading(false);
+        setModalData({
+          title: "¡Borrado exitoso!",
+          message: "El presupuesto se eliminó correctamente.",
+          isVisible: true,
+          isSuccess: true,
+          handleBtnOnSuccess: () => {
+            limpiarState();
+            onCancelar();
+          },
+          successBtnText: "Volver",
+          showErrorBtn: false,
+        });
+      },
+      (error) => {
+        setListado((prevState) => ({
+          ...prevState,
+          data: [],
+          isLoading: false,
+        }));
 
-  const tableHeaders = [
-    "",
-    "Tipo",
-    "Monto",
-    "Fecha Inicio."
-  ];
+        console.log(error);
+      }
+    );
+  };
+
+  const deleteButton = (data, index) => (
+    <TouchableOpacity onPress={() => onBorrar(data)}>
+      <View style={buttonStyles.btnTable}>
+        <CustomIcon name="md-trash" size={22} />
+      </View>
+    </TouchableOpacity>
+  );
+
+  /* Botón borrar */
+
+  /* Listado */
+
+  const tableHeaders = ["", "Tipo", "Monto", "Fecha Inicio."];
   const columnWidth = [30, 160, 80, 120];
 
   const getListado = () => {
     setListado((prevState) => ({ ...prevState, isLoading: true }));
 
-    var substractDays = listado.periodo === "1" ? 7
-    : listado.periodo === "2" ? 30 
-    : listado.periodo === "3" ? 365 : 7;
+    var substractDays =
+      listado.periodo === "1"
+        ? 7
+        : listado.periodo === "2"
+        ? 30
+        : listado.periodo === "3"
+        ? 365
+        : 7;
 
     var to = new Date();
     var from = new Date();
@@ -173,11 +158,14 @@ export default function PresupuestosScreen({ route,navigation }) {
 
     Session.getUser().then((usuario) => {
       PresupuestosQueries._getListado(
-        usuario.id, fromFormatted, toFormatted,
+        usuario.id,
+        fromFormatted,
+        toFormatted,
         (data) => {
           var tableData =
             data?.map((item) => {
-              return [item.id,
+              return [
+                item.id,
                 item.categoriaEgreso,
                 item.monto,
                 formatStringDateFromDB(item.fechaInicio),
@@ -191,7 +179,6 @@ export default function PresupuestosScreen({ route,navigation }) {
           }));
         },
         (error) => {
-
           setListado((prevState) => ({
             ...prevState,
             data: [],
@@ -204,10 +191,10 @@ export default function PresupuestosScreen({ route,navigation }) {
     });
   };
 
-  if((listado.data === null
-    || (route?.params?.isReload ?? false))
-    && !listado.isLoading){ 
-
+  if (
+    (listado.data === null || (route?.params?.isReload ?? false)) &&
+    !listado.isLoading
+  ) {
     /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
     navigation.setParams({ isReload: false });
 
@@ -222,10 +209,10 @@ export default function PresupuestosScreen({ route,navigation }) {
         <Text style={buttonStyles.btnText}>Nuevo Presupuesto</Text>
       </TouchableOpacity>
 
-      <View style={[ screenStyles.containerDivider, titleStyles.titleContainer ]}>
-          <Text h5 style={titleStyles.titleText}>
-            Filtros
-          </Text>
+      <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
+        <Text h5 style={titleStyles.titleText}>
+          Filtros
+        </Text>
       </View>
 
       <DropDownPicker
@@ -255,9 +242,9 @@ export default function PresupuestosScreen({ route,navigation }) {
             </Text>
           </View>
 
-          <View style={tableStyles.tableContainer}>
-            <ScrollView horizontal>
-              {listado.data !== null && listado.data.length > 0 && (
+          {listado.data !== null && listado.data.length > 0 && (
+            <View style={tableStyles.tableContainer}>
+              <ScrollView horizontal>
                 <View>
                   <Table borderStyle={tableStyles.tableHeaderBorder}>
                     <Row
@@ -296,13 +283,13 @@ export default function PresupuestosScreen({ route,navigation }) {
                     </Table>
                   </ScrollView>
                 </View>
-              )}
+              </ScrollView>
+            </View>
+          )}
 
-              {(listado.data === null || listado.data.length === 0) && (
-                <Alert type="danger" message="Sin información" />
-              )}
-            </ScrollView>
-          </View>
+          {(listado.data === null || listado.data.length === 0) && (
+            <Alert type="danger" message="Sin información" />
+          )}
         </View>
       )}
 
@@ -319,7 +306,6 @@ export default function PresupuestosScreen({ route,navigation }) {
         errorBtnText={modalData?.errorBtnText}
         showErrorBtn={modalData?.showErrorBtn}
       />
-
     </ScrollView>
   );
 }

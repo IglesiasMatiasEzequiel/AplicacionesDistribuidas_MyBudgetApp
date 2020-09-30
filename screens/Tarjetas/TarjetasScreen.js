@@ -189,9 +189,9 @@ export default function TarjetasScreen({ route, navigation }) {
             </Text>
           </View>
 
-          <View style={tableStyles.tableContainer}>
-            <ScrollView horizontal>
-              {listado.data !== null && listado.data.length > 0 && (
+          {listado.data !== null && listado.data.length > 0 && (
+            <View style={tableStyles.tableContainer}>
+              <ScrollView horizontal>
                 <View>
                   <Table borderStyle={tableStyles.tableHeaderBorder}>
                     <Row
@@ -230,13 +230,13 @@ export default function TarjetasScreen({ route, navigation }) {
                     </Table>
                   </ScrollView>
                 </View>
-              )}
+              </ScrollView>
+            </View>
+          )}
 
-              {(listado.data === null || listado.data.length === 0) && (
-                <Alert type="danger" message="Sin información" />
-              )}
-            </ScrollView>
-          </View>
+          {(listado.data === null || listado.data.length === 0) && (
+            <Alert type="danger" message="Sin información" />
+          )}
         </View>
       )}
 

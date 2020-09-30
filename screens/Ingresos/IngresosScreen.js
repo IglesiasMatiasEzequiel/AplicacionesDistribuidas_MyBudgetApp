@@ -247,9 +247,10 @@ export default function Ingresos({ route, navigation }) {
             </Text>
           </View>
 
+          {listado.data !== null && listado.data.length > 0 && (
+
           <View style={tableStyles.tableContainer}>
             <ScrollView horizontal>
-              {(listado.data !== null && listado.data.length > 0) && (
                 <View>
                   <Table borderStyle={tableStyles.tableHeaderBorder}>
                     <Row
@@ -263,40 +264,38 @@ export default function Ingresos({ route, navigation }) {
                     style={[tableStyles.tableDataContainer, { height: 200 }]}
                   >
                     <Table borderStyle={tableStyles.tableDataBorder}>
-
-                    {listado.data.map((rowData, index) => (
-                      <TableWrapper
-                        key={index}
-                        style={[
-                          tableStyles.tableRow,
-                          index % 2 && { backgroundColor: "transparent" },
-                        ]}
-                      >
-                        {rowData.map((cellData, cellIndex) => (
-                          <Cell
-                            key={cellIndex.toString()}
-                            width={columnWidth[cellIndex]}
-                            data={
-                              cellIndex === 0
-                                ? deleteButton(cellData, index)
-                                : cellData
-                            }
-                            textStyle={tableStyles.tableRowtext}
-                          />
-                        ))}
-                      </TableWrapper>
-                    ))}
-
+                      {listado.data.map((rowData, index) => (
+                        <TableWrapper
+                          key={index}
+                          style={[
+                            tableStyles.tableRow,
+                            index % 2 && { backgroundColor: "transparent" },
+                          ]}
+                        >
+                          {rowData.map((cellData, cellIndex) => (
+                            <Cell
+                              key={cellIndex.toString()}
+                              width={columnWidth[cellIndex]}
+                              data={
+                                cellIndex === 0
+                                  ? deleteButton(cellData, index)
+                                  : cellData
+                              }
+                              textStyle={tableStyles.tableRowtext}
+                            />
+                          ))}
+                        </TableWrapper>
+                      ))}
                     </Table>
                   </ScrollView>
                 </View>
-              )}
-
-              {(listado.data === null || listado.data.length === 0) && (
-                <Alert type="danger" message="Sin información" />
-              )}
             </ScrollView>
           </View>
+          )}
+
+          {(listado.data === null || listado.data.length === 0) && (
+                  <Alert type="danger" message="Sin información" />
+              )}
         </View>
       )}
 
@@ -313,7 +312,6 @@ export default function Ingresos({ route, navigation }) {
         errorBtnText={modalData?.errorBtnText}
         showErrorBtn={modalData?.showErrorBtn}
       />
-
     </ScrollView>
   );
 }

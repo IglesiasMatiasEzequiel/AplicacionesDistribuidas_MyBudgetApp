@@ -1,48 +1,30 @@
 import React from "react";
 
-import { 
-  ScrollView, 
-  View,
-  Text, 
-  TouchableOpacity 
-} from "react-native";
+import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 
-import { 
-  Table, 
-  Row, 
-  TableWrapper, 
-  Cell 
-} from "react-native-table-component";
+import { Table, Row, TableWrapper, Cell } from "react-native-table-component";
 
 import {
   screenStyles,
   tableStyles,
   titleStyles,
-  buttonStyles
+  buttonStyles,
 } from "../../components/Styles";
 
+import { periodosData } from "../../components/Data";
+
+import { CustomSpinner, CustomIcon, Alert, Dropdown } from "../../components";
+
 import {
-  periodosData
-} from "../../components/Data";
-
-import { 
-  CustomSpinner,  
-  CustomIcon, 
-  Alert,
-  Dropdown
-} from "../../components";
-
-import { 
-  formatDateToString, 
-  formatStringDateToDB, 
-  formatStringDateFromDB 
+  formatDateToString,
+  formatStringDateToDB,
+  formatStringDateFromDB,
 } from "../../components/Formatters";
 
 import { CuentasQueries } from "../../database";
 import * as Session from "../../components/Session";
 
 export default function MovimientoCuenta({ route, navigation }) {
-
   /* State del CustomSpinner */
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -53,42 +35,38 @@ export default function MovimientoCuenta({ route, navigation }) {
     data: null,
     isLoading: false,
     cuenta: null,
-    periodo: null
-  });
-  const [listado2, setListado2] = React.useState({
-    data: null,
-    isLoading: false,
-    cuenta: null,
-    periodo: null
+    periodo: null,
   });
 
   const handleChangeCuenta = (prop, value) => {
-    setListado((prevState) => ({ 
-      ...prevState, 
-      data: null, 
+    setListado((prevState) => ({
+      ...prevState,
+      data: null,
       isLoading: false,
       cuenta: value,
-      periodo: null
-     }));
+      periodo: null,
+    }));
   };
 
-
   const handleChangePeriodo = (prop, value) => {
-    setListado((prevState) => ({ 
-      ...prevState, 
-      data: null, 
+    setListado((prevState) => ({
+      ...prevState,
+      data: null,
       isLoading: false,
-      periodo: value
-     }));
-     getListado();
+      periodo: value,
+    }));
+    getListado();
   };
 
   const renderStatusIcon = (tipoRegistro, index) => (
-    <View style={tipoRegistro === 1 ? buttonStyles.btnTableSuccess : buttonStyles.btnTableDelete}>
-      <CustomIcon
-        name={tipoRegistro === 1 ? "md-redo" : "md-undo"}
-        size={22}
-      />
+    <View
+      style={
+        tipoRegistro === 1
+          ? buttonStyles.btnTableSuccess
+          : buttonStyles.btnTableDelete
+      }
+    >
+      <CustomIcon name={tipoRegistro === 1 ? "md-redo" : "md-undo"} size={22} />
     </View>
   );
 
@@ -96,13 +74,19 @@ export default function MovimientoCuenta({ route, navigation }) {
 
   /* Listado */
 
-  const tableHeaders = ["", "Fecha", "Monto", "Descripcion", "Tipo", "Categoría"];
+  const tableHeaders = [
+    "",
+    "Fecha",
+    "Monto",
+    "Descripcion",
+    "Tipo",
+    "Categoría",
+  ];
   const columnWidth = [30, 120, 150, 300, 300, 150];
 
   const getListado = () => {
-
     setListado((prevState) => ({ ...prevState, isLoading: true }));
-    
+
     var substractDays =
       listado.periodo === "1"
         ? 7
@@ -122,31 +106,34 @@ export default function MovimientoCuenta({ route, navigation }) {
 
     Session.getUser().then((usuario) => {
       CuentasQueries._getMovimientos(
-        usuario.id, listado.cuenta, fromFormatted, toFormatted,
+        usuario.id,
+        listado.cuenta,
+        fromFormatted,
+        toFormatted,
         (data) => {
-
-          var tableData = data?.map((item) => {
-              return [item.tipoRegistro,
+          var tableData =
+            data?.map((item) => {
+              return [
+                item.tipoRegistro,
                 formatStringDateFromDB(item.fecha),
                 "$ " + item.monto,
                 item.descripcion ?? "-",
                 item.tipo,
-                item.categoria ?? "-"
+                item.categoria ?? "-",
               ];
-            }) ?? [];            
+            }) ?? [];
 
-          setListado((prevState) => ({ 
-            ...prevState, 
+          setListado((prevState) => ({
+            ...prevState,
             data: tableData,
-            isLoading: false, 
+            isLoading: false,
           }));
         },
         (error) => {
-          
-          setListado((prevState) => ({ 
-            ...prevState, 
+          setListado((prevState) => ({
+            ...prevState,
             data: [],
-            isLoading: false, 
+            isLoading: false,
           }));
 
           console.log(error);
@@ -156,11 +143,9 @@ export default function MovimientoCuenta({ route, navigation }) {
   };
 
   const fillDropdownData = () => {
-
     setIsLoading(true);
 
     Session.getUser().then((usuario) => {
-
       CuentasQueries._getListado(usuario.id, (data) => {
         var cuentas =
           data?.map((item) => {
@@ -168,7 +153,7 @@ export default function MovimientoCuenta({ route, navigation }) {
               label: item.banco + " - " + item.cbu,
               value: item.id.toString(),
             };
-          }) ?? [];          
+          }) ?? [];
 
         setDropdownData({
           cuentas: cuentas,
@@ -177,9 +162,9 @@ export default function MovimientoCuenta({ route, navigation }) {
         setIsLoading(false);
       });
     });
-  }
+  };
 
-  if(dropdownData === null && !isLoading){
+  if (dropdownData === null && !isLoading) {
     fillDropdownData();
   }
 
@@ -187,14 +172,15 @@ export default function MovimientoCuenta({ route, navigation }) {
     <ScrollView style={screenStyles.screen}>
       {dropdownData !== null && (
         <View>
+          <View
+            style={[screenStyles.containerDivider, titleStyles.titleContainer]}
+          >
+            <Text h5 style={titleStyles.titleText}>
+              Filtros
+            </Text>
+          </View>
 
-        <View style={[screenStyles.containerDivider, titleStyles.titleContainer]}>
-          <Text h5 style={titleStyles.titleText}>
-            Filtros
-          </Text>
-        </View>
-
-        <Dropdown
+          <Dropdown
             propName="tarjeta"
             items={dropdownData.cuentas}
             defaultValue={listado.cuenta}
@@ -202,89 +188,91 @@ export default function MovimientoCuenta({ route, navigation }) {
             handleChange={handleChangeCuenta}
           />
 
-        <Dropdown
+          <Dropdown
             propName="periodo"
             items={periodosData}
             defaultValue={listado.periodo}
-            placeholder="Seleccione un perdioso."
+            placeholder="Seleccione un periodo."
             handleChange={handleChangePeriodo}
           />
 
-        {!listado.isLoading && (
-          <View>
-            <View
-              style={[screenStyles.containerDivider, titleStyles.titleContainer]}
-            >
-              <Text h5 style={titleStyles.titleText}>
-                Movimientos
-                {listado.periodo === "1"
-                  ? " de la semana"
-                  : listado.periodo === "2"
-                  ? " del mes"
-                  : listado.periodo === "3"
-                  ? " del año"
-                  : ""}
-              </Text>
-            </View>
+          {!listado.isLoading && (
+            <View>
+              <View
+                style={[
+                  screenStyles.containerDivider,
+                  titleStyles.titleContainer,
+                ]}
+              >
+                <Text h5 style={titleStyles.titleText}>
+                  Movimientos
+                  {listado.periodo === "1"
+                    ? " de la semana"
+                    : listado.periodo === "2"
+                    ? " del mes"
+                    : listado.periodo === "3"
+                    ? " del año"
+                    : ""}
+                </Text>
+              </View>
 
-            <View style={tableStyles.tableContainer}>
-              <ScrollView horizontal>
-                {(listado.data !== null && listado.data.length > 0) && (
-                  <View>
-                    <Table borderStyle={tableStyles.tableHeaderBorder}>
-                      <Row
-                        data={tableHeaders}
-                        widthArr={columnWidth}
-                        style={tableStyles.tableHeader}
-                        textStyle={tableStyles.tableHeadertext}
-                      />
-                    </Table>
-                    <ScrollView
-                      style={[tableStyles.tableDataContainer, { height: 200 }]}
-                    >
-                      <Table borderStyle={tableStyles.tableDataBorder}>
-
-                      {listado.data.map((rowData, index) => (
-                        <TableWrapper
-                          key={index}
-                          style={[
-                            tableStyles.tableRow,
-                            index % 2 && { backgroundColor: "transparent" },
-                          ]}
-                        >
-                          {rowData.map((cellData, cellIndex) => (
-                            <Cell
-                              key={cellIndex.toString()}
-                              width={columnWidth[cellIndex]}
-                              data={
-                                cellIndex === 0
-                                  ? renderStatusIcon(cellData, index)
-                                  : cellData
-                              }
-                              textStyle={tableStyles.tableRowtext}
-                            />
-                          ))}
-                        </TableWrapper>
-                      ))}
-
+              {listado.data !== null && listado.data.length > 0 && (
+                <View style={tableStyles.tableContainer}>
+                  <ScrollView horizontal>
+                    <View>
+                      <Table borderStyle={tableStyles.tableHeaderBorder}>
+                        <Row
+                          data={tableHeaders}
+                          widthArr={columnWidth}
+                          style={tableStyles.tableHeader}
+                          textStyle={tableStyles.tableHeadertext}
+                        />
                       </Table>
-                    </ScrollView>
-                  </View>
-                )}
+                      <ScrollView
+                        style={[
+                          tableStyles.tableDataContainer,
+                          { height: 200 },
+                        ]}
+                      >
+                        <Table borderStyle={tableStyles.tableDataBorder}>
+                          {listado.data.map((rowData, index) => (
+                            <TableWrapper
+                              key={index}
+                              style={[
+                                tableStyles.tableRow,
+                                index % 2 && { backgroundColor: "transparent" },
+                              ]}
+                            >
+                              {rowData.map((cellData, cellIndex) => (
+                                <Cell
+                                  key={cellIndex.toString()}
+                                  width={columnWidth[cellIndex]}
+                                  data={
+                                    cellIndex === 0
+                                      ? renderStatusIcon(cellData, index)
+                                      : cellData
+                                  }
+                                  textStyle={tableStyles.tableRowtext}
+                                />
+                              ))}
+                            </TableWrapper>
+                          ))}
+                        </Table>
+                      </ScrollView>
+                    </View>
+                  </ScrollView>
+                </View>
+              )}
 
-                {(listado.data === null || listado.data.length === 0) && (
-                  <Alert type="danger" message="Sin información" />
-                )}
-              </ScrollView>
+              {(listado.data === null || listado.data.length === 0) && (
+                <Alert type="danger" message="Sin información" />
+              )}
             </View>
-          </View>
-        )}
-
-      </View>
+          )}
+        </View>
       )}
 
       <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
-
     </ScrollView>
   );
 }

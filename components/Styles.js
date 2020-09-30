@@ -229,7 +229,7 @@ const notificationStyles = StyleSheet.create({
 
 const alertStyles = StyleSheet.create({
   alertContainer: {
-    width: width - 40,
+    width: '100%',
     borderRadius: 5,
     justifyContent: "center",
     padding: 15,
