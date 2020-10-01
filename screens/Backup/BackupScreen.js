@@ -16,7 +16,9 @@ import {
   InversionesQueries,
 } from "../../database";
 
-import { deleteByIdUsuario, backup } from "../../services/backupServices";
+import { formatBackupDate } from '../../components/Formatters'
+
+import { deleteByIdUsuario, backup, getByIdUsuario } from "../../services/backupServices";
 
 import * as Session from "../../components/Session";
 
@@ -200,14 +202,72 @@ export default function TarjetasScreen({ route, navigation }) {
     });
   };
 
+  const onGetBackup = (id) => {
+    setModalData({
+      title: "Backup",
+      message: "¿Está seguro de que desea actualzar sus datos con los de la nube?. Aquellos datos que no estén subidos se perderán.",
+      handleBtnOnSuccess: () => onConfirmarGetBackup(id),
+      handleBtnOnError: () => onCancelar(),
+      showErrorBtn: true,
+      isVisible: true,
+    });
+  };
+
+  const onConfirmarGetBackup = () => {
+    setIsLoading(true);
+
+    //obtengo el usuario de la sesión
+    Session.getUser().then((usuario) => {
+      var idUsuario = usuario.id;
+
+      getByIdUsuario({ idUsuario: idUsuario })
+        .then((data) => {
+          
+          data.data.ingresos.map((item) => {
+            IngresosQueries._insert({
+              idUsuario: idUsuario,
+              idTipoIngreso: item.idTipoIngreso,
+              idCategoriaIngreso: item.idCategoriaIngreso,
+              idDestinoIngreso: item.idDestinoIngreso,
+              idCuenta: item.idCuenta,
+              fecha: formatBackupDate(item.fecha),
+              monto: item.monto,
+              descripcion: item.descripcion
+            });
+          });
+
+          data.data.egresos.map((item) => {
+            EgresosQueries._insert({
+              idUsuario: idUsuario,
+              fecha: formatBackupDate(item.fecha),
+              monto: item.monto,
+              idTipoEgreso: item.idTipoEgreso,
+              idCategoriaEgreso: item.idCategoriaEgreso,
+              detalleEgreso: item.detalleEgreso,
+              idMedioPago: item.idMedioPago,
+              cuotas: item.cuotas,
+              idCuenta: item.idCuenta,
+              idTarjeta: item.idTarjeta,
+            });
+          });
+
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          console.log(error);
+        });
+    });
+  };
+
   return (
     <ScrollView style={screenStyles.screen}>
       <TouchableOpacity onPress={onBackup} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Subir info</Text>
+        <Text style={buttonStyles.btnText}>Enviar mis datos</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBackup} style={buttonStyles.btn}>
-        <Text style={buttonStyles.btnText}>Traer info</Text>
+      <TouchableOpacity onPress={onGetBackup} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Recuperar mis datos</Text>
       </TouchableOpacity>
 
       <CustomSpinner isLoading={isLoading} text={"Cargando..."} />

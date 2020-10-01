@@ -2,13 +2,6 @@ import endpoints from "./endpoints";
 
 const axios = require("axios");
 
-let config = {
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
-    Accept: "application/json",
-  },
-};
-
 export const createUsuario = async (request) => {
   try {
     return axios.post(endpoints.createUsuario, request);
@@ -38,7 +31,7 @@ export const deleteByIdUsuario = async (request) => {
 
 export const getByIdUsuario = async (request) => {
   try {
-    return axios.get(endpoints.getByIdUsuario, request);
+    return axios.post(endpoints.getByIdUsuario, request);
   } catch (error) {
     console.log(error);
   }

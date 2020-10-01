@@ -2,15 +2,23 @@ import React from "react";
 import { ScrollView, SafeAreaView, View, FlatList, Text } from "react-native";
 import { Card } from "react-native-elements";
 import { PieChart } from "react-native-chart-kit";
-import ProgressCircle from 'react-native-progress-circle-rtl';
+import ProgressCircle from "react-native-progress-circle-rtl";
 import { screenStyles } from "../components/Styles";
 import { Alert } from "../components";
 
 import { notificationStyles } from "../components/Styles";
 
-import { formatStringDateFromDB, formatStringToDate } from "../components/Formatters";
+import {
+  formatStringDateFromDB,
+  formatStringToDate,
+} from "../components/Formatters";
 
-import { CuentasQueries, DataBase, EgresosQueries, PresupuestosQueries } from "../database";
+import {
+  CuentasQueries,
+  DataBase,
+  EgresosQueries,
+  PresupuestosQueries,
+} from "../database";
 
 import {
   formatDateToString,
@@ -100,10 +108,14 @@ const renderItemSaldo = (item) => {
 };
 
 const renderItemVencimiento = ({ item, index }) => {
-  
-  var tipoVencimiento = item.tipoVencimiento === 1 ? "Egreso" 
-  : item.tipoVencimiento === 2 ? "Ineversión"
-  : item.tipoVencimiento === 3 ? "Prestamo" : ""
+  var tipoVencimiento =
+    item.tipoVencimiento === 1
+      ? "Egreso"
+      : item.tipoVencimiento === 2
+      ? "Ineversión"
+      : item.tipoVencimiento === 3
+      ? "Prestamo"
+      : "";
 
   return (
     <View
@@ -112,7 +124,9 @@ const renderItemVencimiento = ({ item, index }) => {
         index % 2 && { backgroundColor: "transparent" },
       ]}
     >
-      <Text style={[notificationStyles.notificationTitle, { fontWeight: "bold" } ]}>
+      <Text
+        style={[notificationStyles.notificationTitle, { fontWeight: "bold" }]}
+      >
         {formatStringDateFromDB(item.vencimiento)} - {tipoVencimiento}
       </Text>
       <Text style={notificationStyles.notificationMessage}>
@@ -123,8 +137,24 @@ const renderItemVencimiento = ({ item, index }) => {
 };
 
 export default function DashboardScreen({ route, navigation }) {
+  React.useEffect(() => {
+    getGastosMes();
+  }, [gastosMes, setGastosMes]);
+
+  React.useEffect(() => {
+    getSaldosCuentas();
+  }, [saldosCuentas, setSaldosCuentas]);
+
+  React.useEffect(() => {
+    getVencimientos();
+  }, [vencimientos, setVencimientos]);
+
+  React.useEffect(() => {
+    getPresupuestos();
+  }, [presupuestos, setPresupuestos]);
+
   const today = new Date();
-  
+
   /* State del Listado */
   const [gastosMes, setGastosMes] = React.useState({
     data: null,
@@ -165,7 +195,6 @@ export default function DashboardScreen({ route, navigation }) {
         fromFormatted,
         toFormatted,
         (data) => {
-
           var gastoTotal = data?.reduce((a, b) => a + (b.gasto || 0), 0) ?? 0;
 
           var dataGastosMes =
@@ -205,7 +234,6 @@ export default function DashboardScreen({ route, navigation }) {
       CuentasQueries._getListadoSaldos(
         usuario.id,
         (data) => {
-
           var saldoTotal = data?.reduce((a, b) => a + (b.monto || 0), 0) ?? 0;
 
           var dataSaldosCuentas =
@@ -252,9 +280,9 @@ export default function DashboardScreen({ route, navigation }) {
     Session.getUser().then((usuario) => {
       DataBase._getVencimientos(
         usuario.id,
-        fromFormatted, toFormatted,
+        fromFormatted,
+        toFormatted,
         (data) => {
-
           var dataVencimientos =
             data?.map((item, index) => {
               return {
@@ -265,7 +293,7 @@ export default function DashboardScreen({ route, navigation }) {
               };
             }) ?? [];
 
-            setVencimientos((prevState) => ({
+          setVencimientos((prevState) => ({
             ...prevState,
             data: dataVencimientos,
             isLoading: false,
@@ -288,9 +316,9 @@ export default function DashboardScreen({ route, navigation }) {
     setPresupuestos((prevState) => ({ ...prevState, isLoading: true }));
 
     var to = new Date();
-    to.setDate(to.getDate())
+    to.setDate(to.getDate());
 
-    var currentMonth = (to.getMonth()).toString().padStart(2, "0");
+    var currentMonth = to.getMonth().toString().padStart(2, "0");
     var currentYear = to.getFullYear();
 
     var toFormatted = formatStringDateToDB(formatDateToString(to));
@@ -299,53 +327,49 @@ export default function DashboardScreen({ route, navigation }) {
     );
 
     Session.getUser().then((usuario) => {
-
       PresupuestosQueries._getListado(
         usuario.id,
-        fromFormatted, 
+        fromFormatted,
         toFormatted,
         (dataPrespuestos) => {
+          dataPrespuestos?.forEach((dataPresupuesto) => {
 
-          if (dataPrespuestos !== null && dataPrespuestos.length > 0) {
-
-            dataPrespuestos.forEach((dataPresupuesto) => {
-
+            if (!presupuestos?.data?.some((presupuesto) => { presupuesto.id === dataPresupuesto.idCategoriaEgreso })) {
               EgresosQueries._getGastosPorCategoria(
                 usuario.id,
                 dataPresupuesto.idCategoriaEgreso,
                 dataPresupuesto.fechaInicio,
                 toFormatted,
                 (gastoPorCategoria) => {
-
                   var newData = presupuestos.data ?? [];
 
-                  if(gastoPorCategoria !== null && gastoPorCategoria.length == 1){                    
-
+                  if (
+                    gastoPorCategoria !== null &&
+                    gastoPorCategoria.length == 1
+                  ) {
                     newData.push({
                       id: dataPresupuesto.idCategoriaEgreso,
                       categoria: dataPresupuesto.categoriaEgreso,
                       gasto: gastoPorCategoria[0].gasto,
-                      presupuesto: dataPresupuesto.monto
+                      presupuesto: dataPresupuesto.monto,
                     });
-                  }else{
-
+                  } else {
                     newData.push({
                       id: dataPresupuesto.idCategoriaEgreso,
                       categoria: dataPresupuesto.categoriaEgreso,
                       gasto: 0,
-                      presupuesto: dataPresupuesto.monto
+                      presupuesto: dataPresupuesto.monto,
                     });
                   }
 
                   setPresupuestos((prevState) => ({
                     ...prevState,
-                    data: newData
+                    data: newData,
                   }));
                 }
               );
-            });
-          }
-
+            }
+          });
           setPresupuestos((prevState) => ({ ...prevState, isLoading: false }));
         },
         (error) => {
@@ -358,30 +382,28 @@ export default function DashboardScreen({ route, navigation }) {
           console.log(error);
         }
       );
-    
-      
     });
   };
 
-  if (
-    (gastosMes.data === null ||
-      saldosCuentas.data === null ||
-      vencimientos.data === null ||
-      // presupuestos.data === null ||
-      (route?.params?.isReload ?? false))
-       && !gastosMes.isLoading
-       && !saldosCuentas.isLoading
-       && !vencimientos.isLoading
-      //  && !presupuestos.isLoading
-  ) {
+  if (route?.params?.isReload ?? false) {
     /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
     navigation.setParams({ isReload: false });
 
+    if (!gastosMes.isLoading) {
       getGastosMes();
+    }
+
+    if (!gastosMes.isLoading) {
       getSaldosCuentas();
+    }
+
+    if (!gastosMes.isLoading) {
       getVencimientos();
-      // getPresupuestos();
-  }  
+    }
+    if (!gastosMes.isLoading) {
+      getPresupuestos();
+    }
+  }
 
   return (
     <ScrollView style={screenStyles.dashboardScreen}>
@@ -491,10 +513,11 @@ export default function DashboardScreen({ route, navigation }) {
           {presupuestos.data !== null && presupuestos.data.length > 0 && (
             <ScrollView horizontal>
               {presupuestos.data.map((presupuesto, index) => {
-                
-                var porcentajeGasto = parseFloat((presupuesto.gasto * 100) / presupuesto.presupuesto).toFixed(2);
-                
-                return(
+                var porcentajeGasto = parseFloat(
+                  (presupuesto.gasto * 100) / presupuesto.presupuesto
+                ).toFixed(2);
+
+                return (
                   <View key={index}>
                     <ProgressCircle
                       percent={porcentajeGasto}
@@ -504,12 +527,16 @@ export default function DashboardScreen({ route, navigation }) {
                       shadowColor="#999"
                       bgColor="#fff"
                     >
-                      <Text style={{ fontSize: 18 }}>{porcentajeGasto + "%"}</Text>
+                      <Text style={{ fontSize: 18 }}>
+                        {porcentajeGasto + "%"}
+                      </Text>
                     </ProgressCircle>
-                    <Text style={{ fontSize: 14 }}>{presupuesto.categoria}</Text>
+                    <Text style={{ fontSize: 14 }}>
+                      {presupuesto.categoria}
+                    </Text>
                   </View>
-                )})}
-
+                );
+              })}
             </ScrollView>
           )}
 

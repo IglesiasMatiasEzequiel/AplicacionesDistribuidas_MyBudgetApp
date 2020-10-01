@@ -67,7 +67,8 @@ export function _getListado(idUsuario, from, to, successCallback, errorCallback)
   " LEFT JOIN Cuentas cuenta ON ingreso.idCuenta = cuenta.id " +
   " LEFT JOIN Bancos banco ON cuenta.idBanco = banco.id " +
   " WHERE ingreso.idUsuario = ? " +
-  " AND ingreso.fecha BETWEEN ? AND ? ";
+  " AND ingreso.fecha BETWEEN ? AND ? " + 
+  " ORDER BY ingreso.fecha DESC, ingreso.idCuenta";
 
   var params = [idUsuario, from, to];
 
@@ -88,7 +89,8 @@ export function _getListadoCuenta(idUsuario, idCuenta, from, to, successCallback
   " WHERE ingreso.idUsuario = ? " +
   " AND ingreso.idDestinoIngreso = '1' " +
   " AND ingreso.idCuenta = ? " +
-  " AND ingreso.fecha BETWEEN ? AND ? ";
+  " AND ingreso.fecha BETWEEN ? AND ? " + 
+  " ORDER BY ingreso.fecha DESC, ingreso.idCuenta";
 
   var params = [idUsuario, idCuenta, from, to];
 

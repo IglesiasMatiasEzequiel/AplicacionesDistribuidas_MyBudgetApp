@@ -27,3 +27,8 @@ export function formatStringDateFromDB(dateString){
     var dateArr = dateString.split('-');
     return dateArr[2] + '/' + dateArr[1] + '/' + dateArr[0];
 }
+
+export function formatBackupDate(dateString){
+    var dateArr = dateString.split('T');
+    return dateArr[0];
+}
