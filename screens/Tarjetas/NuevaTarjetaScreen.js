@@ -88,10 +88,13 @@ export default function NuevaTarjetaScreen({ navigation }) {
   const onConfirmar = async () => {
     
     const isValidForm = await validateForm();
-    console.log(isValidForm);
+    
     if (isValidForm) {
+
       setIsLoading(true);
+
       Session.getUser().then((usuario) => {
+    
         var obj = {
           idUsuario: usuario.id,
           idBanco: form.banco,
@@ -101,6 +104,8 @@ export default function NuevaTarjetaScreen({ navigation }) {
           cierreResumen: formatStringDateToDB(form.cierreResumen),
           vencimientoResumen: formatStringDateToDB(form.vencimientoResumen),
         }
+
+        console.log(obj);
   
         TarjetasQueries._insert(obj,
           (data) => {
@@ -113,6 +118,7 @@ export default function NuevaTarjetaScreen({ navigation }) {
             });
           },
           (error) => {
+            setIsLoading(false);
             console.log("Ocurrió un error al insertar la tarjeta. - " + error);
           }
         );
