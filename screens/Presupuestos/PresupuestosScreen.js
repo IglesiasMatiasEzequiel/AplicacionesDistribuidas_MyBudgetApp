@@ -293,7 +293,7 @@ export default function PresupuestosScreen({ route, navigation }) {
         </View>
       )}
 
-      <CustomSpinner isLoading={isLoading} text={"Eliminando..."} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
 
       <CustomModal
         title={modalData?.title}

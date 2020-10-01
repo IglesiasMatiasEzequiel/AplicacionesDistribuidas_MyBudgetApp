@@ -174,7 +174,7 @@ export default function NuevoPresupuestoScreen({ navigation }) {
         <Text style={buttonStyles.btnBackText}>Volver</Text>
       </TouchableOpacity>
 
-      <CustomSpinner isLoading={isLoading} text={"Guardando Presupuesto..."} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}

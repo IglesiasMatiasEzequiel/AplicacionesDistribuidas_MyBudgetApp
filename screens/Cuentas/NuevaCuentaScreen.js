@@ -287,7 +287,7 @@ export default function NuevaCuentaScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <CustomSpinner isLoading={isLoading} text={"Guardando Cuenta..."} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}

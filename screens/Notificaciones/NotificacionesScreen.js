@@ -148,7 +148,7 @@ export default function Notificaciones({ route, navigation }) {
         <Text style={buttonStyles.btnBackText}>Volver</Text>
       </TouchableOpacity>
 
-      <CustomSpinner isLoading={isLoading} text={"Marcando como leídas..."} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
     </ScrollView>
   );
 }

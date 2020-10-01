@@ -320,7 +320,7 @@ export default function NuevoIngresoScren({ navigation }) {
         </View>
       )}
 
-      <CustomSpinner isLoading={isLoading} text={"Guardando ingreso..."} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}

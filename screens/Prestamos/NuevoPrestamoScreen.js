@@ -459,7 +459,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
         <Text style={buttonStyles.btnBackText}>Volver</Text>
       </TouchableOpacity>
 
-      <CustomSpinner isLoading={isLoading} text={"Guardando Prestamo..."} />
+      <CustomSpinner isLoading={isLoading} text={"Cargando..."} />
 
       <CustomModal
         isSuccess={modalData?.isSuccess}
