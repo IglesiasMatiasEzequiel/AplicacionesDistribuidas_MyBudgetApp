@@ -5,7 +5,11 @@ import { PieChart } from "react-native-chart-kit";
 import { screenStyles } from "../components/Styles";
 import { Alert } from "../components";
 
-import { CuentasQueries, EgresosQueries } from "../database";
+import { notificationStyles } from "../components/Styles";
+
+import { formatStringDateFromDB } from "../components/Formatters";
+
+import { CuentasQueries, DataBase, EgresosQueries } from "../database";
 
 import {
   formatDateToString,
@@ -94,6 +98,29 @@ const renderItemSaldo = (item) => {
   );
 };
 
+const renderItemVencimiento = ({ item, index }) => {
+  
+  var tipoVencimiento = item.tipoVencimiento === 1 ? "Egreso" 
+  : item.tipoVencimiento === 2 ? "Ineversión"
+  : item.tipoVencimiento === 3 ? "Prestamo" : ""
+
+  return (
+    <View
+      style={[
+        notificationStyles.notification,
+        index % 2 && { backgroundColor: "transparent" },
+      ]}
+    >
+      <Text style={[notificationStyles.notificationTitle, { fontWeight: "bold" } ]}>
+        {formatStringDateFromDB(item.vencimiento)} - {tipoVencimiento}
+      </Text>
+      <Text style={notificationStyles.notificationMessage}>
+        {item.descripcion}
+      </Text>
+    </View>
+  );
+};
+
 export default function DashboardScreen({ route, navigation }) {
   const today = new Date();
   
@@ -104,6 +131,11 @@ export default function DashboardScreen({ route, navigation }) {
   });
 
   const [saldosCuentas, setSaldosCuentas] = React.useState({
+    data: null,
+    isLoading: false,
+  });
+
+  const [vencimientos, setVencimientos] = React.useState({
     data: null,
     isLoading: false,
   });
@@ -200,19 +232,70 @@ export default function DashboardScreen({ route, navigation }) {
     });
   };
 
+  const getVencimientos = () => {
+    setVencimientos((prevState) => ({ ...prevState, isLoading: true }));
+
+    var to = new Date();
+    var from = new Date();
+
+    to.setDate(to.getDate() + 7);
+
+    var toFormatted = formatStringDateToDB(formatDateToString(to));
+    var fromFormatted = formatStringDateToDB(formatDateToString(from));
+
+    Session.getUser().then((usuario) => {
+      DataBase._getVencimientos(
+        usuario.id,
+        fromFormatted, toFormatted,
+        (data) => {
+
+          var dataVencimientos =
+            data?.map((item, index) => {
+              return {
+                id: index,
+                tipoVencimiento: item.tipoVencimiento,
+                descripcion: item.descripcion,
+                vencimiento: item.vencimiento,
+              };
+            }) ?? [];
+
+            setVencimientos((prevState) => ({
+            ...prevState,
+            data: dataVencimientos,
+            isLoading: false,
+          }));
+        },
+        (error) => {
+          setVencimientos((prevState) => ({
+            ...prevState,
+            data: [],
+            isLoading: false,
+          }));
+
+          console.log(error);
+        }
+      );
+    });
+  };
+
   if (
     (gastosMes.data === null ||
       saldosCuentas.data === null ||
+      vencimientos.data === null ||
       (route?.params?.isReload ?? false)) &&
     !gastosMes.isLoading
      && !saldosCuentas.isLoading
+     && !vencimientos.isLoading
   ) {
     /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
     navigation.setParams({ isReload: false });
 
     getGastosMes();
     getSaldosCuentas();
+    getVencimientos();
   }
+
+  console.log(vencimientos);
 
   return (
     <ScrollView style={screenStyles.dashboardScreen}>
@@ -292,6 +375,28 @@ export default function DashboardScreen({ route, navigation }) {
           )}
         </Card>
       )}
+
+      {!vencimientos.isLoading && (
+        <Card>
+          <Card.Title>Próximos. Vencimientos</Card.Title>
+          <Card.Divider />
+          {vencimientos.data !== null && vencimientos.data.length > 0 && (
+            <ScrollView style={{ maxHeight: 350 }}>
+              <SafeAreaView style={notificationStyles.notificationContainer}>
+                  <FlatList
+                    data={vencimientos.data}
+                    renderItem={renderItemVencimiento}
+                    keyExtractor={(item) => item.id}
+                  />
+                </SafeAreaView>
+            </ScrollView>
+          )}
+
+          {(vencimientos.data === null || vencimientos.data.length === 0) && (
+            <Alert type="info" message="Sin información" />
+          )}
+        </Card>
+      )}      
     </ScrollView>
   );
 }

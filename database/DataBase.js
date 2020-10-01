@@ -170,3 +170,41 @@ export function _deleteById(tableName, id, successCallback, errorCallback) {
     _deleteByIdTx(tx, tableName, id, successCallback, errorCallback);
   });
 }
+
+export function _getVencimientos(idUsuario, from, to, successCallback, errorCallback) {
+  var query =
+
+    "SELECT tipoVencimiento, descripcion, vencimiento FROM " +
+    "(SELECT 1 as tipoVencimiento, " +
+    " tipoEgreso.tipoEgreso as descripcion, " +
+    " egreso.proxVencimiento as vencimiento" +
+    " FROM Egresos egreso " + 
+    " INNER JOIN TiposEgreso tipoEgreso ON egreso.idTipoEgreso = tipoEgreso.id " +
+    " LEFT JOIN CategoriasEgreso categoriaEgreso ON egreso.idCategoriaEgreso = categoriaEgreso.id " +
+    " WHERE egreso.idUsuario = ? " +
+    " AND idMedioPago = '2' " + 
+    " AND egreso.proxVencimiento BETWEEN ? AND ?" +
+    " UNION " +
+    "SELECT 2 as tipoVencimiento, " +
+    " tipo.tipoInversion as descripcion," +
+    " inversion.fechaVencimiento as vencimiento " +
+    " FROM Inversiones inversion " + 
+    " INNER JOIN TiposInversion tipo ON inversion.idTipo = tipo.id " +
+    " WHERE inversion.idUsuario = ? " +
+    " AND inversion.idTipo = '2' " +
+    " AND inversion.fechaVencimiento BETWEEN ? AND ?" +
+    " UNION " +
+    "SELECT 3 as tipoVencimiento, " +
+    " tipo.tipoPrestamo as descripcion," +
+    " prestamo.vencimiento as vencimiento " +
+    " FROM Prestamos prestamo " + 
+    " INNER JOIN TiposPrestamo tipo ON prestamo.idTipo = tipo.id " +
+    " WHERE prestamo.idUsuario = ? " +
+    " AND prestamo.idTipo = '2' " +
+    " AND prestamo.vencimiento BETWEEN ? AND ?)" +
+    " ORDER BY vencimiento ASC";
+
+  var params = [idUsuario, from, to, idUsuario, from, to, idUsuario, from, to];
+
+  _select(query, params, successCallback, errorCallback);
+}
