@@ -311,7 +311,7 @@ export default function NuevoIngresoScren({ navigation }) {
           </TouchableOpacity>
 
           <View
-            style={[screenStyles.containerDivider, titleStyles.titleContainer]}
+            style={[screenStyles.container, titleStyles.titleContainer]}
           >
             <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
               <Text style={buttonStyles.btnBackText}>Volver</Text>

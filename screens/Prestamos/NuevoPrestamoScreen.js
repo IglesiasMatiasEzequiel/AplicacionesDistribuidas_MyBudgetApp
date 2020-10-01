@@ -145,10 +145,8 @@ export default function NuevoPrestamoScreen({ navigation }) {
           monto: form.monto,
           intereses: form.intereses,
           cuota: form.cuota,
-          vencimiento: form.vencimiento !== null && form.vencimiento !== "" ? formatStringDateToDB(form.vencimiento) : null,
-        };
-
-        console.log()
+          vencimiento: form.vencimiento !== null && form.vencimiento !== "" ? formatStringDateToDB(form.vencimiento) : null
+        }
 
         DataBase._createTransaction(
           (tx) => {

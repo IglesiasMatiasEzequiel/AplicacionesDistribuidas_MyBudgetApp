@@ -25,6 +25,9 @@ const screenStyles = StyleSheet.create({
     borderBottomWidth: 1,
     marginBottom: 20
   },
+  container: {
+    marginBottom: 20
+  },
 });
 
 const titleStyles = StyleSheet.create({

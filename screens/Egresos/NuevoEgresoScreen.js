@@ -428,9 +428,13 @@ export default function NuevoEgresoScren({ navigation }) {
             <Text style={buttonStyles.btnText}>Confirmar</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
-            <Text style={buttonStyles.btnBackText}>Volver</Text>
-          </TouchableOpacity>
+          <View
+            style={[screenStyles.container, titleStyles.titleContainer]}
+          >
+            <TouchableOpacity onPress={onBack} style={buttonStyles.btnBack}>
+              <Text style={buttonStyles.btnBackText}>Volver</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
       <CustomSpinner isLoading={isLoading} text={"Cargando..."} />

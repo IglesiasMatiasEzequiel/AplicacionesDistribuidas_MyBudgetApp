@@ -57,6 +57,26 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _getProximosVencimientos(idUsuario, from, to, successCallback, errorCallback){
+
+  var query = "SELECT prestamo.id, " +
+  " tipo.tipoPrestamo, " +
+  " prestamo.emisorDestinatario, " +
+  " prestamo.monto, " +
+  " prestamo.intereses, " +
+  " prestamo.cuota, " +
+  " prestamo.vencimiento " +
+  " FROM " + tableName + " as prestamo " +
+  " INNER JOIN TiposPrestamo tipo ON prestamo.idTipo = tipo.id " +
+  " WHERE prestamo.idUsuario = ? " +
+  " AND prestamo.idTipo = '2' " + 
+  " AND prestamo.vencimiento BETWEEN ? AND ? ";
+
+  var params = [idUsuario, from, to];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _insertTx(tx, obj, successCallback, errorCallback) {
   
   var query =
