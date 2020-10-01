@@ -1,22 +1,10 @@
 import React from "react";
 
-import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
 
-import { Table, TableWrapper, Row, Cell } from "react-native-table-component";
+import { screenStyles, buttonStyles } from "../../components/Styles";
 
-import {
-  screenStyles,
-  buttonStyles,
-  tableStyles,
-  titleStyles,
-} from "../../components/Styles";
-
-import {
-  CustomSpinner,
-  CustomModal,
-  CustomIcon,
-  Alert,
-} from "../../components";
+import { CustomSpinner, CustomModal } from "../../components";
 
 import {
   IngresosQueries,
@@ -28,13 +16,7 @@ import {
   InversionesQueries,
 } from "../../database";
 
-import { formatStringDateFromDB } from "../../components/Formatters";
-
-import {
-  deleteByIdUsuario,
-  backup,
-  backupPresupuesto,
-} from "../../services/backupServices";
+import { deleteByIdUsuario, backup } from "../../services/backupServices";
 
 import * as Session from "../../components/Session";
 
@@ -62,21 +44,20 @@ export default function TarjetasScreen({ route, navigation }) {
     setIsLoading(true);
 
     //obtengo el usuario de la sesión
-    Session.getUser()
-      .then((usuario) => {
-        
-        var idUsuario = usuario.id;
+    Session.getUser().then((usuario) => {
+      var idUsuario = usuario.id;
 
-        //Borro en el back todo lo asociado al usuario
-        deleteByIdUsuario({ idUsuario: idUsuario }).then(() => {
+      //Borro en el back todo lo asociado al usuario
+      deleteByIdUsuario({ idUsuario: idUsuario })
+        .then(() => {
           var request = {
             ingresos: [],
             egresos: [],
             cuentas: [],
             tarjetas: [],
-            inversiones: [],
             prestamos: [],
             presupuestos: [],
+            inversiones: [],
           };
 
           //hago el backup
@@ -192,13 +173,13 @@ export default function TarjetasScreen({ route, navigation }) {
                                   };
                                 }) ?? [];
 
-                              setIsLoading(false);
-
                               backup(request)
                                 .then((data) => {
+                                  setIsLoading(false);
                                   console.log(data);
                                 })
                                 .catch((error) => {
+                                  setIsLoading(false);
                                   console.log(error);
                                 });
                             }
@@ -211,12 +192,12 @@ export default function TarjetasScreen({ route, navigation }) {
               });
             });
           });
-        });
         })
         .catch((error) => {
           setIsLoading(false);
           console.log(error);
         });
+    });
   };
 
   return (

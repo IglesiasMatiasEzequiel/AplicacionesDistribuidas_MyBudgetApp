@@ -22,16 +22,8 @@ export function _selectAll(successCallback, errorCallback) {
   db._selectAll(tableName, successCallback, errorCallback);
 }
 
-export function _selectAllByIdUsuario(obj, successCallback, errorCallback) {
-  var query =
-  "SELECT * " +
-  " FROM " +
-  tableName +
-  " WHERE idUsuario = ? ";
-
-    var params = [obj.idUsuario];
-
-  db._selectAllByIdUsuario(query, params, successCallback, errorCallback);
+export function _selectAllByIdUsuario(idUsuario, successCallback, errorCallback) {
+  db._selectAllByIdUsuario(tableName, idUsuario, successCallback, errorCallback);
 }
 
 export function _getListado(idUsuario, from, to, successCallback, errorCallback){
