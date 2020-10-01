@@ -37,6 +37,7 @@ export function _selectAllByIdUsuario(obj, successCallback, errorCallback) {
 export function _getListado(idUsuario, from, to, successCallback, errorCallback){
 
   var query = "SELECT presupuesto.id, " +
+  " presupuesto.idCategoriaEgreso, " +
   " tipo.categoriaEgreso, " +
   " presupuesto.fechaInicio, " +
   " presupuesto.monto " +

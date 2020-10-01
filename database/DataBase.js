@@ -3,7 +3,7 @@ const db = SQLite.openDatabase('db.MyBudgetApp');
 
 const debugMode = true;
 
-function log(debugMode, status, method, params, query, id, data) {
+function log(debugMode, status, method, params, query, id, data, error) {
   if (debugMode) {    
     console.log({ 
       status:status, 
@@ -11,13 +11,14 @@ function log(debugMode, status, method, params, query, id, data) {
       query: query, 
       params: params,
       id: id,
-      data: data
+      data: data,
+      error: error
     });
   }
 }
 
-logSuccess = (debugMode, method, params, query, id, data) => log(debugMode, "OK", method, params, query, id, data);
-logError = (debugMode, method, params, query, id, data) => log(debugMode, "ERROR", method, params, query, id, data);
+logSuccess = (debugMode, method, params, query, id, data) => log(debugMode, "OK", method, params, query, id, data, null);
+logError = (debugMode, method, params, query, id, data, error) => log(debugMode, "ERROR", method, params, query, id, data, error);
 
 export function _createTransaction(callback){
   db.transaction((tx) => {
@@ -63,7 +64,7 @@ export function _updateTx(tx, query, params, successCallback, errorCallback) {
       }
     },
     (txObj, error) => {
-      logError(debugMode, "_update", params, query);
+      logError(debugMode, "_update", params, query, null, null, error);
       if (errorCallback) {
         errorCallback(error);
       }
@@ -88,7 +89,7 @@ export function _insertTx(tx, query, params, successCallback, errorCallback) {
       }
     },
     (txObj, error) => {
-      logError(debugMode, "_insert", params, query);
+      logError(debugMode, "_insert", params, query, null, null, error);
       if (errorCallback) {
         errorCallback(error);
       }
@@ -113,11 +114,15 @@ export function _select(query, params, successCallback, errorCallback) {
     tx.executeSql(query, params,
       (txObj, { rows: { _array } }) => {
         logSuccess(debugMode, '_select', params, query, null, _array);
-        successCallback(_array);
+        if (successCallback) {
+          successCallback(_array);
+        }
       },
       (txObj, error) => {
-        logError(debugMode, "_select", params, query);
-        errorCallback(error); 
+        logError(debugMode, "_select", params, query, null, null, error);
+        if (errorCallback) {
+          errorCallback(error);
+        }
       })
   })
 }
@@ -147,7 +152,7 @@ export function _deleteTx(tx, query, params, successCallback, errorCallback) {
       }
     },
     (txObj, error) => {
-      logError(debugMode, "_delete", params, query);
+      logError(debugMode, "_delete", params, query, null, null, error);
       if (errorCallback) {
         errorCallback(error);
       }

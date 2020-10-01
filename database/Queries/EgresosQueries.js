@@ -121,6 +121,21 @@ export function _getPagosAGenerar(idUsuario, vencimiento, successCallback, error
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _getGastosPorCategoria(idUsuario, idCategoria, from, to, successCallback, errorCallback){
+
+  var query = "SELECT egreso.idCategoriaEgreso, " +
+  " SUM(egreso.monto) as gasto " +
+  " FROM " + tableName + " as egreso " +
+  " WHERE egreso.idUsuario = ? " + 
+  " AND egreso.idCategoriaEgreso = ? " + 
+  " AND egreso.fecha BETWEEN ? AND ? " + 
+  " GROUP BY egreso.idCategoriaEgreso ";
+
+  var params = [idUsuario, idCategoria, from, to];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _getGastosMesPorTipoPago(idUsuario, from, to, successCallback, errorCallback){
 
   var query = "SELECT " +

@@ -134,7 +134,7 @@ export default function PresupuestosScreen({ route, navigation }) {
   /* Listado */
 
   const tableHeaders = ["", "Tipo", "Monto", "Fecha Inicio."];
-  const columnWidth = [30, 160, 80, 120];
+  const columnWidth = [30, 250, 250, 180];
 
   const getListado = () => {
     setListado((prevState) => ({ ...prevState, isLoading: true }));
