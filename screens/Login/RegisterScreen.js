@@ -6,6 +6,8 @@ import { screenStyles, buttonStyles } from "../../components/Styles";
 import { UsuariosQueries } from "../../database";
 import { validateRequired } from "../../components/Validations";
 
+import { createUsuario } from '../../services/backupServices';
+
 export default function LoginScreen({ navigation }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
@@ -52,22 +54,31 @@ export default function LoginScreen({ navigation }) {
         password: form.password
       }
 
-      UsuariosQueries._insert(usuario, 
-        () => {
-          setIsLoading(false);
-          setModalData({
-            title: "¡Registro exitoso!",
-            message: "El registro se realizó correctamente.",
-            isVisible: true,
-            isSuccess: true,
-            successBtnText: "IR AL LOGIN",
-          });
-        },
-        () => {
-          setIsLoading(false);
-          console.log("Error creando usuario...");
-        }
-      );
+      createUsuario(usuario).then((result) => {
+
+        usuario.id = result.data.items.id
+        UsuariosQueries._insert(
+          usuario,
+          () => {
+
+            setIsLoading(false);
+            setModalData({
+              title: "¡Registro exitoso!",
+              message: "El registro se realizó correctamente.",
+              isVisible: true,
+              isSuccess: true,
+              successBtnText: "IR AL LOGIN",
+            });
+          },
+          () => {
+            setIsLoading(false);
+            console.log("Error creando usuario...");
+          }
+        );
+     }).catch((error) => { 
+       setIsLoading(false);
+       console.log(error) 
+      });
     }
   };
 

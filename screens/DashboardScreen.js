@@ -367,12 +367,12 @@ export default function DashboardScreen({ route, navigation }) {
     (gastosMes.data === null ||
       saldosCuentas.data === null ||
       vencimientos.data === null ||
-      presupuestos.data === null ||
+      // presupuestos.data === null ||
       (route?.params?.isReload ?? false))
        && !gastosMes.isLoading
        && !saldosCuentas.isLoading
        && !vencimientos.isLoading
-       && !presupuestos.isLoading
+      //  && !presupuestos.isLoading
   ) {
     /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
     navigation.setParams({ isReload: false });

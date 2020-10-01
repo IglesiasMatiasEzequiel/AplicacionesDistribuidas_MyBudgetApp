@@ -7,7 +7,7 @@ export function _createTable(tx, successCallback, errorCallback) {
     "CREATE TABLE " +
     tableName +
     " (" +
-    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+    "id INTEGER PRIMARY KEY," +
     "email VARCHAR(150)," +
     "nombre VARCHAR(100)," +
     "apellido VARCHAR(100)," +
@@ -58,9 +58,9 @@ export function _insertTx(tx, obj) {
   var query =
     "INSERT INTO " +
     tableName +
-    "(email, nombre, apellido, password) " +
-    "VALUES (?, ?, ?, ?)";
-    var params = [obj.email, obj.nombre, obj.apellido, obj.password];
+    "(id, email, nombre, apellido, password) " +
+    "VALUES (?, ?, ?, ?, ?)";
+    var params = [obj.id, obj.email, obj.nombre, obj.apellido, obj.password];
 
   db._insertTx(tx, query, params);
 }
@@ -69,10 +69,10 @@ export function _insert(obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO " +
     tableName +
-    "(email, nombre, apellido, password) " +
-    "VALUES (?, ?, ?, ?)";
+    "(id, email, nombre, apellido, password) " +
+    "VALUES (?, ?, ?, ?, ?)";
 
-  var params = [obj.email, obj.nombre, obj.apellido, obj.password];
+  var params = [obj.id, obj.email, obj.nombre, obj.apellido, obj.password];
 
   db._insert(query, params, successCallback, errorCallback);
 }

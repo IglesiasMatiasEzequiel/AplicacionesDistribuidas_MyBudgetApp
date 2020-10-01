@@ -45,6 +45,8 @@ export default function MenuItem({ navigation, name, title, focused }) {
         return <MenuIcon name="md-contacts" focused={focused} />;
       case "Presupuestos":
         return <MenuIcon name="md-today" focused={focused} />;
+      case "Backup":
+        return <MenuIcon name="md-cloud-upload" focused={focused} />;
       case "Login":
         return <MenuIcon name="md-log-out" focused={focused} />;
       default:

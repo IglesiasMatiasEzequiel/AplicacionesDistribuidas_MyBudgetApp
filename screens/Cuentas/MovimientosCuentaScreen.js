@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 
 import { Table, Row, TableWrapper, Cell } from "react-native-table-component";
 

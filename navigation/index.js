@@ -8,6 +8,7 @@ import PrestamosStack from './PrestamosStack';
 import PresupuestosStack from './PresupuestosStack';
 import CuentasBancariasStack from './CuentasBancariasStack'; 
 import NotificacionesStack from './NotificacionesStack'; 
+import BackupStack from './BackupStack'; 
 
 export {
     Menu,
@@ -19,5 +20,6 @@ export {
     PrestamosStack,
     PresupuestosStack,
     CuentasBancariasStack,
-    NotificacionesStack
+    NotificacionesStack,
+    BackupStack
 }

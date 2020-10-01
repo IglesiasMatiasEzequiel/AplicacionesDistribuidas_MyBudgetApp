@@ -20,6 +20,7 @@ import MovimientosCuentaScreen from './Cuentas/MovimientosCuentaScreen';
 import NuevaCuentaScreen from './Cuentas/NuevaCuentaScreen';
 import EditarCuentaScreen from './Cuentas/EditarCuentaScreen';
 import NotificacionesScreen from './Notificaciones/NotificacionesScreen';
+import BackupScreen from './Backup/BackupScreen';
 
 export {
     LoginScreen,
@@ -43,5 +44,6 @@ export {
     NuevoPresupuestoScreen,
     CuentasBancariasScreen,
     EditarCuentaScreen,
-    NotificacionesScreen
+    NotificacionesScreen,
+    BackupScreen
 }
