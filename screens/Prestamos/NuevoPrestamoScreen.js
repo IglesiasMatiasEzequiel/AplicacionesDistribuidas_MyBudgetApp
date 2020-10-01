@@ -141,7 +141,7 @@ export default function NuevoPrestamoScreen({ navigation }) {
           monto: form.monto,
           intereses: form.intereses,
           cuota: form.cuota,
-          vencimiento: form.vencimiento,
+          vencimiento: formatStringDateToDB(form.vencimiento),
         };
 
         DataBase._createTransaction((tx) => {

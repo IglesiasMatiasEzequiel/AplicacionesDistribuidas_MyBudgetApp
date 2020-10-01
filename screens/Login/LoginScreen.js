@@ -15,6 +15,7 @@ import {
   UsuariosQueries,
   NotificacionesQueries,
   InversionesQueries,
+  PrestamosQueries,
   EgresosQueries,
 } from "../../database";
 import * as Session from "../../components/Session";
@@ -118,6 +119,7 @@ export default function LoginScreen({ navigation }) {
   const enviarNotificaciones = (idUsuario) => {
     enviarNotificacionesResumenTarjeta(idUsuario);
     enviarNotificacionesInversiones(idUsuario);
+    enviarNotificacionesPrestamos(idUsuario);
   };
 
   const enviarNotificacionesResumenTarjeta = (idUsuario) => {
@@ -172,6 +174,42 @@ export default function LoginScreen({ navigation }) {
                   inversion.nombre +
                   " está por vencer el día " +
                   formatStringDateFromDB(inversion.fechaVencimiento),
+                fecha: toFormatted,
+                leido: 0,
+              });
+            });
+          });
+        }
+      }
+    );
+  };
+
+  const enviarNotificacionesPrestamos = (idUsuario) => {
+    var to = new Date();
+    var from = new Date();
+    
+    to.setDate(to.getDate() + 7); //Avisa los que están por vencer en los próximos 7 días
+
+    var toFormatted = formatStringDateToDB(formatDateToString(to));
+    var fromFormatted = formatStringDateToDB(formatDateToString(from));
+    
+    PrestamosQueries._getProximosVencimientos(
+      idUsuario,
+      fromFormatted,
+      toFormatted,
+      (data) => {
+        console.log(data);
+        if (data !== null && data.length > 0) {
+          DataBase._createTransaction((tx) => {
+            data.forEach((prestamo) => {
+              NotificacionesQueries._insertTx(tx, {
+                idUsuario: idUsuario,
+                titulo: "Vencimiento de Prestamo",
+                mensaje:
+                  "El prestamo " +
+                  prestamo.emisorDestinatario +
+                  " está por vencer el día " +
+                  formatStringDateFromDB(prestamo.vencimiento),
                 fecha: toFormatted,
                 leido: 0,
               });
