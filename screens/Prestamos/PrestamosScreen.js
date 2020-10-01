@@ -20,6 +20,7 @@ import {
 
 import { PrestamosQueries } from "../../database";
 import * as Session from "../../components/Session";
+import { formatStringDateFromDB } from "../../components/Formatters";
 
 export default function PrestamosScreen({ route, navigation }) {
   /* State del CustomSpinner */
@@ -138,7 +139,7 @@ export default function PrestamosScreen({ route, navigation }) {
                 "$ " + parseFloat(item.monto).toFixed(2),
                 item.intereses,
                 item.cuota,
-                item.vencimiento,
+                item.vencimiento !== null ? formatStringDateFromDB(item.vencimiento) : '-',
               ];
             }) ?? [];
 

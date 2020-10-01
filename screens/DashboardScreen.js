@@ -135,7 +135,7 @@ export default function DashboardScreen({ route, navigation }) {
               return {
                 id: index,
                 name: item.medioPago,
-                gasto: item.gasto,
+                gasto: parseFloat(parseFloat(item.gasto).toFixed(2)),
                 porc: parseFloat((item.gasto / gastoTotal) * 100).toFixed(2),
                 color: colors[index],
               };
@@ -164,7 +164,7 @@ export default function DashboardScreen({ route, navigation }) {
     setSaldosCuentas((prevState) => ({ ...prevState, isLoading: true }));
 
     Session.getUser().then((usuario) => {
-      CuentasQueries._getListado(
+      CuentasQueries._getListadoSaldos(
         usuario.id,
         (data) => {
 
@@ -175,7 +175,7 @@ export default function DashboardScreen({ route, navigation }) {
               return {
                 id: index,
                 name: item.descripcion,
-                saldo: item.monto,
+                saldo: parseFloat(parseFloat(item.monto).toFixed(2)),
                 porc: parseFloat((item.monto / saldoTotal) * 100).toFixed(2),
                 color: colors[index],
               };

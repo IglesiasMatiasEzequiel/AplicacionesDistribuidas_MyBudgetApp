@@ -70,6 +70,28 @@ export function _getListado(idUsuario, successCallback, errorCallback){
   db._select(query, params, successCallback, errorCallback);
 }
 
+export function _getListadoSaldos(idUsuario, successCallback, errorCallback){
+
+  var query = "SELECT cuenta.id, " +
+  " banco.banco, " +
+  " entidadEmisora.entidadEmisora, " +
+  " cuenta.cbu, " +
+  " cuenta.alias, " +
+  " cuenta.descripcion, " +
+  " cuenta.monto, " +
+  " cuenta.tarjeta, " +
+  " cuenta.vencimiento " +
+  " FROM " + tableName + " as cuenta " +
+  " INNER JOIN Bancos banco ON cuenta.idBanco = banco.id " +
+  " INNER JOIN EntidadesEmisoras entidadEmisora ON cuenta.idEntidadEmisora = entidadEmisora.id " +
+  " WHERE cuenta.idUsuario = ? " +
+  " AND cuenta.monto >= 0";
+
+  var params = [idUsuario];
+
+  db._select(query, params, successCallback, errorCallback);
+}
+
 export function _getMovimientos(idUsuario, idCuenta, from, to, successCallback, errorCallback) {
   var query =
     "SELECT id, tipoRegistro, fecha, monto, descripcion, tipo, categoria FROM " +
