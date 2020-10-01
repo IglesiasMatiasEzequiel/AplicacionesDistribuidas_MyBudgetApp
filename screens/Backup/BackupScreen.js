@@ -144,77 +144,69 @@ export default function TarjetasScreen({ route, navigation }) {
                       };
                     }) ?? [];
 
-                    backup(request)
+                  InversionesQueries._selectAllByIdUsuario(
+                    idUsuario,
+                    (inversiones) => {
+                      request.inversiones =
+                        inversiones?.map((item) => {
+                          return {
+                            idUsuario: idUsuario,
+                            idTipo: item.idTipo,
+                            idCuenta: item.idCuenta,
+                            tarjeta: item.tarjeta,
+                            fechaInicio: item.fechaInicio,
+                            fechaVencimiento: item.fechaVencimiento,
+                            monto: item.monto,
+                            nombre: item.nombre,
+                            duracion: item.duracion,
+                          };
+                        }) ?? [];
+
+                      PrestamosQueries._selectAllByIdUsuario(
+                        idUsuario,
+                        (prestamos) => {
+                          request.prestamos =
+                            prestamos?.map((item) => {
+                              return {
+                                idUsuario: idUsuario,
+                                idTipo: item.idTipo,
+                                idCuenta: item.idCuenta,
+                                emisorDesinatario: item.emisorDesinatario,
+                                intereses: item.intereses,
+                                monto: item.monto,
+                                cuota: item.cuota,
+                                vencimiento: item.vencimiento,
+                              };
+                            }) ?? [];
+
+                          PresupuestosQueries._selectAllByIdUsuario(
+                            idUsuario,
+                            (presupuestos) => {
+                              request.presupuestos =
+                                presupuestos.map((item) => {
+                                  return {
+                                    idUsuario: idUsuario,
+                                    idCategoriaEgreso: item.idCategoriaEgreso,
+                                    fechaInicio: item.fechaInicio,
+                                    monto: item.monto,
+                                  };
+                                }) ?? [];
+
+                              setIsLoading(false);
+
+                              backup(request)
                                 .then((data) => {
                                   console.log(data);
                                 })
                                 .catch((error) => {
                                   console.log(error);
                                 });
-
-                  // InversionesQueries._selectAllByIdUsuario(
-                  //   idUsuario,
-                  //   (inversiones) => {
-                  //     request.inversiones =
-                  //       inversiones?.map((item) => {
-                  //         return {
-                  //           idUsuario: idUsuario,
-                  //           idTipo: item.idTipo,
-                  //           idCuenta: item.idCuenta,
-                  //           tarjeta: item.tarjeta,
-                  //           fechaInicio: item.fechaInicio,
-                  //           fechaVencimiento: item.fechaVencimiento,
-                  //           monto: item.monto,
-                  //           nombre: item.nombre,
-                  //           duracion: item.duracion,
-                  //         };
-                  //       }) ?? [];
-
-                  //     PrestamosQueries._selectAllByIdUsuario(
-                  //       idUsuario,
-                  //       (prestamos) => {
-                  //         request.prestamos =
-                  //           prestamos?.map((item) => {
-                  //             return {
-                  //               idUsuario: idUsuario,
-                  //               idTipo: item.idTipo,
-                  //               idCuenta: item.idCuenta,
-                  //               emisorDesinatario: item.emisorDesinatario,
-                  //               intereses: item.intereses,
-                  //               monto: item.monto,
-                  //               cuota: item.cuota,
-                  //               vencimiento: item.vencimiento,
-                  //             };
-                  //           }) ?? [];
-
-                  //         PresupuestosQueries._selectAllByIdUsuario(
-                  //           idUsuario,
-                  //           (presupuestos) => {
-                  //             request.presupuestos =
-                  //               presupuestos.map((item) => {
-                  //                 return {
-                  //                   idUsuario: idUsuario,
-                  //                   idCategoriaEgreso: item.idCategoriaEgreso,
-                  //                   fechaInicio: item.fechaInicio,
-                  //                   monto: item.monto,
-                  //                 };
-                  //               }) ?? [];
-
-                  //             setIsLoading(false);
-
-                  //             backup(request)
-                  //               .then((data) => {
-                  //                 console.log(data);
-                  //               })
-                  //               .catch((error) => {
-                  //                 console.log(error);
-                  //               });
-                  //           }
-                  //         );
-                  //       }
-                  //     );
-                  //   }
-                  // );
+                            }
+                          );
+                        }
+                      );
+                    }
+                  );
                 });
               });
             });
