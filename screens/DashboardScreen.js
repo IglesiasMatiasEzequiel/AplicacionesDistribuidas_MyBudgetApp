@@ -8,10 +8,7 @@ import { Alert } from "../components";
 
 import { notificationStyles } from "../components/Styles";
 
-import {
-  formatStringDateFromDB,
-  formatStringToDate,
-} from "../components/Formatters";
+import { formatStringDateFromDB } from "../components/Formatters";
 
 import {
   CuentasQueries,
@@ -49,7 +46,7 @@ const colors = [
   "#A063BF",
   "#DA6CA8",
   "#C8F277",
-  "#FDFF7E",
+  "#622C96",
 ];
 
 const chartConfig = {
@@ -243,7 +240,7 @@ export default function DashboardScreen({ route, navigation }) {
                 name: item.descripcion,
                 saldo: parseFloat(parseFloat(item.monto).toFixed(2)),
                 porc: parseFloat((item.monto / saldoTotal) * 100).toFixed(2),
-                color: colors[index],
+                color: colors[7-index],
               };
             }) ?? [];
 
@@ -332,45 +329,59 @@ export default function DashboardScreen({ route, navigation }) {
         fromFormatted,
         toFormatted,
         (dataPrespuestos) => {
-          dataPrespuestos?.forEach((dataPresupuesto) => {
+          var newData = [];
+          var promises = [];
 
-            if (!presupuestos?.data?.some((presupuesto) => { presupuesto.id === dataPresupuesto.idCategoriaEgreso })) {
+          dataPrespuestos.forEach((dataPresupuesto) => {
+            promises.push(
               EgresosQueries._getGastosPorCategoria(
                 usuario.id,
                 dataPresupuesto.idCategoriaEgreso,
                 dataPresupuesto.fechaInicio,
-                toFormatted,
-                (gastoPorCategoria) => {
-                  var newData = presupuestos.data ?? [];
+                toFormatted
+              )
+            );
 
-                  if (
-                    gastoPorCategoria !== null &&
-                    gastoPorCategoria.length == 1
-                  ) {
-                    newData.push({
-                      id: dataPresupuesto.idCategoriaEgreso,
-                      categoria: dataPresupuesto.categoriaEgreso,
-                      gasto: gastoPorCategoria[0].gasto,
-                      presupuesto: dataPresupuesto.monto,
-                    });
-                  } else {
-                    newData.push({
-                      id: dataPresupuesto.idCategoriaEgreso,
-                      categoria: dataPresupuesto.categoriaEgreso,
-                      gasto: 0,
-                      presupuesto: dataPresupuesto.monto,
-                    });
-                  }
-
-                  setPresupuestos((prevState) => ({
-                    ...prevState,
-                    data: newData,
-                  }));
-                }
-              );
-            }
+            newData.push({
+              id: dataPresupuesto.idCategoriaEgreso,
+              categoria: dataPresupuesto.categoriaEgreso,
+              presupuesto: dataPresupuesto.monto,
+              gasto: 0,
+              fechaInicio: dataPresupuesto.fechaInicio,
+            });
           });
-          setPresupuestos((prevState) => ({ ...prevState, isLoading: false }));
+
+          Promise.all(promises)
+            .then((gastosPorCategoria) => {
+              gastosPorCategoria.forEach((gastoPorCategoria) => {
+                if (
+                  gastoPorCategoria !== null &&
+                  gastoPorCategoria.length == 1
+                ) {
+                  var item = newData.find(
+                    (x) => x.id === gastoPorCategoria[0].idCategoriaEgreso
+                  );
+                  item.gasto = gastoPorCategoria[0].gasto;
+                }
+              });
+
+              setPresupuestos((prevState) => ({
+                ...prevState,
+                data: newData,
+              }));
+
+              setPresupuestos((prevState) => ({
+                ...prevState,
+                isLoading: false,
+              }));
+            })
+            .catch((error) => {
+              setPresupuestos((prevState) => ({
+                ...prevState,
+                isLoading: false,
+              }));
+              console.log(error);
+            });
         },
         (error) => {
           setPresupuestos((prevState) => ({
@@ -513,27 +524,43 @@ export default function DashboardScreen({ route, navigation }) {
           {presupuestos.data !== null && presupuestos.data.length > 0 && (
             <ScrollView horizontal>
               {presupuestos.data.map((presupuesto, index) => {
+                console.log(presupuesto);
+
                 var porcentajeGasto = parseFloat(
                   (presupuesto.gasto * 100) / presupuesto.presupuesto
                 ).toFixed(2);
 
                 return (
-                  <View key={index}>
-                    <ProgressCircle
-                      percent={porcentajeGasto}
-                      radius={50}
-                      borderWidth={8}
-                      color="#3399FF"
-                      shadowColor="#999"
-                      bgColor="#fff"
-                    >
-                      <Text style={{ fontSize: 18 }}>
-                        {porcentajeGasto + "%"}
+                  <View key={index} style={{ width: 300 }}>
+                    <Card style={{ flex: 1 }}>
+                      <Card.Title>{presupuesto.categoria}</Card.Title>
+                      <Card.Divider />
+                      <View style={[screenStyles.containerCenter, { marginBottom: 20 }]}>
+                        <ProgressCircle
+                          percent={
+                            porcentajeGasto > 100 ? 100 : porcentajeGasto
+                          }
+                          radius={80}
+                          borderWidth={15}
+                          color={porcentajeGasto > 90 ? "#FF2D2D" 
+                          : porcentajeGasto < 30 ? "#0BD900" 
+                          : porcentajeGasto > 60 ? "#FF9E00" : "#FFFF00" }
+                          shadowColor="#999"
+                          bgColor="#fff"
+                        >
+                          <Text style={{ fontSize: 18 }}>
+                            {porcentajeGasto + "%"}
+                          </Text>
+                        </ProgressCircle>
+                      </View>
+                      <Text adjustsFontSizeToFit style={[screenStyles.containerCenter, { textAlign: 'center', marginBottom: 20 }]}>
+                        {"$ " +
+                          presupuesto.gasto +
+                          " / $ " +
+                          presupuesto.presupuesto}
                       </Text>
-                    </ProgressCircle>
-                    <Text style={{ fontSize: 14 }}>
-                      {presupuesto.categoria}
-                    </Text>
+                      <Card.Divider />
+                    </Card>
                   </View>
                 );
               })}

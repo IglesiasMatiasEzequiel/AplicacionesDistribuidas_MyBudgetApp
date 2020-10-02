@@ -121,11 +121,12 @@ export function _getPagosAGenerar(idUsuario, vencimiento, successCallback, error
   db._select(query, params, successCallback, errorCallback);
 }
 
-export function _getGastosPorCategoria(idUsuario, idCategoria, from, to, successCallback, errorCallback){
+export function _getGastosPorCategoria(idUsuario, idCategoria, from, to){
 
   var query = "SELECT egreso.idCategoriaEgreso, " +
   " SUM(egreso.monto) as gasto " +
   " FROM " + tableName + " as egreso " +
+  " INNER JOIN CategoriasEgreso categoriaEgreso ON egreso.idCategoriaEgreso = categoriaEgreso.id " +
   " WHERE egreso.idUsuario = ? " + 
   " AND egreso.idCategoriaEgreso = ? " + 
   " AND egreso.fecha BETWEEN ? AND ? " + 
@@ -133,7 +134,7 @@ export function _getGastosPorCategoria(idUsuario, idCategoria, from, to, success
 
   var params = [idUsuario, idCategoria, from, to];
 
-  db._select(query, params, successCallback, errorCallback);
+  return db._selectPromise(query, params);
 }
 
 export function _getGastosMesPorTipoPago(idUsuario, from, to, successCallback, errorCallback){

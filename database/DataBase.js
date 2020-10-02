@@ -109,6 +109,22 @@ export function _count(tableName, successCallback, errorCallback) {
   _select("SELECT COUNT(1) FROM " + tableName, null, successCallback, errorCallback);
 }
 
+export function _selectPromise(query, params) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(query, params,
+        (txObj, { rows: { _array } }) => {
+          logSuccess(debugMode, '_select', params, query, null, _array);
+          resolve(_array);
+        },
+        (txObj, error) => {
+          logError(debugMode, "_select", params, query, null, null, error);
+          reject(error);
+        });
+    });
+  });
+}
+
 export function _select(query, params, successCallback, errorCallback) {
   db.transaction(tx => {
     tx.executeSql(query, params,

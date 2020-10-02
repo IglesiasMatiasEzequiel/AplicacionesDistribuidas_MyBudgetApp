@@ -49,6 +49,11 @@ import * as Session from "../../components/Session";
 
 export default function Ingresos({ route, navigation }) {
 
+  React.useEffect(() => {
+    getListado();
+  }, [getListado, setListado]);
+
+
   /* State del CustomSpinner */
   const [isLoading, setIsLoading] = React.useState(false);
   
@@ -196,14 +201,14 @@ export default function Ingresos({ route, navigation }) {
     });
   };
 
-  if((listado.data === null
-    || (route?.params?.isReload ?? false))
-    && !listado.isLoading){ 
+  if(route?.params?.isReload ?? false){ 
 
     /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
     navigation.setParams({ isReload: false });
 
-    getListado();
+    if (!listado.isLoading) {
+      getListado();
+    }
   }
 
   /* Listado */

@@ -28,6 +28,11 @@ const screenStyles = StyleSheet.create({
   container: {
     marginBottom: 20
   },
+  containerCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 });
 
 const titleStyles = StyleSheet.create({
