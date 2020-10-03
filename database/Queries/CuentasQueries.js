@@ -114,7 +114,7 @@ export function _getMovimientos(idUsuario, idCuenta, from, to, successCallback, 
     " INNER JOIN TiposEgreso tipoEgreso ON egreso.idTipoEgreso = tipoEgreso.id " +
     " LEFT JOIN CategoriasEgreso categoriaEgreso ON egreso.idCategoriaEgreso = categoriaEgreso.id " +
     " WHERE egreso.idUsuario = ? " +
-    " AND egreso.idCuenta = ? " +
+    " AND (egreso.idCuenta = ? OR ? = 0) " +
     " AND (egreso.idMedioPago = '3' OR egreso.idMedioPago = '4' OR egreso.idMedioPago = '5')" +
     " AND egreso.fecha BETWEEN ? AND ?" +
     " UNION " +
@@ -130,11 +130,11 @@ export function _getMovimientos(idUsuario, idCuenta, from, to, successCallback, 
     " LEFT JOIN CategoriasIngreso categoriaIngreso ON ingreso.idCategoriaIngreso = categoriaIngreso.id " +
     " WHERE ingreso.idUsuario = ? " +
     " AND ingreso.idDestinoIngreso = '1' " +
-    " AND ingreso.idCuenta = ? " +
+    " AND (ingreso.idCuenta = ? OR ? = 0) " +
     " AND ingreso.fecha BETWEEN ? AND ?)" +
     " ORDER BY fecha DESC";
 
-  var params = [idUsuario, idCuenta, from, to, idUsuario, idCuenta, from, to];
+  var params = [idUsuario, idCuenta, idCuenta, from, to, idUsuario, idCuenta, idCuenta, from, to];
 
   db._select(query, params, successCallback, errorCallback);
 }

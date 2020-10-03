@@ -1,4 +1,7 @@
 import React from "react";
+import XLSX from "xlsx";
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 
@@ -25,9 +28,18 @@ import {
   getByIdUsuario,
 } from "../../services/backupServices";
 
+import {
+  formatDateToString,
+  formatStringDateToDB,
+  formatStringDateFromDB,
+} from "../../components/Formatters";
+
 import * as Session from "../../components/Session";
 
 export default function BackupScreen({ route, navigation }) {
+
+  const exportDir = FileSystem.documentDirectory;
+
   /* State del CustomSpinner */
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -375,6 +387,83 @@ export default function BackupScreen({ route, navigation }) {
       });
   };
 
+  const onGetExcel = () => {
+    setIsLoading(true);
+
+    //obtengo el usuario de la sesión
+    Session.getUser()
+      .then((usuario) => {
+        
+        var idUsuario = usuario.id;
+
+        var to = new Date();
+        var from = new Date(to.getFullYear(), 1, 1);
+    
+        var toFormatted = formatStringDateToDB(formatDateToString(to));
+        var fromFormatted = formatStringDateToDB(formatDateToString(from));
+
+        CuentasQueries._getMovimientos(
+          idUsuario,
+          0, //todas las cuentas
+          fromFormatted,
+          toFormatted,
+          async (data) => {
+
+            var excelData = [
+              {
+                TipoMovimiento:"Tipo Movimiento",
+                Fecha: "Fecha",
+                Monto: "Monto",
+                Descripcion: "Descripción",
+                Tipo: "Tipo",
+                Categoria: "Categoria",
+              }
+            ];
+
+              data?.forEach((item) => {
+                excelData.push({
+                  "TipoMovimiento": item.tipoRegistro === 1 ? "Ingreso" : "Egreso",
+                  "Fecha": formatStringDateFromDB(item.fecha),
+                  "Monto": "$ " + parseFloat(item.monto).toFixed(2),
+                  "Descripcion": item.descripcion ?? "-",
+                  "Tipo": item.tipo,
+                  "Categoria": item.categoria ?? "-",
+                });
+              }) ?? [];
+
+              const worksheet = XLSX.utils.json_to_sheet(excelData, { skipHeader: true });
+              const workbook = XLSX.utils.book_new();
+      
+              XLSX.utils.book_append_sheet(workbook, worksheet, "Movimientos anuales");
+          
+              /* write file */
+              const contents = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });    
+              const fileUri = exportDir + "data_export.xlsx";
+          
+              await FileSystem.writeAsStringAsync(fileUri, contents , {
+                encoding: FileSystem.EncodingType.Base64
+              });
+              
+              await Sharing.shareAsync(fileUri, {
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                dialogTitle: 'Bajar datos exportados',
+                UTI: 'com.microsoft.excel.xlsx'
+              });
+
+              setIsLoading(false);
+          },
+          (error) => {
+            setIsLoading(false);
+            console.log(error);
+          }
+        );
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.log(error);
+      });
+  };
+
   return (
     <ScrollView style={screenStyles.screen}>
       <TouchableOpacity onPress={onBackup} style={buttonStyles.btn}>
@@ -383,6 +472,10 @@ export default function BackupScreen({ route, navigation }) {
 
       <TouchableOpacity onPress={onGetBackup} style={buttonStyles.btn}>
         <Text style={buttonStyles.btnText}>Recuperar mis datos</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={onGetExcel} style={buttonStyles.btn}>
+        <Text style={buttonStyles.btnText}>Descargar movimientos del año</Text>
       </TouchableOpacity>
 
       <CustomSpinner isLoading={isLoading} text={"Cargando..."} />

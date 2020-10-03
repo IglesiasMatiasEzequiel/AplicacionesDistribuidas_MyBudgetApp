@@ -25,8 +25,10 @@
     "axios": "^0.20.0",
     "expo": "^37.0.0",
     "expo-asset": "~8.1.5",
+    "expo-file-system": "^9.2.0",
     "expo-font": "~8.1.0",
     "expo-linear-gradient": "~8.1.0",
+    "expo-sharing": "^8.4.1",
     "expo-sqlite": "^8.4.0",
     "galio-framework": "~0.6.3",
     "radio-buttons-react-native": "^1.0.4",
@@ -50,7 +52,8 @@
     "react-native-screens": "~2.2.0",
     "react-native-svg": "^12.1.0",
     "react-native-table-component": "^1.2.1",
-    "react-native-vector-icons": "^7.1.0"
+    "react-native-vector-icons": "^7.1.0",
+    "xlsx": "^0.16.7"
   },
   "devDependencies": {
     "babel-preset-expo": "^8.2.1",
