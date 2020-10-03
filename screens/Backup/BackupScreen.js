@@ -402,9 +402,8 @@ export default function BackupScreen({ route, navigation }) {
         var toFormatted = formatStringDateToDB(formatDateToString(to));
         var fromFormatted = formatStringDateToDB(formatDateToString(from));
 
-        CuentasQueries._getMovimientos(
+        CuentasQueries._getTodosMovimientos(
           idUsuario,
-          0, //todas las cuentas
           fromFormatted,
           toFormatted,
           async (data) => {

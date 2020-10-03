@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView, TouchableOpacity, Text } from "react-native";
+import { View, ScrollView, TouchableOpacity, Text, Button } from "react-native";
 import {
   Textbox,
   TextboxDate,
@@ -23,10 +23,23 @@ import {
 import { validateRequired } from "../../components/Validations";
 import { DataBase, EgresosQueries, CuentasQueries, TarjetasQueries } from "../../database";
 import { formatDateToString, formatStringDateToDB, formatStringDateFromDB, formatStringToDate } from "../../components/Formatters";
+import * as ImagePicker from 'expo-image-picker';
 
 import * as Session from "../../components/Session";
 
 export default function NuevoEgresoScren({ navigation }) {
+
+  React.useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
+        if (status !== 'granted') {
+          alert('La app no tiene permisos para acceder a tus fotos.');
+        }
+      }
+    })();
+  }, []);
+
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [modalData, setModalData] = React.useState(null);
@@ -43,6 +56,7 @@ export default function NuevoEgresoScren({ navigation }) {
     cuotas: "",
     cuenta: null,
     tarjeta: null,
+    comprobante: null
   });
 
   const [validations, setValidations] = React.useState({
@@ -270,6 +284,26 @@ export default function NuevoEgresoScren({ navigation }) {
     navigation.navigate("Egresos", { isReload: true });
   };
 
+  const onComprobante = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      base64:true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+
+      console.log(result.uri);
+
+      setForm((prevState) => ({
+        ...prevState,
+        comprobante: result.uri
+      }));
+    }
+  };
+
   const fillDropdownData = () => {
     setIsLoading(true);
 
@@ -368,6 +402,12 @@ export default function NuevoEgresoScren({ navigation }) {
               validationMessage={validationMessages.detalleEgreso}
             />
           )}
+
+          <TouchableOpacity onPress={onComprobante} style={buttonStyles.btn}>
+            <Text style={buttonStyles.btnText}>Adjuntar comprobante</Text>
+          </TouchableOpacity>
+
+          {form.comprobante && <Image source={{ uri: form.comprobante }} style={{ width: 200, height: 200 }} />}
 
           <View
             style={[screenStyles.containerDivider, titleStyles.titleContainer]}

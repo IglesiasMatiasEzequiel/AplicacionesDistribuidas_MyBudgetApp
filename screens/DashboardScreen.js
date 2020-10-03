@@ -472,6 +472,7 @@ export default function DashboardScreen({ route, navigation }) {
                 backgroundColor="transparent"
                 hasLegend={false}
                 paddingLeft={95}
+                style={screenStyles.containerCenter}
               />
               <SafeAreaView
                 style={{
