@@ -34,12 +34,20 @@ export function _selectAllByIdUsuario(idUsuario, successCallback, errorCallback)
   db._selectAllByIdUsuario(tableName, idUsuario, successCallback, errorCallback);
 }
 
+export function _selectAllByIdUsuarioPromise(idUsuario) {
+  return db._selectAllByIdUsuarioPromise(tableName, idUsuario);
+}
+
 export function _selectById(id, successCallback, errorCallback) {
   db._selectById(tableName, id, successCallback, errorCallback);
 }
 
 export function _deleteById(id, successCallback, errorCallback) {
   db._deleteById(tableName, id, successCallback, errorCallback);
+}
+
+export function _deleteAllByIdUsuarioPromise(idUsuario) {
+  return db._deleteAllByIdUsuarioPromise(tableName, idUsuario);
 }
 
 export function _deleteByIdCuentaTx(tx, idCuenta, successCallback, errorCallback) {
@@ -121,6 +129,33 @@ export function _insertTx(tx, obj, successCallback, errorCallback) {
   ];
 
   db._insertTx(tx, query, params, successCallback, errorCallback);
+}
+
+export function _insertPromise(tx, obj) {
+  
+  var query =
+    "INSERT INTO Ingresos(" +
+    " idUsuario," +
+    " idTipoIngreso," +
+    " idCategoriaIngreso," +
+    " idDestinoIngreso," +
+    " idCuenta," +
+    " fecha," +
+    " monto," +
+    " descripcion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+   
+    var params = [
+      obj.idUsuario,
+      obj.idTipoIngreso,
+      obj.idCategoriaIngreso,
+      obj.idDestinoIngreso,
+      obj.idCuenta,
+      obj.fecha,
+      obj.monto,
+      obj.descripcion
+    ];
+
+  return db._insertPromise(tx, query, params);
 }
 
 export function _insert(obj, successCallback, errorCallback) {

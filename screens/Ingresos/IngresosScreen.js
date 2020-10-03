@@ -201,14 +201,14 @@ export default function Ingresos({ route, navigation }) {
     });
   };
 
-  if(route?.params?.isReload ?? false){ 
-
+  if (
+    (listado.data === null || (route?.params?.isReload ?? false)) &&
+    !listado.isLoading
+  ) {
     /* Se vuelve a setear el isReload para que no siga actualizando el listado*/
     navigation.setParams({ isReload: false });
 
-    if (!listado.isLoading) {
-      getListado();
-    }
+    getListado();
   }
 
   /* Listado */

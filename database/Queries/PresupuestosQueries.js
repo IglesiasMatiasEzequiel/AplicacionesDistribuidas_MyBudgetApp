@@ -26,6 +26,14 @@ export function _selectAllByIdUsuario(idUsuario, successCallback, errorCallback)
   db._selectAllByIdUsuario(tableName, idUsuario, successCallback, errorCallback);
 }
 
+export function _selectAllByIdUsuarioPromise(idUsuario) {
+  return db._selectAllByIdUsuarioPromise(tableName, idUsuario);
+}
+
+export function _deleteAllByIdUsuarioPromise(idUsuario) {
+  return db._deleteAllByIdUsuarioPromise(tableName, idUsuario);
+}
+
 export function _getListado(idUsuario, from, to, successCallback, errorCallback){
 
   var query = "SELECT presupuesto.id, " +
@@ -67,5 +75,22 @@ export function _insert(obj, successCallback, errorCallback) {
   ];
 
   db._insert(query, params, successCallback, errorCallback);
+}
+
+export function _insertPromise(tx, obj) {
+  var query =
+    "INSERT INTO " +
+    tableName +
+    "(idUsuario, fechaInicio, monto, idCategoriaEgreso) " +
+    "VALUES (?, ?, ?, ?)";
+
+    var params = [
+      obj.idUsuario,
+      obj.fechaInicio,
+      obj.monto,
+      obj.idCategoriaEgreso
+    ];
+
+  return db._insertPromise(tx, query, params);
 }
 

@@ -120,7 +120,7 @@ export default function Notificaciones({ route, navigation }) {
         </Text>
       </View>
 
-      <ScrollView style={{ maxHeight: 350 }}>
+      <ScrollView style={{ height: 350 }}>
         {!listado.isLoading && (
           <View>
             {listado.data !== null && listado.data.length > 0 && (

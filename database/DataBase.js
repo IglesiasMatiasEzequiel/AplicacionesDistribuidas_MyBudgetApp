@@ -97,6 +97,20 @@ export function _insertTx(tx, query, params, successCallback, errorCallback) {
   );
 }
 
+export function _insertPromise(tx, query, params) {
+  return new Promise((resolve, reject) => {
+      tx.executeSql(query, params,
+        (txObj, resultSet) => {
+          logSuccess(debugMode, "_insert", params, query, resultSet?.insertId);
+          resolve(resultSet?.insertId);
+        },
+        (txObj, error) => {
+          logError(debugMode, "_insert", params, query, null, null, error);
+          reject(error);
+        });    
+  });
+}
+
 export function _insert(query, params, successCallback, errorCallback) {
   _createTransaction((tx) => {
     _insertTx(tx, query, params, successCallback, errorCallback);
@@ -151,8 +165,16 @@ export function _selectAllByIdUsuario(tableName, idUsuario, successCallback, err
   _select("SELECT * FROM " + tableName + " WHERE idUsuario = ?", [idUsuario], successCallback, errorCallback);
 }
 
+export function _selectAllByIdUsuarioPromise(tableName, idUsuario) {
+  return _selectPromise("SELECT * FROM " + tableName + " WHERE idUsuario = ?", [idUsuario]);
+}
+
 export function _selectAll(tableName, successCallback, errorCallback) {
   _select("SELECT * FROM " + tableName, null, successCallback, errorCallback);
+}
+
+export function _deleteAllByIdUsuarioPromise(tableName, idUsuario) {
+  return _selectPromise("DELETE FROM " + tableName + " WHERE idUsuario = ?", [idUsuario]);
 }
 
 /* DELETE */
@@ -174,6 +196,20 @@ export function _deleteTx(tx, query, params, successCallback, errorCallback) {
       }
     }
   );
+}
+
+export function _deletePromise(tx, query, params) {
+  return new Promise((resolve, reject) => {
+      tx.executeSql(query, params,
+        (txObj, resultSet) => {
+          logSuccess(debugMode, "_delete", params, query, resultSet?.insertId);
+          resolve(resultSet?.insertId);
+        },
+        (txObj, error) => {
+          logError(debugMode, "_delete", params, query, null, null, error);
+          reject(error);
+        });    
+  });
 }
 
 export function _delete(query, params, successCallback, errorCallback) {

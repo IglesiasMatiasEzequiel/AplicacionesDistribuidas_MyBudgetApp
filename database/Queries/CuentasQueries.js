@@ -35,8 +35,16 @@ export function _selectAllByIdUsuario(idUsuario, successCallback, errorCallback)
   db._selectAllByIdUsuario(tableName, idUsuario, successCallback, errorCallback);
 }
 
+export function _selectAllByIdUsuarioPromise(idUsuario) {
+  return db._selectAllByIdUsuarioPromise(tableName, idUsuario);
+}
+
 export function _selectById(id, successCallback, errorCallback) {
   db._selectById(tableName, id, successCallback, errorCallback);
+}
+
+export function _deleteAllByIdUsuarioPromise(idUsuario) {
+  return db._deleteAllByIdUsuarioPromise(tableName, idUsuario);
 }
 
 export function _deleteById(id, successCallback, errorCallback) {
@@ -162,6 +170,29 @@ export function _insert(obj, successCallback, errorCallback) {
   db._createTransaction((tx) => {
     _insertTx(tx, obj, successCallback, errorCallback);
   });
+}
+
+export function _insertPromise(tx, obj) {
+  
+  var query =
+    "INSERT INTO " +
+    tableName +
+    "(idUsuario, idBanco, idEntidadEmisora, cbu, alias, descripcion, monto, tarjeta, vencimiento) " +
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+   
+    var params = [
+      obj.idUsuario,
+      obj.idBanco,
+      obj.idEntidadEmisora,
+      obj.cbu,
+      obj.alias,
+      obj.descripcion,
+      obj.monto,
+      obj.tarjeta,
+      obj.vencimiento,
+    ];
+
+  return db._insertPromise(tx, query, params);
 }
 
 export function _insertTx(tx, obj, successCallback, errorCallback) {
