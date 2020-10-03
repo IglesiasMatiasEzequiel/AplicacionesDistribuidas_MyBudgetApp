@@ -27,6 +27,8 @@ import {
   formatStringToDate,
 } from "../../components/Formatters";
 
+import { loginUsuario } from "../../services/backupServices";
+
 export default function LoginScreen({ navigation }) {
   const styles = StyleSheet.create({
     logoContainer: {
@@ -73,34 +75,45 @@ export default function LoginScreen({ navigation }) {
     if (isValidForm) {
       setIsLoading(true);
 
-      var loginObj = {
+      loginUsuario({
         email: form.email,
         password: form.password,
-      };
+      })
+        .then((data) => {
+          if (data.data.items != null) {
 
-      UsuariosQueries._login(
-        loginObj,
-        async (data) => {
-          setIsLoading(false);
+            UsuariosQueries._insertIfNotExist(
+              {
+                id: data.data.items.id,
+                email: data.data.items.email,
+                nombre: data.data.items.nombre,
+                apellido: data.data.items.apellido,
+                password: data.data.items.password,
+              },
+              () => {
 
-          if (data && data.length === 1) {
-            limpiarState();
+                limpiarState();
 
-            var usuario = {
-              id: data[0].id,
-              email: data[0].email,
-              nombre: data[0].nombre,
-              apellido: data[0].apellido,
-              password: data[0].password,
-            };
+                var usuario = {
+                  id: data.data.items.id,
+                  email: data.data.items.email,
+                  nombre: data.data.items.nombre,
+                  apellido: data.data.items.apellido,
+                  password: data.data.items.password,
+                };
 
-            Session.setUser(usuario);
+                Session.setUser(usuario);
 
-            enviarNotificaciones(usuario.id);
-            generarPagoCuotas(usuario.id);
+                enviarNotificaciones(usuario.id);
+                generarPagoCuotas(usuario.id);
 
-            navigation.navigate("App", { usuario: usuario });
+                navigation.navigate("App", { usuario: usuario });
+
+                setIsLoading(false);
+              }
+            );
           } else {
+            setIsLoading(false);
             setModalData({
               title: "Error",
               message: "Oops, email y/o password incorrecto/s.",
@@ -108,11 +121,11 @@ export default function LoginScreen({ navigation }) {
               isSuccess: false,
             });
           }
-        },
-        () => {
+        })
+        .catch((error) => {
+          setIsLoading(false);
           console.log("Ocurrió un error en la autenticación.");
-        }
-      );
+        });
     }
   };
 
@@ -187,12 +200,12 @@ export default function LoginScreen({ navigation }) {
   const enviarNotificacionesPrestamos = (idUsuario) => {
     var to = new Date();
     var from = new Date();
-    
+
     to.setDate(to.getDate() + 7); //Avisa los que están por vencer en los próximos 7 días
 
     var toFormatted = formatStringDateToDB(formatDateToString(to));
     var fromFormatted = formatStringDateToDB(formatDateToString(from));
-    
+
     PrestamosQueries._getProximosVencimientos(
       idUsuario,
       fromFormatted,
@@ -231,7 +244,6 @@ export default function LoginScreen({ navigation }) {
         if (pagosAGenerar !== null && pagosAGenerar.length > 0) {
           DataBase._createTransaction((tx) => {
             pagosAGenerar.forEach((pago) => {
-              
               var today = new Date();
               var proxVencimiento = formatStringToDate(
                 formatStringDateFromDB(pago.proxVencimiento)
@@ -254,7 +266,9 @@ export default function LoginScreen({ navigation }) {
                   cuotas: pago.cuotas,
                   idTarjeta: pago.idTarjeta,
                   nroCuota: pago.nroCuota + 1,
-                  proxVencimiento: formatStringDateToDB(formatDateToString(proxVencimiento))
+                  proxVencimiento: formatStringDateToDB(
+                    formatDateToString(proxVencimiento)
+                  ),
                 });
               }
             });

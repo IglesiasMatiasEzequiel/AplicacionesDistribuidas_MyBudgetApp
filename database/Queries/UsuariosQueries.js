@@ -65,6 +65,18 @@ export function _insertTx(tx, obj) {
   db._insertTx(tx, query, params);
 }
 
+export function _insertIfNotExist(obj, successCallback, errorCallback) {
+
+  var query = "INSERT INTO " + tableName + " (id, email, nombre, apellido, password) " +
+  "SELECT * FROM (SELECT ?, ?, ?, ?, ?) AS tmp WHERE NOT EXISTS (" +
+    " SELECT COUNT(1) FROM " + tableName + " WHERE id = ? " +
+  ") LIMIT 1";
+  
+  var params = [obj.id, obj.email, obj.nombre, obj.apellido, obj.password, obj.id];
+
+  db._insert(query, params, successCallback, errorCallback);
+}
+
 export function _insert(obj, successCallback, errorCallback) {
   var query =
     "INSERT INTO " +

@@ -2,6 +2,15 @@ import endpoints from "./endpoints";
 
 const axios = require("axios");
 
+export const loginUsuario = async (request) => {
+  try {
+    return axios.post(endpoints.login, request);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
 export const createUsuario = async (request) => {
   try {
     return axios.post(endpoints.createUsuario, request);
