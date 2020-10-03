@@ -79,7 +79,7 @@ export function createTables() {
         CuentasQueries._insertTx(tx, { 
           idUsuario: 1, 
           idBanco: 3, 
-          idEntidadEmisora: 4, 
+          idEntidadEmisora: 3, 
           cbu: '1118589892333366501444', 
           alias: 'CALAVERA.LAPIZ.TOMATE', 
           descripcion: 'Cuenta terciaria', 

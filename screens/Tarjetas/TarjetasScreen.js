@@ -71,13 +71,13 @@ export default function TarjetasScreen({ route, navigation }) {
   const onConfirmarBorrar = (id) => {
     setIsLoading(true);
 
-    CuentasQueries._deleteById(
+    TarjetasQueries._deleteById(
       id,
       () => {
         setIsLoading(false);
         setModalData({
           title: "¡Borrado exitoso!",
-          message: "La cuenta se eliminó correctamente.",
+          message: "La tarjeta se eliminó correctamente.",
           isVisible: true,
           isSuccess: true,
           handleBtnOnSuccess: () => {

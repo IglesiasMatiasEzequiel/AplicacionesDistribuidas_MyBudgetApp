@@ -12,8 +12,8 @@ export default function IngresosStack(props) {
           name="Ingresos"
           component={IngresosScreen}
           options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Ingresos" scene={scene} navigation={navigation} />
+            header: ({ route, navigation }) => (
+              <Header title="Ingresos" route={route} navigation={navigation} />
             )
           }}
         />
@@ -21,8 +21,8 @@ export default function IngresosStack(props) {
           name="NuevoIngreso"
           component={NuevoIngresoScreen}
           options={{
-            header: ({ navigation, scene }) => (
-              <Header title="Nuevo Ingreso" scene={scene} navigation={navigation} />
+            header: ({ route, navigation }) => (
+              <Header title="Nuevo Ingreso" route={route} navigation={navigation} />
             )
           }}
         />

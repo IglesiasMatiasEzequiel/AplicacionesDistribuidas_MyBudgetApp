@@ -397,7 +397,7 @@ export default function BackupScreen({ route, navigation }) {
         var idUsuario = usuario.id;
 
         var to = new Date();
-        var from = new Date(to.getFullYear(), 1, 1);
+        var from = new Date(to.getFullYear(), 0, 1);
     
         var toFormatted = formatStringDateToDB(formatDateToString(to));
         var fromFormatted = formatStringDateToDB(formatDateToString(from));
